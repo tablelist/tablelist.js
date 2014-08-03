@@ -7,16 +7,23 @@
 	<body>
 		<div id="mocha"></div>
 
-		<!-- DEPENDENCIES -->
-		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+		<!-- MOCHA -->
 		<script src="http://assets.tablelist.com/js/mocha/1.20.1/mocha.js"></script>
-		
-		<!-- SETUP -->
+		<script src="http://chaijs.com/chai.js"></script>
 		<script>mocha.setup('bdd')</script>
+		<script>chai.should()</script>
+
+		<!-- ANGULAR -->
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-mocks.js"></script>
 		
 		<!-- TABLELIST.JS -->
 		<script src="../src/index.js"></script>
+		<script src="../src/common/auth.js"></script>
 
+		<!-- REQUIRE TESTS -->
+		<script src="./auth.test.js"></script>
+		
 		<!-- RUN TESTS -->
 		<script>
 			mocha.checkLeaks();
