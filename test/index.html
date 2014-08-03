@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Tablelist Javascript Tests</title>
+		<link href="http://assets.tablelist.com/js/mocha/1.20.1/mocha.css" rel="stylesheet"  />
+	</head>
+	<body>
+		<div id="mocha"></div>
+
+		<!-- DEPENDENCIES -->
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+		<script src="http://assets.tablelist.com/js/mocha/1.20.1/mocha.js"></script>
+		
+		<!-- SETUP -->
+		<script>mocha.setup('bdd')</script>
+		
+		<!-- TABLELIST.JS -->
+		<script src="../src/index.js"></script>
+
+		<!-- RUN TESTS -->
+		<script>
+			mocha.checkLeaks();
+			mocha.run();
+		</script>
+	</body>
+</html>
