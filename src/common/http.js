@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-    .factory('http', ['$http', 'tlauth', function($http, tlauth){
+    .factory('tl.http', ['$http', 'tl.auth', function($http, auth){
         
         function apiUrl(endpoint, params) {
             params = params || {};

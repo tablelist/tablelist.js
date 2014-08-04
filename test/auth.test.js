@@ -6,7 +6,7 @@ var Storage = null
 describe('Auth Tests', function(){
 	beforeEach(function(){
 		angular.mock.module('tl');
-		inject(['storage', 'cookie', 'auth', function(s, c, a){
+		inject(['tl.storage', 'tl.cookie', 'tl.auth', function(s, c, a){
 			Storage = s;
 			Cookie = c;
 			Auth = a;

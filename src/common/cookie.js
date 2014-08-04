@@ -5,7 +5,7 @@
  */
 angular
 	.module('tl')
-	.factory('cookie', function(){
+	.factory('tl.cookie', function(){
 
 		var Cookie = function(){};
 

@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('storage', function(){
+	.factory('tl.storage', function(){
 
 		var Storage = function(){};
 
