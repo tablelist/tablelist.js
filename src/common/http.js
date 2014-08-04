@@ -1,72 +1,62 @@
 
+var API_URL = 'https://api-dev.tablelist.com';
+
 angular
 	.module('tl')
     .factory('tl.http', ['$http', 'tl.auth', function($http, auth){
         
-        function apiUrl(endpoint, params) {
-            params = params || {};
-            _.extend(params, {
-                auth: getAuthToken()
-            });
+        var HTTP = function(){};
 
-            var data = _.map(params, function(val, key){
-                return key + '=' + encodeURIComponent(val);
-            });
-
-            var url = TL.config.host.api + endpoint + '?' + data.join('&');
-            return url;
+        HTTP.prototype.get = function(endpoint, params) {
+            return $http.get(this.apiUrl(endpoint, params));
         }
 
-        function getAuthToken() {
-            var params = queryParams();
-            if (params.auth) {
-                return params.auth;
-            }
-            return tlauth.authToken();
+        HTTP.prototype.post = function(endpoint, body, headers) {
+            return $http.post(this.apiUrl(endpoint), body, headers);
         }
 
-        function queryParams() {
-            var params = {};
-            var parts = window.location.search.replace('?','').split('&');
-            _.each(parts, function(part){
-                var kv = part.split('=');
-                if (kv && kv.length == 2) {
-                    params[kv[0]] = kv[1];
-                }
-            });
-            return params;
+        HTTP.prototype.put = function(endpoint, body, headers) {
+            return $http.put(this.apiUrl(endpoint), body, headers);
         }
 
-        function get(endpoint, params) {
-            return $http.get(apiUrl(endpoint, params));
+        HTTP.prototype.del = function(endpoint, params) {
+            return $http.delete(this.apiUrl(endpoint, params));
         }
 
-        function post(endpoint, body, headers) {
-            return $http.post(apiUrl(endpoint), body, headers);
-        }
-
-        function put(endpoint, body, headers) {
-            return $http.put(apiUrl(endpoint), body, headers);
-        }
-
-        function del(endpoint, params) {
-            return $http.delete(apiUrl(endpoint, params));
-        }
-
-        function upload(endpoint, body) {
-            return post(endpoint, body, {
+        HTTP.prototype.upload = function(endpoint, body) {
+            return this.post(endpoint, body, {
                 headers: {'Content-Type': undefined },
                 transformRequest: angular.identity
             });
         }
 
-        return {
-            apiUrl: apiUrl,
-            queryParams: queryParams,
-            get: get,
-            post: post,
-            put: put,
-            delete: del,
-            upload: upload
+        HTTP.prototype.apiUrl = function(endpoint, params) {
+            params = params || {};
+            
+            // add auth token if we have it
+            var authToken = auth.authToken();
+            if (authToken) {
+                params['auth'] = authToken;
+            }
+
+            // create url parameter string
+            var data = [];
+            var keys = Object.keys(params);
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var val = params[key];
+                var param = key + '=' + encodeURIComponent(val);
+                data.push(param);
+            }
+
+            // create url
+            var url = API_URL + endpoint;
+            if (data.length) {
+                url += '?' + data.join('&');
+            }
+            return url;
         }
+
+        return new HTTP();
     }]);
+

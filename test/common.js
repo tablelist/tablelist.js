@@ -1,15 +1,15 @@
 
 var Storage = null
   , Cookie = null
-  , Auth = null;
+  , HTTP = null;
 
-describe('Auth Tests', function(){
+describe('Common Tests', function(){
 	beforeEach(function(){
 		angular.mock.module('tl');
-		inject(['tl.storage', 'tl.cookie', 'tl.auth', function(s, c, a){
+		inject(['tl.storage', 'tl.cookie', 'tl.http', function(s, c, h){
 			Storage = s;
 			Cookie = c;
-			Auth = a;
+			HTTP = h;
 		}]);
 	});
 
@@ -46,4 +46,32 @@ describe('Auth Tests', function(){
 			Storage.get('a').length.should.equal(0);
 		});
 	});
+
+	describe('HTTP Tests', function(){
+		it('should get api status', function(done){
+			HTTP.get('/status')
+				.success(function(res, data){
+					console.log(res);
+					console.log(data);
+					done();
+				})
+				.error(function(){
+					console.log('error...');
+					done();
+				});
+		});
+	});
 });
+
+
+
+
+
+
+
+
+
+
+
+
+

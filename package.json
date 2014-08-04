@@ -1,0 +1,25 @@
+{
+    "name": "tablelist.js",
+    "version": "0.0.1",
+    "description": "Tablelist Javascript SDK",
+    "url": "https://www.tablelist.com",
+    "author": "Tablelist, Inc.",
+
+    "engines" : {
+        "node" : "0.10.x"
+    },
+
+    "dependencies": {
+        
+    },
+
+    "devDependencies": {
+        "gulp": "latest",
+        "gulp-clean": "latest",
+        "gulp-concat": "latest",
+        "gulp-ng-annotate": "latest",
+        "gulp-replace": "latest",
+        "gulp-uglify": "latest",
+        "mkdirp": "latest",
+    }
+}
