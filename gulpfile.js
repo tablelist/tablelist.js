@@ -20,7 +20,7 @@ gulp.task('js', [ 'clean' ], function(){
 	return gulp.src([ 'src/**/*.js' ])
 		.pipe(concat('tablelist.js'))
 		.pipe(ngmin())
-		.pipe(uglify())
+		// .pipe(uglify())
 		.pipe(gulp.dest('build'));
 });
 

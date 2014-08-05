@@ -1,9 +1,7 @@
 
-var API_URL = 'https://api-dev.tablelist.com';
-
 angular
 	.module('tl')
-    .factory('tl.http', ['$http', '$httpBackend', 'tl.auth', function($http, $httpBackend, auth){
+    .factory('tl.http', ['$http', '$httpBackend', 'tl.auth', 'tl.config', function($http, $httpBackend, auth, config){
         
         var HTTP = function(){};
 
@@ -50,7 +48,7 @@ angular
             }
 
             // create url
-            var url = API_URL + endpoint;
+            var url = config.API + endpoint;
             if (data.length) {
                 url += '?' + data.join('&');
             }

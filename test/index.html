@@ -16,23 +16,28 @@
 		<!-- ANGULAR -->
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-mocks.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 		
 		<!-- TABLELIST.JS -->
 		<script src="../src/index.js"></script>
+		<!-- common -->
 		<script src="../src/common/cookie.js"></script>
 		<script src="../src/common/storage.js"></script>
 		<script src="../src/common/query.js"></script>
+		<script src="../src/common/resource.js"></script>
 		<script src="../src/common/http.js"></script>
+		<!-- auth -->
 		<script src="../src/auth/service.js"></script>
+		<!-- user -->
+		<script src="../src/user/service.js"></script>
+		<script src="../src/user/resource.js"></script>
 
 		<!-- REQUIRE TESTS -->
 		<script src="./common.js"></script>
 		<script src="./auth.js"></script>
 		
 		<!-- RUN TESTS -->
-		<script>
-			mocha.checkLeaks();
-			mocha.run();
-		</script>
+		<script>mocha.checkLeaks();</script>
+		<script>mocha.run();</script>
 	</body>
 </html>
