@@ -49,16 +49,19 @@ describe('Common Tests', function(){
 
 	describe('HTTP Tests', function(){
 		it('should get api status', function(done){
+			
+			HTTP.whenGET('/status').respond({
+				status: 'ok'
+			});
+
 			HTTP.get('/status')
-				.success(function(res, data){
-					console.log(res);
-					console.log(data);
+				.success(function(data){
+					data.status.should.equal('ok');
 					done();
 				})
-				.error(function(){
-					console.log('error...');
-					done();
-				});
+				.error(done);
+
+			HTTP.flush();
 		});
 	});
 });

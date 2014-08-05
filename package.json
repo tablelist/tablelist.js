@@ -20,6 +20,6 @@
         "gulp-ng-annotate": "latest",
         "gulp-replace": "latest",
         "gulp-uglify": "latest",
-        "mkdirp": "latest",
+        "mkdirp": "latest"
     }
 }
