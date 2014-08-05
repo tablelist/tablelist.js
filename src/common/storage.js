@@ -15,11 +15,15 @@ angular
 		};
 
 		Storage.prototype.set = function(key, obj) {
-			try {
-				var val = JSON.stringify(obj);
-				return localStorage.setItem(key, val);
-			} catch(e) {
-				return null;
+			if (obj) {
+				try {
+					var val = JSON.stringify(obj);
+					return localStorage.setItem(key, val);
+				} catch(e) {
+					return null;
+				}
+			} else {
+				this.remove(key);
 			}
 		}
 

@@ -1,30 +1,84 @@
 
 angular
 	.module('tl')
-	.factory('tl.auth', ['tl.storage', 'tl.cookie', function(storage, cookie){
-
-		var AUTH_KEY = 'tl_auth';
+	.factory('tl.auth', ['tl.keychain', 'tl.http', 'tl.user', 'tl.facebook', function(keychain, http, user, fb){
 
 		var Auth = function(){};
 
 		Auth.prototype.authToken = function() {
-			return cookie.get(AUTH_KEY);
+			return keychain.authToken();
 		};
 
 		Auth.prototype.setAuthToken = function(token) {
-			return cookie.set(AUTH_KEY, token);
+			return keychain.setAuthToken(token);
 		};
 
-		Auth.prototype.login = function(email, password) {
-			// todo
+		Auth.prototype.register = function(email, password, firstName, lastName, next) {
+			next = next || function(){};
+			var _this = this;
+			return http.post('/auth/register', {
+				email: email,
+				password: password,
+				firstName: firstName,
+				lastName: lastName
+			}).success(function(auth){
+				_this.setAuthToken(auth.token);
+				user.setCurrentUser(auth.user);
+				next(null, auth.user);
+			}).error(next);
 		};
 
-		Auth.prototype.loginWithFacebook = function() {
-			// todo
+		Auth.prototype.login = function(email, password, next) {
+			next = next || function(){};
+			var _this = this;
+			return http.post('/auth/login', {
+				email: email,
+				password: password
+			}).success(function(auth){
+				_this.setAuthToken(auth.token);
+				user.setCurrentUser(auth.user);
+				next(null, auth.user);
+			}).error(next);
+		};
+
+		Auth.prototype.loginWithFacebook = function(next) {
+			next = next || function(){};
+			var _this = this;
+			fb.login(function(err, token){
+				if (err) return next(err);
+				
+				http.post('/auth/facebook', {
+					facebookToken: token
+				}).success(function(auth){
+					_this.setAuthToken(auth.token);
+					user.setCurrentUser(auth.user);
+					next(null, auth.user);
+				}).error(next);
+			});
 		};
 
 		Auth.prototype.logout = function() {
-			// todo
+			this.setAuthToken(null);
+			user.setCurrentUser(null);
+		};
+
+		Auth.prototype.forogtPassword = function(email, next) {
+			next = next || function(){};
+			return http.post('/auth/forgot', {
+				email: email
+			}).success(function(res){
+				next(null, res);
+			}).error(next);	
+		};
+
+		Auth.prototype.resetPassword = function(token, password, next) {
+			next = next || function(){};
+			return http.post('/auth/reset', {
+				resetToken: token,
+				password: password
+			}).success(function(res){
+				next(null, res);
+			}).error(next);
 		};
 
 		return new Auth();

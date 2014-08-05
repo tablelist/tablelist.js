@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-    .factory('tl.http', ['$http', '$httpBackend', 'tl.auth', 'tl.config', function($http, $httpBackend, auth, config){
+    .factory('tl.http', ['$http', '$httpBackend', 'tl.keychain', 'tl.config', function($http, $httpBackend, keychain, config){
         
         var HTTP = function(){};
 
@@ -32,7 +32,7 @@ angular
             params = params || {};
             
             // add auth token if we have it
-            var authToken = auth.authToken();
+            var authToken = keychain.authToken();
             if (authToken) {
                 params['auth'] = authToken;
             }

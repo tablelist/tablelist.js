@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.user', ['tl.storage', 'tl.auth', function(storage, auth){
+	.factory('tl.user', ['tl.storage', 'tl.auth', 'tl.user.resource', function(storage, auth, User){
 		
 		var USER_KEY = 'tl_user';
 
@@ -13,6 +13,13 @@ angular
 
 		User.prototype.setCurrentUser = function(user) {
 			return storage.set(USER_KEY, user);
+		};
+
+		User.prototype.me = function(next) {
+			next = next || function(){};
+			return User.me().success(function(user){
+				next(null, user);
+			}).error(next);
 		};
 
 		return new User();

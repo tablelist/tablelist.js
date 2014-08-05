@@ -14,6 +14,7 @@ angular
 		};
 
 		Cookie.prototype.set = function(sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+			if (!sValue) return this.remove(sKey, sPath, sDomain);
 			if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
 		    var sExpires = "";
 		    if (vEnd) {
