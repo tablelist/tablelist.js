@@ -1,7 +1,13 @@
 tablelist.js
 ============
 
-Tablelist Javascript SDK
+Tablelist Javascript SDK for Angular.js
+
+#### Dependencies
+The only dependency is Angular.js
+```
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+```
 
 #### Get Started
 
