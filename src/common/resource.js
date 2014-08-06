@@ -1,14 +1,14 @@
 
 angular
 	.module('tl')
-	.factory('tl.resource', ['$resource', 'tl.auth', 'tl.http', function($resource, auth, http){
+	.factory('tl.resource', ['$resource', 'tl.keychain', 'tl.http', function($resource, keychain, http){
 
 		function _url(endpoint) {
 			return http.apiUrl(endpoint);
 		}
 
 		function _params(params) {
-			var token = auth.authToken();
+			var token = keychain.authToken();
 			if (token) {
 				params['auth'] = token;
 			}

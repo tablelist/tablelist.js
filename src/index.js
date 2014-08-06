@@ -3,9 +3,10 @@
  * 
  * Dependencies: 
  *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js
+ *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js
  */
 angular
-	.module('tl', [])
+	.module('tl', ['ngResource'])
 	.factory('tl.config', function(){
 		return {
 			

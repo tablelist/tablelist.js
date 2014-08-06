@@ -49,7 +49,7 @@ describe('Common Tests', function(){
 
 	describe('HTTP Tests', function(){
 		it('should get api status', function(done){
-			HTTP.testGET('/status')
+			HTTP.get('/status')
 				.success(function(data){
 					console.log(data);
 					data.status.should.equal('OK');

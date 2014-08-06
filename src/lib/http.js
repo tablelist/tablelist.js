@@ -1,24 +1,40 @@
 
 angular
 	.module('tl')
-    .factory('tl.http', ['$http', '$httpBackend', 'tl.keychain', 'tl.config', function($http, $httpBackend, keychain, config){
+    .factory('tl.http', ['$http', 'tl.keychain', 'tl.config', function($http, keychain, config){
         
         var HTTP = function(){};
 
         HTTP.prototype.get = function(endpoint, params) {
-            return $http.get(this.apiUrl(endpoint, params));
+            if (config.ENV_TEST) {
+                return this.testGET(endpoint, params);
+            } else {
+                return $http.get(this.apiUrl(endpoint, params));
+            }
         };
 
         HTTP.prototype.post = function(endpoint, body, headers) {
-            return $http.post(this.apiUrl(endpoint), body, headers);
+            if (config.ENV_TEST) {
+                return this.testPOST(endpoint, body, headers);
+            } else {
+                return $http.post(this.apiUrl(endpoint), body, headers);
+            }
         };
 
         HTTP.prototype.put = function(endpoint, body, headers) {
-            return $http.put(this.apiUrl(endpoint), body, headers);
+            if (config.ENV_TEST) {
+                return this.testPUT(endpoint, body, headers);
+            } else {
+                return $http.put(this.apiUrl(endpoint), body, headers);   
+            }
         };
 
         HTTP.prototype.delete = function(endpoint, params) {
-            return $http.delete(this.apiUrl(endpoint, params));
+            if (config.ENV_TEST) {
+                return this.testDELETE(endpoint, params);
+            } else {
+                return $http.delete(this.apiUrl(endpoint, params));   
+            }
         };
 
         HTTP.prototype.upload = function(endpoint, body) {

@@ -4,9 +4,10 @@ tablelist.js
 Tablelist Javascript SDK for Angular.js
 
 #### Dependencies
-The only dependency is Angular.js
+The SDK relies on Angular.js and ngResource
 ```
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js"></script>
 ```
 
 #### Download

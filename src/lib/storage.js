@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.storage', function(){
+	.factory('tl.storage', ['tl.config', function(config){
 
 		var Storage = function(){};
 
@@ -40,4 +40,4 @@ angular
 		};
 
 		return new Storage();
-	});
+	}]);

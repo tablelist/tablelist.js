@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.facebook', function(){
+	.factory('tl.facebook', ['tl.config', function(config){
 		// Check for Facebook javascript SDK 
 		if (!window.FB) return null;
 
@@ -21,4 +21,4 @@ angular
 		};
 
 		return new Facebook();
-	});
+	}]);

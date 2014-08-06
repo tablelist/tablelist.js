@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.keychain', ['tl.storage', 'tl.cookie', function(storage, cookie){
+	.factory('tl.keychain', ['tl.cookie', function(cookie){
 
 		var AUTH_KEY = 'tl_auth';
 		

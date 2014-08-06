@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.query', function(){
+	.factory('tl.query', ['tl.config', function(config){
 
 		var Query = function(){};
 
@@ -27,4 +27,4 @@ angular
 		};
 
 		return new Query();
-	});
+	}]);
