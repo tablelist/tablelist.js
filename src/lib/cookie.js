@@ -12,7 +12,7 @@ angular
 		Cookie.prototype.get = function(sKey) {
 			if (config.ENV_TEST) {
 				var obj = storage.get(sKey); 
-				return obj ? obj.value : null;
+				return obj ? obj.cookie : null;
 			} else {
 				return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
 			}
@@ -21,7 +21,7 @@ angular
 		Cookie.prototype.set = function(sKey, sValue, vEnd, sPath, sDomain, bSecure) {
 			if (!sValue) return this.remove(sKey, sPath, sDomain);
 			if (config.ENV_TEST) {
-				return storage.set(sKey, { value: sValue });
+				return storage.set(sKey, { cookie: sValue });
 			} else {
 				if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
 				if (!sPath) sPath = '/';

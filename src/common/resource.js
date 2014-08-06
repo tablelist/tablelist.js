@@ -37,40 +37,36 @@ angular
 
 		function _commonActions(endpoint) {
 			return { 
-				'list': {
-					method: 'GET',
-					isArray: true
-				},
-				'create': {
+				create: {
 				    method: 'POST' 
 				},
-				'update': { 
+				update: { 
 				    method: 'PUT' 
 				},
-				'delete': {
-					method: 'DELETE'
+				save: { 
+				    method: 'PUT' 
 				},
-				'queryTotal': {
+				queryTotal: {
 				    method: 'GET',
 				    url: endpoint,
 				    isArray: false
 				},
-				'listImages': { 
+				listImages: { 
 				    method: 'GET',
 				    url: endpoint + '/image',
 				    isArray: true
 				}, 
-				'addImage': { 
+				addImage: { 
 				    method: 'POST',
 				    url: endpoint + '/image',
 				    isArray: true
 				}, 
-				'deleteImage': { 
+				deleteImage: { 
 				    method: 'DELETE',
 				    url: endpoint + '/image/:imageId',
 				    isArray: true
 				}, 
-				'setPrimaryImage': { 
+				setPrimaryImage: { 
 				    method: 'PUT',
 				    url: endpoint + '/image/:imageId',
 				    isArray: true

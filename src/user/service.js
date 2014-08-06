@@ -1,26 +1,26 @@
 
 angular
 	.module('tl')
-	.factory('tl.user', ['tl.storage', 'tl.auth', 'tl.user.resource', function(storage, auth, User){
+	.factory('tl.user', ['tl.storage', 'tl.auth', 'tl.user.resource', 'tl.service', function(storage, auth, User, Service){
 		
 		var USER_KEY = 'tl_user';
 
-		var User = function(){};
+		var UserService = Service.extend(User);
 
-		User.prototype.currentUser = function() {
+		UserService.prototype.currentUser = function() {
 			return storage.get(USER_KEY);
 		};
 
-		User.prototype.setCurrentUser = function(user) {
+		UserService.prototype.setCurrentUser = function(user) {
 			return storage.set(USER_KEY, user);
 		};
 
-		User.prototype.me = function(next) {
+		UserService.prototype.me = function(next) {
 			next = next || function(){};
 			return User.me().success(function(user){
 				next(null, user);
 			}).error(next);
 		};
 
-		return new User();
+		return new UserService();
 	}]);
