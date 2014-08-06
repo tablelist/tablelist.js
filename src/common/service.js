@@ -98,11 +98,3 @@ angular
 			common: Service
 		}
 	}]);
-
-
-
-
-
-
-
-

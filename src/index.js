@@ -6,11 +6,11 @@
  *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js
  */
 angular
-	.module('tl', ['ngResource'])
+	.module('tl', [ 'ngResource' ])
 	.factory('tl.config', function(){
 		return {
 			
-			VERSION: '0.0.1',
+			VERSION: '0.0.2',
 			
 			ENV: 'development',
 			

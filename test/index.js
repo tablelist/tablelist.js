@@ -8,9 +8,9 @@ angular
 		 // Common
 		 'tl.resource', 'tl.service',
 		 // Resource
-		 'tl.user.resource',
+		 'tl.user.resource', 'tl.booking.resource',
 		 // Services
-		 'tl.auth', 'tl.user',
+		 'tl.auth', 'tl.user', 'tl.booking',
 
 		function($scope,
 			// Lib
@@ -18,9 +18,9 @@ angular
 			// Common
 			resource, service,
 			// Resources
-			user,
+			user, booking,
 			// Services
-			authService, userService){
+			authService, userService, bookingService){
 		
 				// Lib
 				tlCookie = cookie;
@@ -36,14 +36,15 @@ angular
 
 				// Resources
 				tlUser = user;
+				tlBooking = booking;
 
 				// Services
 				tlAuthService = authService;
 				tlUserService = userService;
+				tlBookingService = bookingService;
 
 				// Run Tests
 				tlAuthService.logout();
-				mocha.timeout(5 * 1000);
 				mocha.checkLeaks();
 				mocha.run();
 		}]);
