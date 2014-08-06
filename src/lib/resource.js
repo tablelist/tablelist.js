@@ -16,12 +16,22 @@ angular
 		}
 
 		function _actions(actions) {
-			var _data = _.extend(_commonActions(), actions);
-			_.each(_data, function(action){
-			    if (action.url) {
-			        action.url = _url(action.url);
-			    }
-			});
+			var _data = _commonActions();
+			var actionKeys = Object.keys(actions);
+			for (var i = 0; i < actionKeys.length; i++) {
+				var key = actionKeys[i];
+				_data[key] = actions[key];
+			}
+
+			var keys = Object.keys(_data);
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				var action = _data[key];
+				if (action.url) {
+				    action.url = _url(action.url);
+				}
+			}
+			
 			return actions;
 		}
 

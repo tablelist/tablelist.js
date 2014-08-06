@@ -3,7 +3,6 @@
  * 
  * Dependencies: 
  *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js
- *  - http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js
  */
 angular
 	.module('tl', [])
