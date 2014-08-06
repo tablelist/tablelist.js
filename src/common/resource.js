@@ -8,10 +8,7 @@ angular
 		}
 
 		function _params(params) {
-			var token = keychain.authToken();
-			if (token) {
-				params['auth'] = token;
-			}
+			// do nothing for now
 			return params;
 		}
 

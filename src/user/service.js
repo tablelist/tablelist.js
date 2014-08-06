@@ -15,11 +15,8 @@ angular
 			return storage.set(USER_KEY, user);
 		};
 
-		UserService.prototype.me = function(next) {
-			next = next || function(){};
-			return User.me().success(function(user){
-				next(null, user);
-			}).error(next);
+		UserService.prototype.me = function(success, error) {
+			return User.me().$promise.then(success, error);
 		};
 
 		return new UserService();
