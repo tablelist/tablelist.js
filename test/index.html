@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html ng-app="test">
 	<head>
-		<title>Tablelist Javascript Tests</title>
+		<title>tablelist.js</title>
 		<link href="http://assets.tablelist.com/js/mocha/1.20.1/mocha.css" rel="stylesheet" />
 		<script>ENV_TEST=true</script>
 	</head>
 	<body>
-		<div ng-controller="TestController">
-			<div id="mocha"></div>
-		</div>
+		<div ng-controller="TestController" id="mocha"></div>
 
 		<!-- MOCHA -->
 		<script src="http://assets.tablelist.com/js/mocha/1.20.1/mocha.js"></script>
@@ -17,7 +15,6 @@
 		<script>chai.should()</script>
 
 		<!-- ANGULAR -->
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js"></script>
 		
