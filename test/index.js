@@ -43,6 +43,7 @@ angular
 
 				// Run Tests
 				tlAuthService.logout();
+				mocha.timeout(5 * 1000);
 				mocha.checkLeaks();
 				mocha.run();
 		}]);
