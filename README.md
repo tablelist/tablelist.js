@@ -9,7 +9,19 @@ The only dependency is Angular.js
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
 ```
 
-#### Get Started
+#### Download
+Production (minified):
+```
+<script src="//assets.tablelist.com/js/tablelist/VERSION/tablelist.js"></script>
+``` 
+
+Development:
+```
+<script src="//assets.tablelist.com/js/tablelist/VERSION/tablelist-dev.js"></script>
+``` 
+
+Development
+===========
 
 Start by installing gulp globally if you have not already:
 ```
