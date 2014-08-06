@@ -95,7 +95,7 @@ angular
 
 		return { 
 			extend: extend,
-			service: Service
+			common: Service
 		}
 	}]);
 

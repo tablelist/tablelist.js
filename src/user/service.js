@@ -16,7 +16,23 @@ angular
 		};
 
 		UserService.prototype.me = function(success, error) {
-			return User.me().$promise.then(success, error);
+			var _this = this;
+			return User.me().$promise.then(function(user){
+				_this.setCurrentUser(user);
+				if (success) {
+					success(user);
+				}
+			}, error);
+		};
+
+		UserService.prototype.updateMe = function(me, success, error) {
+			var _this = this;
+			return me.update().$promise.then(function(user){
+				_this.setCurrentUser(user);
+				if (success) {
+					success(user);
+				}
+			}, error);
 		};
 
 		return new UserService();

@@ -50,5 +50,12 @@ describe('Auth Tests', function(){
 				done(err);
 			});
 		});
+
+		it('should store current user locally', function(){
+			var user = tlUserService.currentUser();
+			user.email.should.equal(email);
+			user.firstName.should.equal(firstName);
+			user.lastName.should.equal(lastName);
+		});
 	});
 });
