@@ -25,15 +25,19 @@ angular
 			} else {
 				this.remove(key);
 			}
-		}
+		};
 
 		Storage.prototype.remove = function(key) {
 			return localStorage.removeItem(key);
-		}
+		};
+
+		Storage.prototype.exists = function(key) {
+			return this.get(key) != null;
+		};
 
 		Storage.prototype.clear = function() {
 			return localStorage.clear();
-		}
+		};
 
 		return new Storage();
 	});

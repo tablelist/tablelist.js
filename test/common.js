@@ -13,11 +13,10 @@ describe('Common Tests', function(){
 		}]);
 	});
 
-	describe('Cookie Tests', function(){
-		return; // broken on local machine
-		
+	describe('Cookie Tests', function(){		
 		it('should set a cookie', function(){
-			Cookie.set('a', '12345').should.be.ok;
+			Cookie.set('a', '12345');
+			Cookie.get('a').should.equal('12345');
 		});	
 
 		it('should have a cookie', function(){
@@ -29,7 +28,8 @@ describe('Common Tests', function(){
 		});
 
 		it('should remove a cookie', function(){
-			Cookie.remove('a').should.be.ok;
+			Cookie.remove('a');
+			Cookie.exists('a').should.not.be.ok;
 		});
 
 		it('should not have a cookie', function(){
@@ -49,19 +49,13 @@ describe('Common Tests', function(){
 
 	describe('HTTP Tests', function(){
 		it('should get api status', function(done){
-			
-			HTTP.whenGET('/status').respond({
-				status: 'ok'
-			});
-
-			HTTP.get('/status')
+			HTTP.testGET('/status')
 				.success(function(data){
-					data.status.should.equal('ok');
+					console.log(data);
+					data.status.should.equal('OK');
 					done();
 				})
 				.error(done);
-
-			HTTP.flush();
 		});
 	});
 });

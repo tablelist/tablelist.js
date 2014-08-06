@@ -14,11 +14,24 @@ gulp.task('clean', function(next){
 });
 
 /**
- * Minify javascript files
+ * Minify javascript files for dev
  */
-gulp.task('js', [ 'clean' ], function(){
+gulp.task('js-dev', [ 'clean' ], function(){
+	return gulp.src([ 'src/**/*.js' ])
+		.pipe(concat('tablelist-dev.js'))
+		.pipe(ngmin())
+		.pipe(gulp.dest('build'));
+});
+
+/**
+ * Minify javascript files for prod
+ */
+gulp.task('js-prod', [ 'clean' ], function(){
 	return gulp.src([ 'src/**/*.js' ])
 		.pipe(concat('tablelist.js'))
+		.pipe(replace('-dev', '', { skipBinary: true }))
+		.pipe(replace('_DEV', '_PROD', { skipBinary: true }))
+		.pipe(replace('development', 'production', { skipBinary: true }))
 		.pipe(ngmin())
 		.pipe(uglify())
 		.pipe(gulp.dest('build'));
@@ -27,4 +40,4 @@ gulp.task('js', [ 'clean' ], function(){
 /**
  * Run all steps in order
  */
-gulp.task('default', [ 'clean', 'js' ]);
+gulp.task('default', [ 'clean', 'js-dev', 'js-prod' ]);

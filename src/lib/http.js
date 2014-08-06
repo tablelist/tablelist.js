@@ -56,27 +56,31 @@ angular
         };
 
         /*==========================================================*
-         * Unit Testing
+         * Unit Testing - uses JQuery ajax methods
          *==========================================================*/
 
-        HTTP.prototype.whenGET = function(endpoint) {
-            return $httpBackend.whenGET(this.apiUrl(endpoint))
+        HTTP.prototype.testAJAX = function(method, endpoint, data) {
+            return $.ajax({
+                type: method,
+                url: this.apiUrl(endpoint),
+                data: data
+            });
         };
 
-        HTTP.prototype.whenPOST = function(endpoint) {
-            return $httpBackend.whenPOST(this.apiUrl(endpoint))
+        HTTP.prototype.testGET = function(endpoint, params) {
+            return this.testAJAX('GET', endpoint, params);
         };
 
-        HTTP.prototype.whenPUT = function(endpoint) {
-            return $httpBackend.whenPUT(this.apiUrl(endpoint))
+        HTTP.prototype.testPOST = function(endpoint, body) {
+            return this.testAJAX('POST', endpoint, body);
         };
 
-        HTTP.prototype.whenDELETE = function(endpoint) {
-            return $httpBackend.whenDELETE(this.apiUrl(endpoint))
+        HTTP.prototype.testPUT = function(endpoint, body) {
+            return this.testAJAX('PUT', endpoint, body);
         };
 
-        HTTP.prototype.flush = function() {
-            $httpBackend.flush();
+        HTTP.prototype.testDELETE = function(endpoint, params) {
+            return this.testAJAX('DELETE', endpoint, params);
         };
 
         return new HTTP();

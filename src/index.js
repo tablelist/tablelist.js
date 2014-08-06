@@ -15,6 +15,10 @@ angular
 			
 			DOMAIN: 'tablelist.com',
 
-			API: 'https://api-dev.tablelist.com'
+			API: 'https://api-dev.tablelist.com',
+
+			ENV_DEV: true,
+
+			ENV_TEST: window.ENV_TEST
 		}
 	});
