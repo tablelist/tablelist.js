@@ -2,8 +2,6 @@
 angular
 	.module('tl')
 	.factory('tl.facebook', ['tl.config', function(config){
-		// Check for Facebook javascript SDK 
-		if (!window.FB) return null;
 
 		var PERMISSIONS = [ 'public_profile', 'email', 'user_friends' ];
 

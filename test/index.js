@@ -4,7 +4,7 @@ angular
 	.controller('TestController', 
 		['$scope', 
 		 // Lib
-		 'tl.cookie', 'tl.facebook', 'tl.http', 'tl.keychain', 'tl.query', 'tl.storage',
+		 'tl.cookie', 'tl.facebook', 'tl.http', 'tl.keychain', 'tl.query', 'tl.storage', 'tl.ws',
 		 // Common
 		 'tl.resource', 'tl.service',
 		 // Resource
@@ -14,14 +14,14 @@ angular
 
 		function($scope,
 			// Lib
-			cookie, facebook, http, keychain, query, storage,
+			cookie, facebook, http, keychain, query, storage, ws,
 			// Common
 			resource, service,
 			// Resources
 			user, booking,
 			// Services
 			authService, userService, bookingService){
-		
+				
 				// Lib
 				tlCookie = cookie;
 				tlFacebook = facebook;
@@ -29,6 +29,7 @@ angular
 				tlKeychain = keychain;
 				tlQuery = query;
 				tlStorage = storage;
+				tlWS = ws;
 
 				// Common
 				tlResource = resource;
@@ -47,4 +48,4 @@ angular
 				tlAuthService.logout();
 				mocha.checkLeaks();
 				mocha.run();
-		}]);
+			}]);
