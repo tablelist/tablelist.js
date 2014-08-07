@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.user', ['tl.storage', 'tl.user.resource', 'tl.service', function(storage, User, Service){
+	.service('tl.user', ['tl.storage', 'tl.user.resource', 'tl.service', function(storage, User, Service){
 		
 		var USER_KEY = 'tl_user';
 

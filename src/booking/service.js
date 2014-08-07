@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.booking', ['tl.booking.resource', 'tl.service', function(Booking, Service){
+	.service('tl.booking', ['tl.booking.resource', 'tl.service', function(Booking, Service){
 
 		var BookingService = Service.extend(Booking);
 

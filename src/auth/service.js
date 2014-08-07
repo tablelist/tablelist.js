@@ -1,8 +1,8 @@
 
 angular
 	.module('tl')
-	.factory('tl.auth', ['tl.keychain', 'tl.http', 'tl.user', 'tl.facebook', function(keychain, http, user, fb){
-
+	.service('tl.auth', ['tl.keychain', 'tl.http', 'tl.user', 'tl.facebook', function(keychain, http, user, fb){
+		
 		var Auth = function(){};
 
 		Auth.prototype.authToken = function() {
