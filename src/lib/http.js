@@ -1,7 +1,7 @@
 
 angular
     .module('tl')
-    .factory('tlInterceptor', ['tl.config', 'tl.keychain', function(config, keychain){
+    .factory('tlHTTPInterceptor', ['tl.config', 'tl.keychain', function(config, keychain){
         return {
             request: function(data) {
                 var token = keychain.authToken();
@@ -13,7 +13,7 @@ angular
         }
     }])
     .config(['$httpProvider', function($httpProvider){
-        $httpProvider.interceptors.push('tlInterceptor');
+        $httpProvider.interceptors.push('tlHTTPInterceptor');
     }])
     .factory('tl.http', ['$http', 'tl.keychain', 'tl.config', function($http, keychain, config){
         
@@ -23,12 +23,12 @@ angular
             return $http.get(this.apiUrl(endpoint, params));
         };
 
-        HTTP.prototype.post = function(endpoint, body, headers) {
-            return $http.post(this.apiUrl(endpoint), body, headers);
+        HTTP.prototype.post = function(endpoint, body, options) {
+            return $http.post(this.apiUrl(endpoint), body, options);
         };
 
-        HTTP.prototype.put = function(endpoint, body, headers) {
-            return $http.put(this.apiUrl(endpoint), body, headers);
+        HTTP.prototype.put = function(endpoint, body, options) {
+            return $http.put(this.apiUrl(endpoint), body, options);
         };
 
         HTTP.prototype.delete = function(endpoint, params) {
@@ -37,7 +37,7 @@ angular
 
         HTTP.prototype.upload = function(endpoint, body) {
             return this.post(endpoint, body, {
-                headers: {'Content-Type': undefined },
+                headers: { 'Content-Type': undefined },
                 transformRequest: angular.identity
             });
         };
@@ -51,7 +51,7 @@ angular
             for (var i = 0; i < keys.length; i++) {
                 var key = keys[i];
                 var val = params[key];
-                var param = key + '=' + encodeURIComponent(val);
+                var param = encodeURIComponent(key) + '=' + encodeURIComponent(val);
                 data.push(param);
             }
 
