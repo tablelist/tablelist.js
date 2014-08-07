@@ -2,7 +2,10 @@
 angular
 	.module('tl')
 	.factory('tl.user.resource', ['tl.resource', function(resource){
-		return resource('/user/:id', {
+		
+		var endpoint = '/user/:id';
+
+		return resource(endpoint, {
 			id: '@id'
 		}, {
 			me: {
@@ -21,12 +24,12 @@ angular
 			},
 			listReferrals: { 
 				method: 'GET',
-				url: '/user/:id/referral',
+				url: endpoint + '/referral',
 				isArray: true
 			},
 			listBookings: { 
 				method: 'GET',
-				url: '/user/:id/booking',
+				url: endpoint + '/booking',
 				isArray: true
 			}
 		});

@@ -2,155 +2,139 @@
 angular
 	.module('tl')
 	.factory('tl.venue.resource', ['tl.resource', function(resource){
-		return resource('/venue/:id', {
+		
+		var endpoint = '/venue/:id';		
+		
+		return resource(endpoint, {
 			id: '@id',
 			itemId: '@itemId',
-			imageId: '@imageId'
+			imageId: '@imageId',
+			cityId: '@cityId'
 		}, {
-			create: { method: 'POST' },
-			update: { method: 'PUT' },
-			query: {
+
+			/*==============================================================*
+			/* Cities
+			/*==============================================================*/
+
+			listForCity: {
 				method: 'GET',
-				url: '/venue',
+				url: '/city/:cityId/venue',
 				isArray: true
 			},
-			queryAdmin: {
+			listCityFeatured: {
 				method: 'GET',
-				url: '/venue',
+				url: '/city/:cityId/venue/featured',
 				isArray: true
 			},
+			listCityTonight: {
+				method: 'GET',
+				url: '/city/:cityId/venue/tonight',
+				isArray: true
+			},
+
+			/*==============================================================*
+			/* Schedule
+			/*==============================================================*/
+
 			schedule: {
 				method: 'GET',
-				url: '/venue/:id/schedule',
+				url: endpoint + '/schedule',
 			},
 			updateSchedule: {
 				method: 'PUT',
-				url: '/venue/:id/schedule',
+				url: endpoint + '/schedule',
 			},
 
-			/* Inventory */
+			/*==============================================================*
+			/* Inventory
+			/*==============================================================*/
+
 			listInventory: {
 				method: 'GET',
-				url: '/venue/:id/inventory',
+				url: endpoint + '/inventory',
 				isArray: false
 			},
-
 			listInventoryAdmin: {
 				method: 'GET',
-				url: '/venue/:id/inventory/admin',
+				url: endpoint + '/inventory/admin',
 				isArray: false
 			},
-
 			readInventory: {
 				method: 'GET',
-				url: '/venue/:id/inventory/:tableId',
+				url: endpoint + '/inventory/:tableId',
 				isArray: false
 			},
-
 			addInventory: {
 				method: 'POST',
-				url: '/venue/:id/inventory',
+				url: endpoint + '/inventory',
 				isArray: false
 			},
-
 			updateInventory: {
 				method: 'PUT',
-				url: '/venue/:id/inventory/:tableId',
+				url: endpoint + '/inventory/:tableId',
 				isArray: false
 			},
 
-			/* Events */
+			/*==============================================================*
+			/* Events
+			/*==============================================================*/
+
 			listEvents: {
 				method: 'GET',
-				url: '/venue/:id/event',
+				url: endpoint + '/event',
 				isArray: true
 			},
-
-			// listEventsAdmin: {
-			// 	method: 'GET',
-			// 	url: '/venue/:id/event/admin',
-			// 	isArray: false
-			// },
-
-			// readEvent: {
-			// 	method: 'GET',
-			// 	url: '/venue/:id/event/:tableId',
-			// 	isArray: false
-			// },
-
 			addEvent: {
 				method: 'POST',
-				url: '/event/',
+				url: '/event',
 				isArray: false
 			},
 
-			// updateEvent: {
-			// 	method: 'PUT',
-			// 	url: '/venue/:id/event/:tableId',
-			// 	isArray: false
-			// },
+			/*==============================================================*
+			/* Items
+			/*==============================================================*/
 
-			/* Items */
 			listItems: {
 				method: 'GET',
-				url: '/venue/:id/item',
+				url: endpoint + '/item',
 				isArray: true
 			},
 			addItem: {
 				method: 'POST',
-				url: '/venue/:id/item'
+				url: endpoint + '/item'
 			},
 			updateItem: {
 				method: 'PUT',
-				url: '/venue/:id/item/:itemId'
+				url: endpoint + '/item/:itemId'
 			},
 			deleteItem: {
 				method: 'DELETE',
-				url: '/venue/:id/item/:itemId'
+				url: endpoint + '/item/:itemId'
 			},
 
-			/* Staff */
+			/*==============================================================*
+			/* Staff
+			/*==============================================================*/
+
 			listStaff: {
 				method: 'GET',
-				url: '/venue/:id/user',
+				url: endpoint + '/user',
 				isArray: true
 			},
 			addStaff: {
 				method: 'POST',
-				url: '/venue/:id/user',
+				url: endpoint + '/user',
 				isArray: true
 			},
 			updateStaff: {
 				method: 'PUT',
-				url: '/venue/:id/user/:userId',
+				url: endpoint + '/user/:userId',
 				isArray: true
 			},
 			removeStaff: {
 				method: 'DELETE',
-				url: '/venue/:id/user/:userId',
+				url: endpoint + '/user/:userId',
 				isArray: true
-			},
-
-			/* Images */
-			listImages: {
-				method: 'GET',
-				url: '/venue/:id/image',
-				isArray: true
-			},
-			addImage: {
-				method: 'POST',
-				url: '/venue/:id/image',
-				isArray: true
-			},
-			deleteImage: {
-				method: 'DELETE',
-				url: '/venue/:id/image/:imageId',
-				isArray: true
-			},
-			setPrimaryImage: {
-				method: 'PUT',
-				url: '/venue/:id/image/:imageId',
-				isArray: true
-			},
+			}
 		});
 	}]);

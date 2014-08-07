@@ -17,80 +17,98 @@ angular
 		};
 
 		/*==============================================================*
+		/* Constants
+		/*==============================================================*/
+
+		var DEFAULT_LIMIT = 100;
+		var DEFAULT_SORT = '-created';
+
+		/*==============================================================*
 		/* CRUD
 		/*==============================================================*/
 
-		Service.prototype.create = function(data) {
-			return this.resource.create(data);
+		Service.prototype.save = function(data, success, error) {
+			return this.resource.save(data, success, error);
 		};
 
-		Service.prototype.read = function(id) {
-			return this.resource.get({ id: id });
+		Service.prototype.get = function(id, success, error) {
+			return this.resource.get({ id: id }, success, error);
 		};
 
-		Service.prototype.update = function(id, data) {
-			return this.resource.update({ id: id}, data);
+		Service.prototype.update = function(id, data, success, error) {
+			return this.resource.update({ id: id}, data, success, error);
 		};
 
-		Service.prototype.delete = function(id, data) {
-			return this.resource.delete({ id: id}, data);
+		Service.prototype.delete = function(id, success, error) {
+			return this.resource.delete({ id: id}, success, error);
+		};
+
+		Service.prototype.list = function(limit, sort, success, error) {
+			return this.resource.query({
+				sort: sort || DEFAULT_SORT,
+				limit: limit || DEFAULT_LIMIT
+			}, success, error);
 		};
 
 		/*==============================================================*
 		/* Query
 		/*==============================================================*/
 
-		Service.prototype.query = function(query, sort, limit) {
-			return this.queryResource(query, sort, false, limit);
+		Service.prototype.query = function(query, limit, sort, success, error) {
+			var queryString = this.buildQueryString(query);
+			if (!queryString) return null;
+
+			return this.resource.query({
+				query: queryString,
+				sort: sort || DEFAULT_SORT,
+				limit: limit || DEFAULT_LIMIT
+			}, success, error);
 		};
 
-		Service.prototype.queryTotal = function(query, sort) {
-			return this.queryResource(query, sort, true);
+		Service.prototype.totals = function(query, sort, success, error) {
+			var queryString = this.buildQueryString(query);
+			if (!queryString) return null;
+
+			return this.resource.query({
+				total: true,
+				query: queryString,
+				sort: sort || DEFAULT_SORT
+			}, success, error);
 		};
 
-		Service.prototype.queryResource = function(query, sort, total, limit) {
-			query = query || {};
-			sort = sort || "";
-			total = total || false;
-			limit = limit || DEFAULT_LIMIT;
-
-			var params = { 
-				query: JSON.stringify(query),
-				limit: limit,
-				admin: true
-			};
-			if (sort) params['sort'] = sort;
-			if (total) params['total'] = true;
-
-			var fn = (total) ? 'queryTotal' : 'query';
-			return this.resource[fn](params);
+		Service.prototype.buildQueryString = function(query, next) {
+			try {
+				return JSON.stringify(query);
+			} catch(err) {
+				return null;
+			}
 		};
 
 		/*==============================================================*
 		/* Images
 		/*==============================================================*/
 
-		Service.prototype.listImage = function(id) {
-		    return this.resource.listImages({ id: id });
+		Service.prototype.listImages = function(id, success, error) {
+		    return this.resource.listImages({ id: id }, success, error);
 		};
 
-		Service.prototype.addImage = function(id, image) {
+		Service.prototype.addImage = function(id, image, success, error) {
 			image.id = id;
-		    return this.resource.addImage(image);
+		    return this.resource.addImage(image, success, error);
 		};
 
-		Service.prototype.deleteImage = function(id, imageId) {
+		Service.prototype.deleteImage = function(id, imageId, success, error) {
 		    return this.resource.deleteImage({
 		    	id: id,
 		    	imageId: imageId
-		    });
+		    }, success, error);
 		};
 
-		Service.prototype.setPrimaryImage = function(id, imageId) {
+		Service.prototype.setPrimaryImage = function(id, imageId, success, error) {
 		    return this.resource.setPrimaryImage({
 		    	id: id,
 		    	imageId: imageId
-		    });
+		    }, success, error);
 		};
 
 		return { 

@@ -5,7 +5,7 @@ describe('Auth Tests', function(){
 	var firstName = 'Alan';
 	var lastName = 'Turing';
 
-	describe('Register Email', function(){
+	describe('Register', function(){
 
 		it('should register a new user', function(done){
 			tlAuthService.register(email, password, firstName, lastName)

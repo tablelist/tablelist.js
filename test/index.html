@@ -12,6 +12,7 @@
 		<script src="http://assets.tablelist.com/js/mocha/1.20.1/mocha.js"></script>
 		<script src="http://chaijs.com/chai.js"></script>
 		<script>mocha.setup('bdd')</script>
+		<script>mocha.timeout(4 * 1000)</script>
 		<script>chai.should()</script>
 
 		<!-- ANGULAR -->
@@ -49,6 +50,8 @@
 		<!-- REQUIRE TESTS -->
 		<script src="./common.js"></script>
 		<script src="./auth.js"></script>
+		<script src="./city.js"></script>
+		<script src="./venue.js"></script>
 		
 		<!-- RUN TESTS -->
 		<script src="./index.js"></script>

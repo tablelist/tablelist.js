@@ -5,6 +5,6 @@ angular
 		return resource('/city/:id', {
 			id: '@id'
 		}, {
-			
+			// no extra methods
 		});
 	}]);

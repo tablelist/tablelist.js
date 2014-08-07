@@ -34,20 +34,17 @@ angular
 
 		function _commonActions(endpoint) {
 			return { 
-				create: {
-				    method: 'POST' 
-				},
-				update: { 
-				    method: 'PUT' 
-				},
-				save: { 
-				    method: 'PUT' 
-				},
-				queryTotal: {
-				    method: 'GET',
-				    url: endpoint,
-				    isArray: false
-				},
+
+				/*==============================================================*
+				/* CRUD: Default actions - get, query, save, remove|delete
+				/*==============================================================*/
+
+				update: { method: 'PUT' },
+
+				/*==============================================================*
+				/* Images
+				/*==============================================================*/
+
 				listImages: { 
 				    method: 'GET',
 				    url: endpoint + '/image',
