@@ -8,9 +8,9 @@ angular
 		 // Common
 		 'tl.resource', 'tl.service',
 		 // Resource
-		 'tl.user.resource', 'tl.booking.resource',
+		 'tl.user.resource', 'tl.booking.resource', 'tl.venue.resource',
 		 // Services
-		 'tl.auth', 'tl.user', 'tl.booking',
+		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue',
 
 		function($scope,
 			// Lib
@@ -18,9 +18,9 @@ angular
 			// Common
 			resource, service,
 			// Resources
-			user, booking,
+			user, booking, venue,
 			// Services
-			authService, userService, bookingService){
+			authService, userService, bookingService, venueService){
 				
 				// Lib
 				tlCookie = cookie;
@@ -38,11 +38,13 @@ angular
 				// Resources
 				tlUser = user;
 				tlBooking = booking;
+				tlVenue = venue;
 
 				// Services
 				tlAuthService = authService;
 				tlUserService = userService;
 				tlBookingService = bookingService;
+				tlVenueService = venueService;
 
 				// Run Tests
 				tlAuthService.logout();
