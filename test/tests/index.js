@@ -8,9 +8,9 @@ angular
 		 // Common
 		 'tl.resource', 'tl.service',
 		 // Resource
-		 'tl.auth.resource', 'tl.user.resource', 'tl.booking.resource', 'tl.venue.resource', 'tl.city.resource',
+		 'tl.auth.resource', 'tl.user.resource', 'tl.booking.resource', 'tl.venue.resource', 'tl.city.resource', 'tl.settings.resource',
 		 // Services
-		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 'tl.city',
+		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 'tl.city', 'tl.settings',
 
 		function($scope,
 			// Lib
@@ -18,9 +18,9 @@ angular
 			// Common
 			resource, service,
 			// Resources
-			auth, user, booking, venue, city,
+			auth, user, booking, venue, city, settings,
 			// Services
-			authService, userService, bookingService, venueService, cityService){
+			authService, userService, bookingService, venueService, cityService, settingsService){
 				
 				// Lib
 				tlCookie = cookie;
@@ -41,6 +41,7 @@ angular
 				tlBooking = booking;
 				tlVenue = venue;
 				tlCity = city;
+				tlSettings = settings;
 
 				// Services
 				tlAuthService = authService;
@@ -48,9 +49,12 @@ angular
 				tlBookingService = bookingService;
 				tlVenueService = venueService;
 				tlCityService = cityService;
+				tlSettingsService = settingsService;
+
+				// clear previous tests
+				tlAuthService.logout();
 
 				// Run Tests
-				tlAuthService.logout();
 				mocha.checkLeaks();
 				mocha.run();
 			}]);

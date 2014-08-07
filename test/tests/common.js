@@ -35,12 +35,12 @@ describe('Common Tests', function(){
 		});
 	});
 
-	describe('HTTP Tests', function(){
-		it('should get api status', function(done){
-			tlHTTP.get('/status')
+	describe('API Tests', function(){
+		it('should get api root', function(done){
+			tlHTTP.get('/')
 				.success(function(data){
 					console.log(data);
-					data.status.should.equal('OK');
+					data.name.should.equal('tablelist-api');
 					done();
 				})
 				.error(done);

@@ -6,14 +6,14 @@ angular
 		var BookingService = Service.extend(Booking);
 
 		BookingService.prototype.void = function(id, notify, success, error) {
-			return Booking.void({
+			return Booking.void({}, {
 				id: id,
 				notify: notify ? true : false
 			}, success, error);
 		};
 
 		BookingService.prototype.refund = function(id, amount, reason, success, error) {
-			return Booking.refund({
+			return Booking.refund({}, {
 				id: id,
 				money: amount,
 				reason: reason
