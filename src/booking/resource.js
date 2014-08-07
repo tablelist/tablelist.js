@@ -2,16 +2,19 @@
 angular
 	.module('tl')
 	.factory('tl.booking.resource', ['tl.resource', function(resource){
-		return resource('/booking/:id', {
+		
+		var endpoint = '/booking/:id';
+
+		return resource(endpoint, {
 			id: '@id'
 		}, {
 			void: {
 				method: 'POST',
-				url: '/booking/:id/void'
+				url: endpoint + '/void'
 			},
 			refund: {
 				method: 'POST',
-				url: '/booking/:id/refund'
+				url: endpoint + '/refund'
 			}
 		});
 	}]);

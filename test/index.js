@@ -8,7 +8,7 @@ angular
 		 // Common
 		 'tl.resource', 'tl.service',
 		 // Resource
-		 'tl.user.resource', 'tl.booking.resource', 'tl.venue.resource', 'tl.city.resource',
+		 'tl.auth.resource', 'tl.user.resource', 'tl.booking.resource', 'tl.venue.resource', 'tl.city.resource',
 		 // Services
 		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 'tl.city',
 
@@ -18,7 +18,7 @@ angular
 			// Common
 			resource, service,
 			// Resources
-			user, booking, venue, city,
+			auth, user, booking, venue, city,
 			// Services
 			authService, userService, bookingService, venueService, cityService){
 				
@@ -32,6 +32,7 @@ angular
 				tlWS = ws;
 
 				// Common
+				tlAuth = auth;
 				tlResource = resource;
 				tlService = service;
 

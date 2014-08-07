@@ -1,85 +1,76 @@
 
 angular
 	.module('tl')
-	.service('tl.auth', ['tl.keychain', 'tl.http', 'tl.user', 'tl.facebook', function(keychain, http, user, fb){
+	.service('tl.auth', ['tl.auth.resource', 'tl.keychain', 'tl.user', 'tl.facebook', function(Auth, keychain, user, fb){
 		
-		var Auth = function(){};
+		var AuthService = function(){};
 
-		Auth.prototype.authToken = function() {
+		AuthService.prototype.authToken = function() {
 			return keychain.authToken();
 		};
 
-		Auth.prototype.setAuthToken = function(token) {
+		AuthService.prototype.setAuthToken = function(token) {
 			return keychain.setAuthToken(token);
 		};
 
-		Auth.prototype.register = function(email, password, firstName, lastName, next) {
-			next = next || function(){};
+		AuthService.prototype.register = function(email, password, firstName, lastName, success, error) {
 			var _this = this;
-			return http.post('/auth/register', {
+			return Auth.register({}, {
 				email: email,
 				password: password,
 				firstName: firstName,
 				lastName: lastName
-			}).success(function(auth){
+			}, success, error)
+			.$promise.then(function(auth){
 				_this.setAuthToken(auth.token);
 				user.setCurrentUser(auth.user);
-				next(null, auth.user);
-			}).error(next);
-		};
-
-		Auth.prototype.login = function(email, password, next) {
-			next = next || function(){};
-			var _this = this;
-			return http.post('/auth/login', {
-				email: email,
-				password: password
-			}).success(function(auth){
-				_this.setAuthToken(auth.token);
-				user.setCurrentUser(auth.user);
-				next(null, auth.user);
-			}).error(next);
-		};
-
-		Auth.prototype.loginWithFacebook = function(next) {
-			next = next || function(){};
-			var _this = this;
-			fb.login(function(err, token){
-				if (err) return next(err);
-				
-				http.post('/auth/facebook', {
-					facebookToken: token
-				}).success(function(auth){
-					_this.setAuthToken(auth.token);
-					user.setCurrentUser(auth.user);
-					next(null, auth.user);
-				}).error(next);
 			});
 		};
 
-		Auth.prototype.logout = function() {
+		AuthService.prototype.login = function(email, password, success, error) {
+			var _this = this;
+			return Auth.login({}, {
+				email: email,
+				password: password
+			}, success, error)
+			.$promise.then(function(auth){
+				_this.setAuthToken(auth.token);
+				user.setCurrentUser(auth.user);
+			});
+		};
+
+		AuthService.prototype.loginWithFacebook = function(success, error) {
+			var _this = this;
+			fb.login(function(err, token){				
+				var _this = this;
+				return Auth.loginFacebook({}, {
+					facebookToken: token
+				}, success, error)
+				.$promise.then(function(auth){
+					_this.setAuthToken(auth.token);
+					user.setCurrentUser(auth.user);
+				});
+			});
+		};
+
+		AuthService.prototype.logout = function() {
 			this.setAuthToken(null);
 			user.setCurrentUser(null);
+			return true;
 		};
 
-		Auth.prototype.forogtPassword = function(email, next) {
-			next = next || function(){};
-			return http.post('/auth/forgot', {
+		AuthService.prototype.forogtPassword = function(email, success, error) {
+			return Auth.forgotPassword({}, {
 				email: email
-			}).success(function(res){
-				next(null, res);
-			}).error(next);	
+			}, success, error);
 		};
 
-		Auth.prototype.resetPassword = function(token, password, next) {
-			next = next || function(){};
-			return http.post('/auth/reset', {
-				resetToken: token,
+		AuthService.prototype.resetPassword = function(token, password, success, error) {
+			return Auth.resetPassword({}, {
+				email: email,
 				password: password
-			}).success(function(res){
-				next(null, res);
-			}).error(next);
+			}, success, error);
 		};
 
-		return new Auth();
+		return new AuthService();
 	}]);

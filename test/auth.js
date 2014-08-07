@@ -8,32 +8,30 @@ describe('Auth Tests', function(){
 	describe('Register', function(){
 
 		it('should register a new user', function(done){
-			tlAuthService.register(email, password, firstName, lastName)
-				.success(function(auth){
+			tlAuthService
+				.register(email, password, firstName, lastName, function(auth){
 					console.log(auth);
 					var user = auth.user;
 					user.email.should.equal(email);
 					user.firstName.should.equal(firstName);
 					user.lastName.should.equal(lastName);
 					done();
-				})
-				.error(done);
+				}, done);
 		});
 	});
 
 	describe('Login', function(){
 
 		it('should log me in', function(done){
-			tlAuthService.login(email, password)
-				.success(function(auth){
+			tlAuthService
+				.login(email, password, function(auth){
 					console.log(auth);
 					var user = auth.user;
 					user.email.should.equal(email);
 					user.firstName.should.equal(firstName);
 					user.lastName.should.equal(lastName);
 					done();
-				})
-				.error(done);
+				}, done);
 		});
 	});
 
