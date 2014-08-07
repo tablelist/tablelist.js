@@ -3,14 +3,16 @@
 	<head>
 		<title>tablelist.js</title>
 		<link href="http://assets.tablelist.com/js/mocha/1.20.1/mocha.css" rel="stylesheet" />
-		<script>ENV_TEST=true</script>
 	</head>
 	<body>
 		<div ng-controller="TestController" id="mocha"></div>
 
-		<!-- MOCHA -->
+		<!-- LIBRARIES -->
 		<script src="http://assets.tablelist.com/js/mocha/1.20.1/mocha.js"></script>
 		<script src="http://chaijs.com/chai.js"></script>
+		
+		<!-- CONFIG -->
+		<script>ENV_TEST=true</script>
 		<script>mocha.setup('bdd')</script>
 		<script>mocha.timeout(4 * 1000)</script>
 		<script>mocha.slow(1.5 * 1000)</script>
@@ -21,36 +23,7 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js"></script>
 		
 		<!-- TABLELIST.JS -->
-		<script src="../src/index.js"></script>
-		<!-- lib -->
-		<script src="../src/lib/cookie.js"></script>
-		<script src="../src/lib/storage.js"></script>
-		<script src="../src/lib/query.js"></script>
-		<script src="../src/lib/http.js"></script>
-		<script src="../src/lib/ws.js"></script>
-		<script src="../src/lib/keychain.js"></script>
-		<script src="../src/lib/facebook.js"></script>
-		<!-- common -->
-		<script src="../src/common/resource.js"></script>
-		<script src="../src/common/service.js"></script>
-		<!-- auth -->
-		<script src="../src/auth/service.js"></script>
-		<script src="../src/auth/resource.js"></script>
-		<!-- user -->
-		<script src="../src/user/service.js"></script>
-		<script src="../src/user/resource.js"></script>
-		<!-- booking -->
-		<script src="../src/booking/service.js"></script>
-		<script src="../src/booking/resource.js"></script>
-		<!-- venue -->
-		<script src="../src/venue/service.js"></script>
-		<script src="../src/venue/resource.js"></script>
-		<!-- city -->
-		<script src="../src/city/service.js"></script>
-		<script src="../src/city/resource.js"></script>
-		<!-- settings -->
-		<script src="../src/settings/service.js"></script>
-		<script src="../src/settings/resource.js"></script>
+		<script src="../build/tablelist-dev.js"></script>
 
 		<!-- REQUIRE TESTS -->
 		<script src="./tests/common.js"></script>
@@ -61,6 +34,6 @@
 		<script src="./tests/venue.js"></script>
 		
 		<!-- RUN TESTS -->
-		<script src="./tests/index.js"></script>
+		<script src="./test.js"></script>
 	</body>
 </html>

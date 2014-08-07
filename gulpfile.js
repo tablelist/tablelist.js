@@ -1,22 +1,14 @@
 var gulp = require('gulp')
-  , clean = require('gulp-clean')
   , ngmin = require('gulp-ng-annotate')
   , uglify = require('gulp-uglify')
   , replace = require('gulp-replace')
+  , watch = require('gulp-watch')
   , concat = require('gulp-concat');
-
-/**
- * Clean the build directory
- */
-gulp.task('clean', function(next){
-	return gulp.src('build', { read: false })
-		.pipe(clean());
-});
 
 /**
  * Minify javascript files for dev
  */
-gulp.task('js-dev', [ 'clean' ], function(){
+gulp.task('js-dev', function(){
 	return gulp.src([ 'src/**/*.js' ])
 		.pipe(concat('tablelist-dev.js'))
 		.pipe(ngmin())
@@ -26,7 +18,7 @@ gulp.task('js-dev', [ 'clean' ], function(){
 /**
  * Minify javascript files for prod
  */
-gulp.task('js-prod', [ 'clean' ], function(){
+gulp.task('js-prod', function(){
 	return gulp.src([ 'src/**/*.js' ])
 		.pipe(concat('tablelist.js'))
 		.pipe(replace('-dev', '', { skipBinary: true }))
@@ -38,6 +30,15 @@ gulp.task('js-prod', [ 'clean' ], function(){
 });
 
 /**
+ * Watch for changes
+ */
+gulp.task('watch', function(){
+	watch({ glob: 'src/**/*.js', emit: 'one', emitOnGlob: false }, function(files) {
+	    gulp.run('js-dev');
+	});
+});
+
+/**
  * Run all steps in order
  */
-gulp.task('default', [ 'clean', 'js-dev', 'js-prod' ]);
+gulp.task('default', [ 'js-dev', 'js-prod' ]);

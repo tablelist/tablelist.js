@@ -10,16 +10,11 @@
     },
 
     "dependencies": {
-        
-    },
-
-    "devDependencies": {
         "gulp": "latest",
-        "gulp-clean": "latest",
         "gulp-concat": "latest",
         "gulp-ng-annotate": "latest",
         "gulp-replace": "latest",
         "gulp-uglify": "latest",
-        "mkdirp": "latest"
+        "gulp-watch": "latest"   
     }
 }

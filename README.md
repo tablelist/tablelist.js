@@ -34,6 +34,12 @@ Install gulp dependencies
 npm install
 ```
 
+To watch files as you make changes run:
+```
+make js
+``` 
+This will allow you to develop and run unit tests without rebuilding from the terminal.
+
 
 #### Build SDK
 

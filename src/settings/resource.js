@@ -6,7 +6,7 @@ angular
 		var endpoint = '/settings';
 
 		return resource(endpoint, {
-			// nothing here
+			// nothing here 
 		}, {
 
 			status: {
