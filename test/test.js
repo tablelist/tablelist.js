@@ -3,7 +3,7 @@ angular
 	.module('test', ['tl'])
 	.controller('TestController', 
 		[// Lib
-		 'tl.cookie', 'tl.facebook', 'tl.http', 
+		 'tl.cookie', 'tl.facebook', 'tl.http', 'tl.utils',
 		 'tl.keychain', 'tl.query', 'tl.storage', 'tl.ws',
 		 
 		 // Modules
@@ -13,7 +13,7 @@ angular
 
 		function(
 			// Lib
-			cookie, facebook, http, 
+			cookie, facebook, http, utils,
 			keychain, query, storage, ws,
 			// Modules
 			auth, user, booking, venue, 
@@ -28,6 +28,7 @@ angular
 				tlQuery = query;
 				tlStorage = storage;
 				tlWS = ws;
+				tlUtils = utils;
 
 				// Resources
 				tlAuth = auth;
