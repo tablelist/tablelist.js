@@ -6,7 +6,7 @@ angular
 		var Utils = function(){};
 
 		Utils.prototype.noop = function() {
-			// emty function
+			// empty function
 		};
 
 		Utils.prototype.slugify = function(string) {
