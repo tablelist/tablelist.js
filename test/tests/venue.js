@@ -1,10 +1,10 @@
 
 describe('Venue Tests', function(){
 
+	var city = null;
+	var venue = null;
+
 	describe('List', function(){
-
-		var city = null;
-
 		it('should get a city', function(){
 			city = tlStorage.get('cities')[0];
 		});
@@ -12,6 +12,7 @@ describe('Venue Tests', function(){
 		it('should list venues for a city', function(done){
 			tlVenue.service.listForCity(city.id, function(venues){
 				console.log(venues);
+				venue = venues[0];
 				done();
 			}, done);
 		});
@@ -28,6 +29,18 @@ describe('Venue Tests', function(){
 				console.log(venues);
 				done();
 			}, done);
+		});
+	});
+
+	describe('Read', function(){
+		it('should get a single venue', function(done){
+			console.log(tlVenue.service);
+			tlVenue.service
+				.read(venue.id, function(_venue){
+					console.log(_venue);
+					venue = _venue;
+					done();
+				}, done);
 		});
 	});
 });

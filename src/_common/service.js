@@ -8,12 +8,20 @@ angular
 		};
 
 		var extend = function(resource) {
-			var _service = function() {
+			var ExtendedService = function() {
 				Service.call(this, resource);
 			};
-			_service.prototype = new Service();
-			_service.prototype.constructor = _service;
-			return _service;
+			
+			var proto = Service.prototype;
+			var keys = Object.keys(proto);
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				if (key != 'constructor') {
+					ExtendedService.prototype[key] = proto[key];
+				}
+			}
+
+			return ExtendedService;
 		};
 
 		/*==============================================================*
@@ -27,11 +35,11 @@ angular
 		/* CRUD
 		/*==============================================================*/
 
-		Service.prototype.save = function(data, success, error) {
+		Service.prototype.create = function(data, success, error) {
 			return this.resource.save(data, success, error);
 		};
 
-		Service.prototype.get = function(id, success, error) {
+		Service.prototype.read = function(id, success, error) {
 			return this.resource.get({ id: id }, success, error);
 		};
 
