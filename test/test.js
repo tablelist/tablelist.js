@@ -1,19 +1,17 @@
 
-
-
 angular
 	.module('test', ['tl'])
 	.controller('TestController', 
 		['$scope', 
 		 // Lib
 		 'tl.cookie', 'tl.facebook', 'tl.http', 'tl.keychain', 'tl.query', 'tl.storage', 'tl.ws',
-		 // Models
+		 // Modules
 		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 'tl.city', 'tl.settings', 'tl.review', 'tl.reward', 'tl.table',
 
 		function($scope,
 			// Lib
 			cookie, facebook, http, keychain, query, storage, ws,
-			// Resources
+			// Modules
 			auth, user, booking, venue, city, settings, review, reward, table){
 				
 				// Lib
@@ -37,7 +35,6 @@ angular
 				tlTable = table;
 
 				// clear previous tests
-				console.log(tlAuth);
 				tlAuth.service.logout();
 
 				// Run Tests
