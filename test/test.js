@@ -6,13 +6,13 @@ angular
 		 // Lib
 		 'tl.cookie', 'tl.facebook', 'tl.http', 'tl.keychain', 'tl.query', 'tl.storage', 'tl.ws',
 		 // Modules
-		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 'tl.city', 'tl.settings', 'tl.review', 'tl.reward', 'tl.table',
+		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 'tl.city', 'tl.settings', 'tl.review', 'tl.reward', 'tl.table', 'tl.event', 'tl.item',
 
 		function($scope,
 			// Lib
 			cookie, facebook, http, keychain, query, storage, ws,
 			// Modules
-			auth, user, booking, venue, city, settings, review, reward, table){
+			auth, user, booking, venue, city, settings, review, reward, table, event, item){
 				
 				// Lib
 				tlCookie = cookie;
@@ -33,6 +33,8 @@ angular
 				tlReview = review;
 				tlReward = reward;
 				tlTable = table;
+				tlEvent = event;
+				tlItem = item;
 
 				// clear previous tests
 				tlAuth.service.logout();
