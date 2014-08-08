@@ -2,17 +2,23 @@
 angular
 	.module('test', ['tl'])
 	.controller('TestController', 
-		['$scope', 
-		 // Lib
-		 'tl.cookie', 'tl.facebook', 'tl.http', 'tl.keychain', 'tl.query', 'tl.storage', 'tl.ws',
+		[// Lib
+		 'tl.cookie', 'tl.facebook', 'tl.http', 
+		 'tl.keychain', 'tl.query', 'tl.storage', 'tl.ws',
+		 
 		 // Modules
-		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 'tl.city', 'tl.settings', 'tl.review', 'tl.reward', 'tl.table', 'tl.event', 'tl.item',
+		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 
+		 'tl.city', 'tl.settings', 'tl.review', 'tl.reward', 
+		 'tl.table', 'tl.event', 'tl.item',
 
-		function($scope,
+		function(
 			// Lib
-			cookie, facebook, http, keychain, query, storage, ws,
+			cookie, facebook, http, 
+			keychain, query, storage, ws,
 			// Modules
-			auth, user, booking, venue, city, settings, review, reward, table, event, item){
+			auth, user, booking, venue, 
+			city, settings, review, reward, 
+			table, event, item){	
 				
 				// Lib
 				tlCookie = cookie;
