@@ -43,7 +43,6 @@ angular
 			      	}
 			    }
 			    var cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
-			    console.log(cookie);
 			    document.cookie = cookie;
 			    return true;
 			}
