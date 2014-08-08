@@ -10,21 +10,21 @@ describe('Venue Tests', function(){
 		});
 
 		it('should list venues for a city', function(done){
-			tlVenueService.listForCity(city.id, function(venues){
+			tlVenue.service.listForCity(city.id, function(venues){
 				console.log(venues);
 				done();
 			}, done);
 		});
 
 		it('should list featured venues for a city', function(done){
-			tlVenueService.listCityFeatured(city.id, function(venues){
+			tlVenue.service.listCityFeatured(city.id, function(venues){
 				console.log(venues);
 				done();
 			}, done);
 		});
 
 		it('should list tonight venues for a city', function(done){
-			tlVenueService.listCityTonight(city.id, function(venues){
+			tlVenue.service.listCityTonight(city.id, function(venues){
 				console.log(venues);
 				done();
 			}, done);

@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.service('tl.settings', ['tl.service', 'tl.settings.resource', function(Service, Settings){
+	.service('tl.settings.service', ['tl.service', 'tl.settings.resource', function(Service, Settings){
 
 		var SettingsService = function(){};
 

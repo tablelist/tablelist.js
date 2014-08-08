@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.service('tl.auth', ['tl.auth.resource', 'tl.keychain', 'tl.user', 'tl.facebook', function(Auth, keychain, user, fb){
+	.service('tl.auth.service', ['tl.auth.resource', 'tl.keychain', 'tl.user.service', 'tl.facebook', function(Auth, keychain, user, fb){
 		
 		var AuthService = function(){};
 

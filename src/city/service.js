@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.service('tl.city', ['tl.service', 'tl.city.resource', function(Service, City){
+	.service('tl.city.service', ['tl.service', 'tl.city.resource', function(Service, City){
 
 		var CityService = Service.extend(City);
 

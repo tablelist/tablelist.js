@@ -8,7 +8,7 @@ describe('Auth Tests', function(){
 	describe('Register', function(){
 
 		it('should register a new user', function(done){
-			tlAuthService
+			tlAuth.service
 				.register(email, password, firstName, lastName, function(auth){
 					console.log(auth);
 					var user = auth.user;
@@ -23,7 +23,7 @@ describe('Auth Tests', function(){
 	describe('Login', function(){
 
 		it('should log me in', function(done){
-			tlAuthService
+			tlAuth.service
 				.login(email, password, function(auth){
 					console.log(auth);
 					var user = auth.user;
@@ -38,7 +38,7 @@ describe('Auth Tests', function(){
 	describe('Me', function(){
 
 		it('should fetch me', function(done){
-			tlUserService.me(function(user){
+			tlUser.service.me(function(user){
 				console.log(user);
 				user.email.should.equal(email);
 				user.firstName.should.equal(firstName);
@@ -50,7 +50,7 @@ describe('Auth Tests', function(){
 		});
 
 		it('should store current user locally', function(){
-			var user = tlUserService.currentUser();
+			var user = tlUser.service.currentUser();
 			user.email.should.equal(email);
 			user.firstName.should.equal(firstName);
 			user.lastName.should.equal(lastName);

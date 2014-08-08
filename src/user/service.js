@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.service('tl.user', ['tl.storage', 'tl.user.resource', 'tl.service', function(storage, User, Service){
+	.service('tl.user.service', ['tl.storage', 'tl.user.resource', 'tl.service', function(storage, User, Service){
 		
 		var USER_KEY = 'tl_user';
 
