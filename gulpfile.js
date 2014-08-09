@@ -8,37 +8,44 @@ var gulp = require('gulp')
 /**
  * Minify javascript files for dev
  */
-gulp.task('js-dev', function(){
-	return gulp.src([ 'src/**/*.js' ])
-		.pipe(concat('tablelist-dev.js'))
-		.pipe(ngmin())
-		.pipe(gulp.dest('build'));
-});
+function dev() {
+ 	return gulp.src([ 'src/**/*.js' ])
+ 		.pipe(concat('tablelist-dev.js'))
+ 		.pipe(ngmin())
+ 		.pipe(gulp.dest('build'));
+}
+
 
 /**
  * Minify javascript files for prod
  */
-gulp.task('js-prod', function(){
-	return gulp.src([ 'src/**/*.js' ])
-		.pipe(concat('tablelist.js'))
-		.pipe(replace('-dev', '', { skipBinary: true }))
-		.pipe(replace('_DEV', '_PROD', { skipBinary: true }))
-		.pipe(replace('development', 'production', { skipBinary: true }))
-		.pipe(ngmin())
-		.pipe(uglify())
-		.pipe(gulp.dest('build'));
-});
+function prod() {
+ 	return gulp.src([ 'src/**/*.js' ])
+ 		.pipe(concat('tablelist.js'))
+ 		.pipe(replace('-dev', '', { skipBinary: true }))
+ 		.pipe(replace('_DEV', '_PROD', { skipBinary: true }))
+ 		.pipe(replace('development', 'production', { skipBinary: true }))
+ 		.pipe(ngmin())
+ 		.pipe(uglify())
+ 		.pipe(gulp.dest('build'));
+}
+
 
 /**
  * Watch for changes
  */
-gulp.task('watch', function(){
-	watch({ glob: 'src/**/*.js', emit: 'one', emitOnGlob: false }, function(files) {
-	    gulp.run('js-dev');
-	});
-});
+function js() {
+	watch({ 
+		glob: 'src/**/*.js', 
+		emit: 'one', 
+		emitOnGlob: false 
+	}, dev);
+}
 
 /**
- * Run all steps in order
+ * Register steps
  */
+gulp.task('js-dev', dev);
+gulp.task('js-prod', prod);
+gulp.task('watch', js);
 gulp.task('default', [ 'js-dev', 'js-prod' ]);
