@@ -5,8 +5,13 @@ angular
         return {
             request: function(data) {
                 var token = keychain.authToken();
-                if (token && data.url.indexOf(config.API) >= 0) {
+                var isApi = data.url.indexOf(config.API) >= 0;
+                if (token && isApi) {
                     data.url = data.url + '&auth=' + token;
+                }
+                if (!token && isApi) {
+                    var ptoken = keychain.prospectToken();
+                    data.url = data.url + '&prospect=' + ptoken;
                 }
                 return data;
             }

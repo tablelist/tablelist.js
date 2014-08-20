@@ -10,7 +10,7 @@ var gulp = require('gulp')
  */
 function dev() {
  	return gulp.src([ 'src/**/*.js' ])
- 		.pipe(concat('tablelist-dev.js'))
+ 		.pipe(concat('tablelist.js'))
  		.pipe(ngmin())
  		.pipe(gulp.dest('build'));
 }
@@ -21,10 +21,7 @@ function dev() {
  */
 function prod() {
  	return gulp.src([ 'src/**/*.js' ])
- 		.pipe(concat('tablelist.js'))
- 		.pipe(replace('-dev', '', { skipBinary: true }))
- 		.pipe(replace('_DEV', '_PROD', { skipBinary: true }))
- 		.pipe(replace('development', 'production', { skipBinary: true }))
+ 		.pipe(concat('tablelist.min.js'))
  		.pipe(ngmin())
  		.pipe(uglify())
  		.pipe(gulp.dest('build'));
