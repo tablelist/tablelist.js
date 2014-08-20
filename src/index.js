@@ -25,7 +25,6 @@ angular
 		};
 
 		return {
-			VERSION   : '0.0.4',
 			DOMAIN    : 'tablelist.com',
 			ENV       : TL_ENV,
 			ENV_DEV   : ENV_DEV,
