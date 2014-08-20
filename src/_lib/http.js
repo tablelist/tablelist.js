@@ -13,6 +13,10 @@ angular
                     var ptoken = keychain.prospectToken();
                     data.url = data.url + '&prospect=' + ptoken;
                 }
+                if (config.CLIENT) {
+                    var client = config.CLIENT;
+                    data.url = data.url + '&client=' + client;
+                }
                 return data;
             }
         }

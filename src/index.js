@@ -8,7 +8,8 @@
 angular
 	.module('tl', [ 'ngResource' ])
 	.service('tl.config', function(){
-		TL_ENV = window.TL_ENV || 'development';
+		TL_ENV    = window.TL_ENV    || 'development';
+		TL_CLIENT = window.TL_CLIENT || 'web';
 
 		// Environments
 		var ENV_DEV   = TL_ENV == 'development';
@@ -25,14 +26,18 @@ angular
 		};
 
 		return {
-			DOMAIN    : 'tablelist.com',
 			ENV       : TL_ENV,
+			CLIENT    : TL_CLIENT,
 			ENV_DEV   : ENV_DEV,
 			ENV_PROD  : ENV_PROD,
 			ENV_LOCAL : ENV_LOCAL,
 			ENV_TEST  : ENV_TEST,
-			API       : API[TL_ENV]
+			API       : API[TL_ENV],
+			DOMAIN    : 'tablelist.com',
 		}
 	});
 
-function tablelist(env) { TL_ENV = env; };
+function tablelist(env, client) { 
+	TL_ENV = env; 
+	TL_CLIENT = client;
+};

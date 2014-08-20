@@ -13,12 +13,14 @@ The SDK relies on Angular.js and ngResource
 #### Download
 Production (minified):
 ```
-<script src="//assets.tablelist.com/js/tablelist/VERSION/tablelist.js"></script>
+<script src="//assets.tablelist.com/js/tablelist/VERSION/tablelist.min.js"></script>
+<script>tablelist('production')</script>
 ``` 
 
 Development:
 ```
-<script src="//assets.tablelist.com/js/tablelist/VERSION/tablelist-dev.js"></script>
+<script src="//assets.tablelist.com/js/tablelist/VERSION/tablelist.js"></script>
+<script>tablelist('development')</script>
 ``` 
 
 Development
