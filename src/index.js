@@ -34,3 +34,5 @@ angular
 			API       : API[TL_ENV]
 		}
 	});
+
+function tablelist(env) { TL_ENV = env; };

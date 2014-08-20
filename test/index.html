@@ -12,7 +12,6 @@
 		<script src="https://assets.tablelist.com/js/chai/1.9.1/chai.min.js"></script>
 		
 		<!-- CONFIG -->
-		<script>ENV_TEST=true</script>
 		<script>mocha.setup('bdd')</script>
 		<script>mocha.timeout(4 * 1000)</script>
 		<script>mocha.slow(1.5 * 1000)</script>
@@ -23,7 +22,8 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js"></script>
 		
 		<!-- TABLELIST.JS -->
-		<script src="../build/tablelist-dev.js"></script>
+		<script src="../build/tablelist.js"></script>
+		<script>tablelist('test')</script>
 
 		<!-- REQUIRE TESTS -->
 		<script src="./tests/common.js"></script>
