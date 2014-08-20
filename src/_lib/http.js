@@ -6,14 +6,14 @@ angular
             request: function(data) {
                 var token = keychain.authToken();
                 var isApi = data.url.indexOf(config.API) >= 0;
-                if (token && isApi) {
+                if (isApi && token) {
                     data.url = data.url + '&auth=' + token;
                 }
-                if (!token && isApi) {
+                if (isApi && !token) {
                     var ptoken = keychain.prospectToken();
                     data.url = data.url + '&prospect=' + ptoken;
                 }
-                if (config.CLIENT) {
+                if (isApi && config.CLIENT) {
                     var client = config.CLIENT;
                     data.url = data.url + '&client=' + client;
                 }
