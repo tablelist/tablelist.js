@@ -7,10 +7,12 @@ angular
 	.module('tl')
 	.factory('tl.cookie', ['tl.config', 'tl.storage', function(config, storage){
 
+		var LOCAL_STORAGE = window.location.hostname.indexOf('tablelist.com') < 0;
+
 		var Cookie = function(){};
 
 		Cookie.prototype.get = function(sKey) {
-			if (config.ENV_TEST) {
+			if (LOCAL_STORAGE) {
 				var obj = storage.get(sKey); 
 				return obj ? obj.cookie : null;
 			} else {
@@ -20,7 +22,7 @@ angular
 
 		Cookie.prototype.set = function(sKey, sValue, vEnd, sPath, sDomain, bSecure) {
 			if (!sValue) return this.remove(sKey, sPath, sDomain);
-			if (config.ENV_TEST) {
+			if (LOCAL_STORAGE) {
 				return storage.set(sKey, { cookie: sValue });
 			} else {
 				if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
@@ -49,7 +51,7 @@ angular
 		};
 
 		Cookie.prototype.remove = function(sKey, sPath, sDomain) {
-			if (config.ENV_TEST) {
+			if (LOCAL_STORAGE) {
 				return storage.remove(sKey);
 			} else {
 				if (!sKey || !this.exists(sKey)) { return false; }
@@ -59,7 +61,7 @@ angular
 		};
 
 		Cookie.prototype.exists = function(sKey) {
-			if (config.ENV_TEST) {
+			if (LOCAL_STORAGE) {
 				return storage.exists(sKey);
 			} else {
 				return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
