@@ -28,8 +28,8 @@ angular
 				    action.url = _url(action.url);
 				}
 			}
-			
-			return actions;
+
+			return _data;
 		}
 
 		function _commonActions(endpoint) {

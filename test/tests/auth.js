@@ -16,6 +16,14 @@ describe('Auth Tests', function(){
 		it('should be the same prospect token', function(){
 			_token.should.equal(tlKeychain.prospectToken());
 		});
+
+		it('should update current prospect', function(done){
+			var update = { firstName: 'Andrew' };
+			tlProspect.service.updateProspect(update, function(prospect){
+				prospect.firstName.should.equal('Andrew');
+				done();
+			}, done);
+		});
 	});
 
 	describe('Register', function(){

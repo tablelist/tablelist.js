@@ -5,5 +5,9 @@ angular
 
 		var ProspectService = Service.extend(Prospect);
 
+		ProspectService.prototype.updateProspect = function(data, success, error) {
+			return Prospect.update({}, data, success, error);
+		};
+
 		return new ProspectService();
 	}]);
