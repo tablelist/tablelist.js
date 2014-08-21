@@ -5,6 +5,19 @@ describe('Auth Tests', function(){
 	var firstName = 'Alan';
 	var lastName = 'Turing';
 
+	describe('Prospect', function(){
+		var _token = null;
+		it('should have a prospect token', function(){
+			_token = tlKeychain.prospectToken();
+			_token.should.exist;
+			console.log(_token);
+		});
+
+		it('should be the same prospect token', function(){
+			_token.should.equal(tlKeychain.prospectToken());
+		});
+	});
+
 	describe('Register', function(){
 
 		it('should register a new user', function(done){
