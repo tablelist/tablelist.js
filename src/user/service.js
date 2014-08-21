@@ -33,7 +33,7 @@ angular
 					success(user);
 				}
 			}, error);
-		};
+		}; 
 
 		return new UserService();
 	}]);
