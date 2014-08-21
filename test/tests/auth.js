@@ -1,6 +1,6 @@
 
 describe('Auth Tests', function(){
-	var email = 'test+' + Date.now() + '@test.com';
+	var email = 'test+' + Date.now() + '@tablelist.com';
 	var password = 'password';
 	var firstName = 'Alan';
 	var lastName = 'Turing';

@@ -35,7 +35,7 @@ function js() {
 	watch({ 
 		glob: 'src/**/*.js', 
 		emit: 'one', 
-		emitOnGlob: false 
+		emitOnGlob: false
 	}, dev);
 }
 
