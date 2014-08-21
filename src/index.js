@@ -8,7 +8,7 @@
 angular
 	.module('tl', [ 'ngResource' ])
 	.service('tl.config', function(){
-		TL_ENV    = window.TL_ENV    || 'development';
+		TL_ENV    = window.TL_ENV    || 'production';
 		TL_CLIENT = window.TL_CLIENT || 'web';
 
 		// Environments

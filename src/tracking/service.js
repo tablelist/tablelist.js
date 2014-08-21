@@ -14,7 +14,7 @@ angular
 				event: eventName,
 				data: data,
 				client: {
-					os: 'web',
+					os: config.CLIENT,
 					version: config.VERSION,
 					device: window.navigator ? window.navigator.userAgent : null
 				}
