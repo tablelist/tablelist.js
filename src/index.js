@@ -25,6 +25,10 @@ angular
 			test: 'https://api-dev.tablelist.com',
 		};
 
+		// Domain
+		var LOCALHOST = window.location.hostname == 'localhost';
+		var DOMAIN = LOCALHOST ? window.location.host : 'tablelist.com';
+
 		return {
 			ENV       : TL_ENV,
 			CLIENT    : TL_CLIENT,
@@ -33,7 +37,7 @@ angular
 			ENV_LOCAL : ENV_LOCAL,
 			ENV_TEST  : ENV_TEST,
 			API       : API[TL_ENV],
-			DOMAIN    : 'tablelist.com',
+			DOMAIN    : DOMAIN
 		}
 	});
 
