@@ -80,7 +80,7 @@ angular
 		/**
 		 * Sends a reset password to the given email address
 		 */
-		AuthService.prototype.forogtPassword = function(email, success, error) {
+		AuthService.prototype.forgotPassword = function(email, success, error) {
 			return Auth.forgotPassword({}, {
 				email: email
 			}, success, error);
