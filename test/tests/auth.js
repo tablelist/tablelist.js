@@ -5,6 +5,27 @@ describe('Auth Tests', function(){
 	var firstName = 'Alan';
 	var lastName = 'Turing';
 
+	describe('Prospect', function(){
+		var _token = null;
+		it('should have a prospect token', function(){
+			_token = tlKeychain.prospectToken();
+			_token.should.exist;
+			console.log(_token);
+		});
+
+		it('should be the same prospect token', function(){
+			_token.should.equal(tlKeychain.prospectToken());
+		});
+
+		it('should update current prospect', function(done){
+			var update = { firstName: 'Andrew' };
+			tlProspect.service.updateProspect(update, function(prospect){
+				prospect.firstName.should.equal('Andrew');
+				done();
+			}, done);
+		});
+	});
+
 	describe('Register', function(){
 
 		it('should register a new user', function(done){
@@ -54,6 +75,20 @@ describe('Auth Tests', function(){
 			user.email.should.equal(email);
 			user.firstName.should.equal(firstName);
 			user.lastName.should.equal(lastName);
+		});
+
+		it('should update current user', function(done){
+			var update = {
+				firstName: 'foobar',
+				_id: 'fake',
+				id: 'fake'
+			};
+			tlUser.service.updateMe(update, function(user){
+				user.firstName.should.equal('foobar');
+				var _user = tlUser.service.currentUser();
+				_user.firstName.should.equal(user.firstName);
+				done();
+			});
 		});
 	});
 });

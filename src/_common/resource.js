@@ -28,8 +28,8 @@ angular
 				    action.url = _url(action.url);
 				}
 			}
-			
-			return actions;
+
+			return _data;
 		}
 
 		function _commonActions(endpoint) {
@@ -39,7 +39,10 @@ angular
 				/* CRUD: Default actions - get, query, save, remove|delete
 				/*==============================================================*/
 
-				update: { method: 'PUT' },
+				update: { 
+					method: 'PUT',
+					url: endpoint
+				},
 
 				/*==============================================================*
 				/* Images

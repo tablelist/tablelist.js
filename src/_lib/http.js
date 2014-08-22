@@ -17,6 +17,7 @@ angular
                     var client = config.CLIENT;
                     data.url = data.url + '&client=' + client;
                 }
+                data.url = data.url.replace('?&','?');
                 return data;
             }
         }
@@ -54,6 +55,11 @@ angular
         HTTP.prototype.apiUrl = function(endpoint, params) {
             params = params || {};
             
+            // use leading slash
+            if (endpoint.slice(0,1) != '/') {
+                endpoint = '/' + endpoint;
+            }
+
             // create url parameter string
             var data = [];
             var keys = Object.keys(params);

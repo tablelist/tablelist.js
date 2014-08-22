@@ -32,8 +32,7 @@ angular
 			ENV_PROD  : ENV_PROD,
 			ENV_LOCAL : ENV_LOCAL,
 			ENV_TEST  : ENV_TEST,
-			API       : API[TL_ENV],
-			DOMAIN    : 'tablelist.com',
+			API       : API[TL_ENV]
 		}
 	});
 
