@@ -57,7 +57,6 @@ angular
 		AuthService.prototype.loginWithFacebook = function(success, error) {
 			var _this = this;
 			fb.login(function(err, token){
-				var _this = this;
 				return Auth.loginFacebook({}, {
 					facebookToken: token
 				}, success, error)
