@@ -5,10 +5,16 @@ angular
 
 		var TrackService = Service.extend(Track);
 		
+		/**
+		 * Returns a map of valid tracking events
+		 */
 		TrackService.prototype.trackingEvents = function() {
 			return EVENTS;
 		};
 
+		/**
+		 * Send a tracking event to the server
+		 */
 		TrackService.prototype.send = function(eventName, data) {
 			var track = {
 				event: eventName,

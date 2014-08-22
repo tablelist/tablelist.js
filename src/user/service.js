@@ -7,14 +7,23 @@ angular
 
 		var UserService = Service.extend(User);
 
+		/**
+		 * Returns a local copy of the current user
+		 */
 		UserService.prototype.currentUser = function() {
 			return storage.get(USER_KEY);
 		};
 
+		/**
+		 * Sets a local copy of the current user
+		 */
 		UserService.prototype.setCurrentUser = function(user) {
 			return storage.set(USER_KEY, user);
 		};
 
+		/**
+		 * Fetches the current user from the API
+		 */
 		UserService.prototype.me = function(success, error) {
 			var _this = this;
 			return User.me().$promise.then(function(user){
@@ -25,6 +34,9 @@ angular
 			}, error);
 		};
 
+		/**
+		 * Updates the current user
+		 */
 		UserService.prototype.updateMe = function(body, success, error) {
 			var _this = this;
 			return User.updateMe({}, body).$promise.then(function(user){

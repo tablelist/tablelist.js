@@ -5,7 +5,13 @@ angular
 
 		var ProspectService = Service.extend(Prospect);
 
+		/**
+		 * Updates the current prospect
+		 */
 		ProspectService.prototype.updateProspect = function(data, success, error) {
+			delete data._id;
+			delete data.id;
+			
 			return Prospect.update({}, data, success, error);
 		};
 

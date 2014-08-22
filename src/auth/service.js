@@ -5,14 +5,23 @@ angular
 		
 		var AuthService = function(){};
 
+		/**
+		 * Gets the current users auth token from the keychain
+		 */
 		AuthService.prototype.authToken = function() {
 			return keychain.authToken();
 		};
 
+		/**
+		 * Stores an auth token in the keychain
+		 */
 		AuthService.prototype.setAuthToken = function(token) {
 			return keychain.setAuthToken(token);
 		};
 
+		/**
+		 * Registers a new user
+		 */
 		AuthService.prototype.register = function(email, password, firstName, lastName, success, error) {
 			var _this = this;
 			return Auth.register({}, {
@@ -27,6 +36,9 @@ angular
 			});
 		};
 
+		/**
+		 * Logs in a user via email and password
+		 */
 		AuthService.prototype.login = function(email, password, success, error) {
 			var _this = this;
 			return Auth.login({}, {
@@ -39,6 +51,9 @@ angular
 			});
 		};
 
+		/**
+		 * Attempts to login a user via Facebook
+		 */
 		AuthService.prototype.loginWithFacebook = function(success, error) {
 			var _this = this;
 			fb.login(function(err, token){				
@@ -53,18 +68,27 @@ angular
 			});
 		};
 
+		/**
+		 * Logs out the current user
+		 */
 		AuthService.prototype.logout = function() {
 			this.setAuthToken(null);
 			user.setCurrentUser(null);
 			return true;
 		};
 
+		/**
+		 * Sends a reset password to the given email address
+		 */
 		AuthService.prototype.forogtPassword = function(email, success, error) {
 			return Auth.forgotPassword({}, {
 				email: email
 			}, success, error);
 		};
 
+		/**
+		 * Resets a users password based on token recieved from forgot password email
+		 */
 		AuthService.prototype.resetPassword = function(token, password, success, error) {
 			return Auth.resetPassword({}, {
 				email: email,
