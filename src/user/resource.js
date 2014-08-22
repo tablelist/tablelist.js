@@ -12,6 +12,10 @@ angular
 				method: 'GET',
 				url: '/me'
 			},
+			updateMe: {
+				method: 'PUT',
+				url: '/me'
+			},
 			search: {
 				method: 'GET',
 				url: '/user/search',

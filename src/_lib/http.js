@@ -17,6 +17,7 @@ angular
                     var client = config.CLIENT;
                     data.url = data.url + '&client=' + client;
                 }
+                data.url = data.url.replace('?&','?');
                 return data;
             }
         }

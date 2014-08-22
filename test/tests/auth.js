@@ -78,7 +78,12 @@ describe('Auth Tests', function(){
 		});
 
 		it('should update current user', function(done){
-			tlUser.service.updateMe({ firstName: 'foobar' }, function(user){
+			var update = {
+				firstName: 'foobar',
+				_id: 'fake',
+				id: 'fake'
+			};
+			tlUser.service.updateMe(update, function(user){
 				user.firstName.should.equal('foobar');
 				var _user = tlUser.service.currentUser();
 				_user.firstName.should.equal(user.firstName);
