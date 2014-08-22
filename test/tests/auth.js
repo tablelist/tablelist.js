@@ -76,5 +76,14 @@ describe('Auth Tests', function(){
 			user.firstName.should.equal(firstName);
 			user.lastName.should.equal(lastName);
 		});
+
+		it('should update current user', function(done){
+			tlUser.service.updateMe({ firstName: 'foobar' }, function(user){
+				user.firstName.should.equal('foobar');
+				var _user = tlUser.service.currentUser();
+				_user.firstName.should.equal(user.firstName);
+				done();
+			});
+		});
 	});
 });
