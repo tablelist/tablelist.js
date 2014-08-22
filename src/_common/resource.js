@@ -39,7 +39,10 @@ angular
 				/* CRUD: Default actions - get, query, save, remove|delete
 				/*==============================================================*/
 
-				update: { method: 'PUT' },
+				update: { 
+					method: 'PUT',
+					url: endpoint
+				},
 
 				/*==============================================================*
 				/* Images
