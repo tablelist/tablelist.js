@@ -2,7 +2,7 @@
 angular
 	.module('tl')
 	.service('tl.auth.service', ['tl.auth.resource', 'tl.keychain', 'tl.user.service', 'tl.facebook', function(Auth, keychain, user, fb){
-		
+
 		var AuthService = function(){};
 
 		/**
@@ -56,7 +56,7 @@ angular
 		 */
 		AuthService.prototype.loginWithFacebook = function(success, error) {
 			var _this = this;
-			fb.login(function(err, token){				
+			fb.login(function(err, token){
 				var _this = this;
 				return Auth.loginFacebook({}, {
 					facebookToken: token
