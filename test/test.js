@@ -10,7 +10,7 @@ angular
 		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 
 		 'tl.city', 'tl.settings', 'tl.review', 'tl.reward', 
 		 'tl.table', 'tl.event', 'tl.item', 'tl.track', 'tl.prospect',
-		 'tl.inquiry', 'tl.inventory', 'tl.schedule',
+		 'tl.inquiry', 'tl.inventory', 'tl.schedule', 'tl.payment',
 
 		function(
 			// Lib
@@ -20,7 +20,7 @@ angular
 			auth, user, booking, venue, 
 			city, settings, review, reward, 
 			table, event, item, track, prospect,
-			inquiry, inventory, schedule){	
+			inquiry, inventory, schedule, payment){	
 				
 				// Lib
 				tlCookie = cookie;
@@ -49,6 +49,7 @@ angular
 				tlInventory = inventory;
 				tlSchedule = schedule;
 				tlProspect = prospect;
+				tlPayment = payment;
 
 				// clear previous tests
 				tlAuth.service.logout();

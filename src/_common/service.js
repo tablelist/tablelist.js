@@ -36,7 +36,7 @@ angular
 		/*==============================================================*/
 
 		Service.prototype.create = function(data, success, error) {
-			return this.resource.save(data, success, error);
+			return this.resource.save({}, data, success, error);
 		};
 
 		Service.prototype.read = function(id, success, error) {
@@ -44,11 +44,11 @@ angular
 		};
 
 		Service.prototype.update = function(id, data, success, error) {
-			return this.resource.update({ id: id}, data, success, error);
+			return this.resource.update({ id: id }, data, success, error);
 		};
 
 		Service.prototype.delete = function(id, success, error) {
-			return this.resource.delete({ id: id}, success, error);
+			return this.resource.delete({ id: id }, success, error);
 		};
 
 		Service.prototype.list = function(limit, sort, success, error) {
