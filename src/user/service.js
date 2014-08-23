@@ -47,5 +47,21 @@ angular
 			}, error);
 		}; 
 
+		/**
+		 * Requests a verification code to verify a phone number
+		 */
+		UserService.prototype.requestVerificationCode = function(success, error) {
+			return User.requestVerificationCode({}, success, error);
+		};
+
+		/**
+		 * Verifies the users phone number
+		 */
+		UserService.prototype.verifyPhoneNumber = function(code, success, error) {
+			return User.verifyPhoneNumber({}, { 
+				verificationCode: code 
+			}, success, error);
+		};
+
 		return new UserService();
 	}]);

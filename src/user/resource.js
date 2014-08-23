@@ -35,6 +35,14 @@ angular
 				method: 'GET',
 				url: endpoint + '/booking',
 				isArray: true
+			},
+			requestVerificationCode: {
+				method: 'GET',
+				url: '/user/verify'
+			},
+			verifyPhoneNumber: {
+				method: 'PUT',
+				url: '/user/verify'
 			}
 		});
 	}]);
