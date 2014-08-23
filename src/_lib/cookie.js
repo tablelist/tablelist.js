@@ -8,6 +8,7 @@ angular
 	.factory('tl.cookie', ['tl.config', 'tl.storage', function(config, storage){
 
 		var LOCAL_STORAGE = window.location.hostname.indexOf('tablelist.com') < 0;
+		var DOMAIN = '.tablelist.com';
 
 		var Cookie = function(){};
 
@@ -28,7 +29,7 @@ angular
 				if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
 				if (!sPath) sPath = '/';
 				if (!vEnd) vEnd = Infinity;
-				if (!sDomain) sDomain = config.DOMAIN;
+				if (!sDomain) sDomain = DOMAIN;
 				if (config.ENV_PROD) bSecure = true;
 			    var sExpires = "";
 			    if (vEnd) {
