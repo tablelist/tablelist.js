@@ -1,10 +1,11 @@
 
 angular
 	.module('tl')
-	.factory('tl.keychain', ['tl.cookie', 'tl.utils', function(cookie, utils){
+	.factory('tl.keychain', ['tl.cookie', 'tl.utils', 'tl.config', function(cookie, utils, config){
 
-		var AUTH_KEY = 'tl_auth';
-		var PROSPECT_KEY = 'tl_prospect';
+		var SUFFIX = config.ENV_PROD ? '' : '_dev';
+		var AUTH_KEY = 'tl_auth' + SUFFIX;
+		var PROSPECT_KEY = 'tl_prospect' + SUFFIX;
 		
 		var Keychain = function(){};
 
