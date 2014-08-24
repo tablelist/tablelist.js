@@ -22,8 +22,23 @@ angular
 			return this.params[key];
 		};
 
-		Query.prototype.set = function() {
-			// todo
+		Query.prototype.set = function(key, value) {
+			var params = this.params();
+			params[key] = value;
+			var keys = Object.keys(params);
+			var parts = [];
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				var val = params[key];
+				var string = encodeURIComponent(key) + '=' + encodeURIComponent(val);
+				parts.push(string);
+			}
+			var search = '?' + parts.join('&');
+			if (window.history && window.history.pushState) {
+				window.history.pushState({}, '', search);
+			} else {
+				window.location.search = search;
+			}
 		};
 
 		return new Query();

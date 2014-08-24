@@ -22,12 +22,26 @@ angular
 		};
 
 		/**
+		 * Merges local copy of user with new data
+		 */
+		UserService.prototype.saveCurrentUser = function(user) {
+			var _user = this.currentUser() || {};
+			var keys = Object.keys(user);
+			for (var i = 0; i < keys.length; i++) {
+				var key = keys[i];
+				var val = user[key];
+				_user[key] = val;
+			}
+			this.setCurrentUser(_user);
+		};
+
+		/**
 		 * Fetches the current user from the API
 		 */
 		UserService.prototype.me = function(success, error) {
 			var _this = this;
 			return User.me().$promise.then(function(user){
-				_this.setCurrentUser(user);
+				_this.saveCurrentUser(user);
 				if (success) {
 					success(user);
 				}
@@ -40,12 +54,26 @@ angular
 		UserService.prototype.updateMe = function(body, success, error) {
 			var _this = this;
 			return User.updateMe({}, body).$promise.then(function(user){
-				_this.setCurrentUser(user);
+				_this.saveCurrentUser(user);
 				if (success) {
 					success(user);
 				}
 			}, error);
 		}; 
+
+		/**
+		 * Sets the users preferred city
+		 */
+		UserService.prototype.updatePreferredCity = function(cityId, success, error) {
+			var _this = this;
+			var body = { city: cityId };
+			return User.updatePreferredCity({}, body).$promise.then(function(user){
+				_this.saveCurrentUser(user);
+				if (success) {
+					success(user);
+				}
+			}, error);
+		};
 
 		/**
 		 * Requests a verification code to verify a phone number
@@ -58,9 +86,14 @@ angular
 		 * Verifies the users phone number
 		 */
 		UserService.prototype.verifyPhoneNumber = function(code, success, error) {
-			return User.verifyPhoneNumber({}, { 
-				verificationCode: code 
-			}, success, error);
+			var _this = this;
+			var data = { verificationCode: code };
+			return User.verifyPhoneNumber({}, data).$promise.then(function(user){
+				_this.saveCurrentUser(user);
+				if (success) {
+					success(user);
+				}
+			}, error);
 		};
 
 		return new UserService();

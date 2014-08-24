@@ -77,6 +77,15 @@ describe('Auth Tests', function(){
 			user.lastName.should.equal(lastName);
 		});
 
+		it('should save current user', function(){
+			var update = { firstName: 'foobar' };
+			tlUser.service.saveCurrentUser(update);
+			var user = tlUser.service.currentUser();
+			console.log(user);
+			user.firstName.should.equal('foobar');
+			user.email.should.equal(email);
+		});
+
 		it('should update current user', function(done){
 			var update = {
 				firstName: 'foobar',

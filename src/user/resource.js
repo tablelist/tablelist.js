@@ -36,6 +36,10 @@ angular
 				url: endpoint + '/booking',
 				isArray: true
 			},
+			updatePreferredCity: {
+				method: 'PUT',
+				url: '/user/city'
+			},
 			requestVerificationCode: {
 				method: 'GET',
 				url: '/user/verify'
