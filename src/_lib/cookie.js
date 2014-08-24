@@ -52,6 +52,7 @@ angular
 		};
 
 		Cookie.prototype.remove = function(sKey, sPath, sDomain) {
+			if (!sDomain) sDomain = DOMAIN;
 			if (LOCAL_STORAGE) {
 				return storage.remove(sKey);
 			} else {
