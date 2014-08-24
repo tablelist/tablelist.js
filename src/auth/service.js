@@ -23,47 +23,53 @@ angular
 		 * Registers a new user
 		 */
 		AuthService.prototype.register = function(email, password, firstName, lastName, success, error) {
+			success = success || function(){};
 			var _this = this;
 			return Auth.register({}, {
 				email: email,
 				password: password,
 				firstName: firstName,
 				lastName: lastName
-			}, success, error)
+			})
 			.$promise.then(function(auth){
 				_this.setAuthToken(auth.token);
 				user.setCurrentUser(auth.user);
-			});
+				success(auth);
+			}, error);
 		};
 
 		/**
 		 * Logs in a user via email and password
 		 */
 		AuthService.prototype.login = function(email, password, success, error) {
+			success = success || function(){};
 			var _this = this;
 			return Auth.login({}, {
 				email: email,
 				password: password
-			}, success, error)
+			})
 			.$promise.then(function(auth){
 				_this.setAuthToken(auth.token);
 				user.setCurrentUser(auth.user);
-			});
+				success(auth);
+			}, error);
 		};
 
 		/**
 		 * Attempts to login a user via Facebook
 		 */
 		AuthService.prototype.loginWithFacebook = function(success, error) {
+			success = success || function(){};
 			var _this = this;
 			fb.login(function(err, token){
 				return Auth.loginFacebook({}, {
 					facebookToken: token
-				}, success, error)
+				})
 				.$promise.then(function(auth){
 					_this.setAuthToken(auth.token);
 					user.setCurrentUser(auth.user);
-				});
+					success(auth);
+				}, error);
 			});
 		};
 
