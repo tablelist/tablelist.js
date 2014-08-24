@@ -19,7 +19,7 @@ angular
 		};
 
 		Query.prototype.get = function(key) {
-			return this.params[key];
+			return this.params()[key];
 		};
 
 		Query.prototype.set = function(key, value) {
