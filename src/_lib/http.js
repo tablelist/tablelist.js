@@ -17,6 +17,10 @@ angular
                     var client = config.CLIENT;
                     data.url = data.url + '&client=' + client;
                 }
+                if (isApi && config.VERSION) {
+                    var version = config.VERSION;
+                    data.url = data.url + '&version=' + version;
+                }
                 data.url = data.url.replace('?&','?');
                 return data;
             }
