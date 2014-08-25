@@ -6,7 +6,7 @@ angular
 		var Query = function(){};
 
 		Query.prototype.params = function() {
-			return $location.search();
+			return $location.search() || {};
 		};
 
 		Query.prototype.get = function(key) {
@@ -14,7 +14,7 @@ angular
 		};
 
 		Query.prototype.set = function(key, value) {
-			var data = {};
+			var data = this.params();
 			data[key] = value;
 			$location.search(data);
 		};
