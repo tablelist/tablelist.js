@@ -2,14 +2,14 @@
  * Tablelist.js
  * 
  * Dependencies: 
- *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js
- *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular-resource.min.js
+ *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular.min.js
+ *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular-resource.min.js
  */
 angular
 	.module('tl', [ 'ngResource' ])
 	.service('tl.config', function(){
-		TL_ENV    = window.TL_ENV    || 'production';
-		TL_CLIENT = window.TL_CLIENT || 'web';
+		var TL_ENV    = window.TL_ENV    || 'production';
+		var TL_CLIENT = window.TL_CLIENT || 'web';
 
 		// Environments
 		var ENV_DEV   = TL_ENV == 'development';
@@ -26,17 +26,18 @@ angular
 		};
 
 		return {
-			ENV       : TL_ENV,
-			CLIENT    : TL_CLIENT,
-			ENV_DEV   : ENV_DEV,
-			ENV_PROD  : ENV_PROD,
-			ENV_LOCAL : ENV_LOCAL,
-			ENV_TEST  : ENV_TEST,
-			API       : API[TL_ENV]
+			ENV        : TL_ENV,
+			CLIENT     : TL_CLIENT,
+			SUB_CLIENT : null,
+			ENV_DEV    : ENV_DEV,
+			ENV_PROD   : ENV_PROD,
+			ENV_LOCAL  : ENV_LOCAL,
+			ENV_TEST   : ENV_TEST,
+			API        : API[TL_ENV],
 		}
 	});
 
 function tablelist(env, client) { 
-	TL_ENV = env; 
-	TL_CLIENT = client;
+	window.TL_ENV = env; 
+	window.TL_CLIENT = client;
 };

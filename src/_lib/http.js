@@ -15,6 +15,10 @@ angular
                 }
                 if (isApi && config.CLIENT) {
                     var client = config.CLIENT;
+                    var subClient = config.SUB_CLIENT;
+                    if (subClient) {
+                        client = client + '-' + subClient;
+                    }
                     data.url = data.url + '&client=' + client;
                 }
                 if (isApi && config.VERSION) {
