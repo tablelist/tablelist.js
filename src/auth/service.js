@@ -96,7 +96,7 @@ angular
 		 */
 		AuthService.prototype.resetPassword = function(token, password, success, error) {
 			return Auth.resetPassword({}, {
-				email: email,
+				resetToken: token,
 				password: password
 			}, success, error);
 		};
