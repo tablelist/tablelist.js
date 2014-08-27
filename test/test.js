@@ -4,7 +4,7 @@ angular
 	.controller('TestController', 
 		[// Lib
 		 'tl.cookie', 'tl.facebook', 'tl.http', 'tl.utils',
-		 'tl.keychain', 'tl.query', 'tl.storage', 'tl.ws',
+		 'tl.keychain', 'tl.query', 'tl.storage', 'tl.session', 'tl.ws',
 		 
 		 // Modules
 		 'tl.auth', 'tl.user', 'tl.booking', 'tl.venue', 
@@ -15,7 +15,7 @@ angular
 		function(
 			// Lib
 			cookie, facebook, http, utils,
-			keychain, query, storage, ws,
+			keychain, query, storage, session, ws,
 			// Modules
 			auth, user, booking, venue, 
 			city, settings, review, reward, 
@@ -29,6 +29,7 @@ angular
 				tlKeychain = keychain;
 				tlQuery = query;
 				tlStorage = storage;
+				tlSession = session;
 				tlWS = ws;
 				tlUtils = utils;
 
