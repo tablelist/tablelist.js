@@ -1,17 +1,26 @@
 var gulp = require('gulp')
-  , ngmin = require('gulp-ng-annotate')
+  , ngAnnotate = require('gulp-ng-annotate')
   , uglify = require('gulp-uglify')
   , replace = require('gulp-replace')
   , watch = require('gulp-watch')
-  , concat = require('gulp-concat');
+  , concat = require('gulp-concat')
+  , clean = require('gulp-clean')
 
 /**
- * Minify javascript files for dev
+ * Clean build folder
+ */
+function cleanTask() {
+	return gulp.src('build/*', {read: false})
+    	.pipe(clean());
+}
+
+/**
+ * Concatenate javascript files for dev
  */
 function dev() {
  	return gulp.src([ 'src/**/*.js' ])
  		.pipe(concat('tablelist.js'))
- 		.pipe(ngmin())
+ 		.pipe(ngAnnotate())
  		.pipe(gulp.dest('build'));
 }
 
@@ -22,11 +31,19 @@ function dev() {
 function prod() {
  	return gulp.src([ 'src/**/*.js' ])
  		.pipe(concat('tablelist.min.js'))
- 		.pipe(ngmin())
+ 		.pipe(ngAnnotate())
  		.pipe(uglify())
  		.pipe(gulp.dest('build'));
 }
 
+/**
+ * Copy build files to a version release directory
+ */
+function prepareRelease () {
+	var package = require('./package.json');
+	return gulp.src('build/*')
+    	.pipe(gulp.dest('build/' + package.version));
+}
 
 /**
  * Watch for changes
@@ -45,4 +62,7 @@ function js() {
 gulp.task('js-dev', dev);
 gulp.task('js-prod', prod);
 gulp.task('watch', js);
-gulp.task('default', [ 'js-dev', 'js-prod' ]);
+gulp.task('clean', cleanTask);
+gulp.task('prepare-release', ['js-dev', 'js-prod'], prepareRelease);
+gulp.task('release', ['clean', 'js-dev', 'js-prod', 'prepare-release']);
+gulp.task('default', [ 'clean', 'js-dev', 'js-prod' ]);
