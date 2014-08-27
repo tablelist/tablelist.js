@@ -15,8 +15,8 @@ build:
         code: |
           echo "node version $(node -v) running"
           echo "npm version $(npm -v) running"
-  after-steps:
-    - hipchat-notify:
-      token: $HIPCHAT_TOKEN
-      room-id: 232970
-      from-name: Wercker
+    after-steps:
+       - hipchat-notify:
+           token: $HIPCHAT_TOKEN
+           room-id: 232970
+           from-name: Wercker
