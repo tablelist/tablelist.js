@@ -2,6 +2,9 @@
 default:
 	gulp
 
+release:
+	gulp release
+
 js:
 	gulp
 	gulp watch
