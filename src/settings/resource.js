@@ -3,7 +3,7 @@ angular
 	.module('tl')
 	.factory('tl.settings.resource', ['tl.resource', function(resource){
 
-		var endpoint = '/settings';
+		var endpoint = '/config';
 
 		return resource(endpoint, {
 			// nothing here 

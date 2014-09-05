@@ -9,6 +9,15 @@ angular
 			id: '@id',
 			imageId: '@imageId'
 		}, {
-			// add additional methods here
+			/*==============================================================*
+			/* Cities
+			/*==============================================================*/
+
+			listForCity: {
+				method: 'GET',
+				url: '/city/:cityId/event',
+				isArray: true
+			}
+
 		});
 	}]);

@@ -21,5 +21,30 @@ angular
 			return Venue.listCityTonight({ cityId: cityId }, success, error);
 		};
 
+		/*==============================================================*
+		/* Inventory
+		/*==============================================================*/
+
+		VenueService.prototype.listInventory = function(id, start, end, ticket, success, error) {
+
+			return Venue.listInventory({
+			  id: id,
+			  start: start,
+			  end: end,
+			  ticket: ticket
+			}, success, error);
+		};
+
+		/*==============================================================*
+		/* Items
+		/*==============================================================*/
+
+		VenueService.prototype.listItems = function(id, success, error) {
+
+			return Venue.listItems({
+			  id: id
+			}, success, error);
+		};
+
 		return new VenueService();
 	}]);
