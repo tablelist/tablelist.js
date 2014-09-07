@@ -1,9 +1,12 @@
 
 angular
 	.module('tl')
-	.service('tl.user.service', ['tl.storage', 'tl.user.resource', 'tl.service', function(storage, User, Service){
+	.service('tl.user.service', ['$timeout', 'tl.storage', 'tl.ee', 'tl.user.resource', 'tl.service', function($timeout, storage, ee, User, Service){
 		
 		var USER_KEY = 'tl_user';
+		var EVENTS = {
+			USER_UPDATED: 'tl.user.updated'
+		};
 
 		var UserService = Service.extend(User);
 
@@ -14,10 +17,17 @@ angular
 			return storage.get(USER_KEY);
 		};
 
+		UserService.prototype.EVENTS = function() {
+			return EVENTS;
+		};
+
 		/**
 		 * Sets a local copy of the current user
 		 */
 		UserService.prototype.setCurrentUser = function(user) {
+			$timeout(function(){ // fire notification on next run loop
+				ee.emit(EVENTS.USER_UPDATED, user);
+			});
 			return storage.set(USER_KEY, user);
 		};
 
