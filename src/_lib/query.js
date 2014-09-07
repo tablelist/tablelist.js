@@ -9,6 +9,10 @@ angular
 			return $location.search() || {};
 		};
 
+		Query.prototype.subdomain = function() {
+			return window.location.hostname.split('.')[0];
+		};
+
 		Query.prototype.get = function(key) {
 			return this.params()[key];
 		};
