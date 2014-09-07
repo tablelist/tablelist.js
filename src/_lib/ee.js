@@ -1,7 +1,9 @@
-
+/**
+ * Node.js style EventEmitter
+ */
 angular
 	.module('tl')
-	.factory('tl.event', ['$rootScope', function($rootScope){
+	.factory('tl.ee', ['$rootScope', function($rootScope){
 
 		var Event = function(){};
 
