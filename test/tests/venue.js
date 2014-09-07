@@ -13,6 +13,9 @@ describe('Venue Tests', function(){
 			tlVenue.service.listForCity(city.id, function(venues){
 				console.log(venues);
 				venue = venues[0];
+
+				venues.should.not.be.empty;
+
 				done();
 			}, done);
 		});
@@ -20,6 +23,9 @@ describe('Venue Tests', function(){
 		it('should list featured venues for a city', function(done){
 			tlVenue.service.listCityFeatured(city.id, function(venues){
 				console.log(venues);
+
+				venues.should.not.be.empty;
+
 				done();
 			}, done);
 		});
@@ -27,20 +33,35 @@ describe('Venue Tests', function(){
 		it('should list tonight venues for a city', function(done){
 			tlVenue.service.listCityTonight(city.id, function(venues){
 				console.log(venues);
+
+				venues.should.not.be.empty;
+
 				done();
 			}, done);
 		});
 	});
 
+	// describe('List Inventory', function() {
+
+	// 	it('should return the inventory for a venue', function(done) {	//TODO: need some date utils - use moment js ????
+	// 		tlVenue.service.listInventory(venue.id, null, null, function(inventory) {
+
+	// 			inventory.should.not.be.empty;
+
+	// 			done();
+	// 		});
+	// 	});
+
+	// });
+
 	describe('Read', function(){
 		it('should get a single venue', function(done){
 			console.log(tlVenue.service);
-			tlVenue.service
-				.read(venue.id, function(_venue){
-					console.log(_venue);
-					venue = _venue;
-					done();
-				}, done);
+			tlVenue.service.read(venue.id, function(_venue){
+				console.log(_venue);
+				venue = _venue;
+				done();
+			}, done);
 		});
 	});
 });
