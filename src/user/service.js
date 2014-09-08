@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.service('tl.user.service', ['$timeout', 'tl.storage', 'tl.ee', 'tl.user.resource', 'tl.service', function($timeout, storage, ee, User, Service){
+	.service('tl.user.service', ['$timeout', 'tl.storage', 'tl.keychain', 'tl.ee', 'tl.user.resource', 'tl.service', function($timeout, storage, keychain, ee, User, Service){
 		
 		var USER_KEY = 'tl_user';
 		var EVENTS = {
@@ -14,7 +14,7 @@ angular
 		 * Returns a local copy of the current user
 		 */
 		UserService.prototype.currentUser = function() {
-			return storage.get(USER_KEY);
+			return keychain.authToken() ? storage.get(USER_KEY) : null;
 		};
 
 		UserService.prototype.EVENTS = function() {
