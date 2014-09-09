@@ -47,6 +47,36 @@ angular
 			verifyPhoneNumber: {
 				method: 'PUT',
 				url: '/user/verify'
+			},
+			listPaymentProfiles: { 
+				method: 'GET',
+				url: '/user/:id/paymentProfiles',
+				isArray: true
+			},
+			listReferrals: { 
+				method: 'GET',
+				url: '/user/:id/referral',
+				isArray: true
+			},
+			listBookings: { 
+				method: 'GET',
+				url: '/user/:id/booking',
+				isArray: true
+			},
+			listPromos : {
+				method: "GET",
+				url: "/user/:id/promo",
+				isArray: true
+			},
+			listTasks: { 
+				method: 'GET',
+				url: '/user/:id/task',
+				isArray: true
+			},
+			listNotifications: {
+				method: "GET",
+				url: '/notify/:id',
+				isArray: true
 			}
 		});
 	}]);

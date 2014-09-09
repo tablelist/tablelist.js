@@ -1,30 +1,14 @@
 
 angular
 	.module('tl')
-	.service('tl.user.service', ['tl.storage', 'tl.user.resource', 'tl.service', function(storage, User, Service){
+	.service('tl.promo.service', ['tl.storage', 'tl.promo.resource', 'tl.service', function(storage, Promo, Service){
 		
-		var USER_KEY = 'tl_user';
-
-		var UserService = Service.extend(User);
+		var PromoService = Service.extend(Promo);
 
 		/**
-		 * Returns a local copy of the current user
+		 * 
 		 */
-		UserService.prototype.currentUser = function() {
-			return storage.get(USER_KEY);
-		};
-
-		/**
-		 * Sets a local copy of the current user
-		 */
-		UserService.prototype.setCurrentUser = function(user) {
-			return storage.set(USER_KEY, user);
-		};
-
-		/**
-		 * Merges local copy of user with new data
-		 */
-		UserService.prototype.saveCurrentUser = function(user) {
+		PromoService.prototype.saveCurrentUser = function(user) {
 			var _user = this.currentUser() || {};
 			var keys = Object.keys(user);
 			for (var i = 0; i < keys.length; i++) {
@@ -102,7 +86,7 @@ angular
 		 */
 		UserService.prototype.listPaymentProfiles = function(userId, success, error) {
 			var _this = this;
-			return User.listPaymentProfiles({ id : userId });
+			return User.listPaymentProfiles({ id : userId }).$promise;
 		};
 
 		/**
@@ -110,7 +94,7 @@ angular
 		 */
 		UserService.prototype.listReferrals = function(userId, success, error) {
 			var _this = this;
-			return User.listPaymentProfiles({ id : userId });
+			return User.listPaymentProfiles({ id : userId }).$promise;
 		};
 
 		/**
@@ -118,7 +102,7 @@ angular
 		 */
 		UserService.prototype.listBookings = function(userId, success, error) {
 			var _this = this;
-			return User.listBookings({ id : userId });
+			return User.listBookings({ id : userId }).$promise;
 		};
 
 		/**
@@ -126,23 +110,7 @@ angular
 		 */
 		UserService.prototype.listPromos = function(userId, success, error) {
 			var _this = this;
-			return User.listPromos({ id : userId });
-		};
-
-		/**
-		 * Lists a user's tasks
-		 */
-		UserService.prototype.listTasks = function(userId, success, error) {
-			var _this = this;
-			return User.listTasks({ id : userId });
-		};
-
-		/**
-		 * Lists a user's notifications
-		 */
-		UserService.prototype.listNotifications = function(userId, success, error) {
-			var _this = this;
-			return User.listNotifications({ id : userId });
+			return User.listPromos({ id : userId }).$promise;
 		};
 
 		return new UserService();
