@@ -11,9 +11,11 @@ angular
 		    /* Instance Vars
 		    /*==================================================*/
 
-		    var _this        = this;
-		    var _events      = [];
-		    var ws           = null;
+		    var _this   = this;
+		    var _events = [];
+		    var ws      = null;
+		    var PING    = 'ping';
+		    var PONG    = 'pong';
 
 		    /*==================================================*
 		    /* Getters
@@ -48,11 +50,15 @@ angular
 
 		        ws.onopen = function() {
 		            interval = setInterval(function(){
-		                ws.send('ping');
+		                ws.send(PING);
 		            }, 5000);
 		        };
 
 		        ws.onmessage = function(event) {
+		            if (event.data === PONG) {
+		            	return;
+		            }
+		            
 		            try {
 		                var data = JSON.parse(event.data);
 		                _events.unshift(data);
