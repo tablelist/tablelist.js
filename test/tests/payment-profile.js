@@ -47,18 +47,18 @@ describe('Payment Profile', function(){
 		});
 	});
 
-	describe('Update', function(){
-		it('should update current profile', function(done){
-			var name = 'Foo Bar';
+	// describe('Update', function(){
+	// 	it('should update current profile', function(done){
+	// 		var name = 'Foo Bar';
 
-			tlPayment.service
-				.updateProfile(profileId, name)
-				.$promise.then(function(profile){
-					console.log(profile);
-					profile.id.should.equal(profileId);
-					profile.cardholderName.should.equal(name);
-					done();
-				}, done);
-		});
-	});
+	// 		tlPayment.service
+	// 			.updateProfile(profileId, name)
+	// 			.$promise.then(function(profile){
+	// 				console.log(profile);
+	// 				profile.id.should.equal(profileId);
+	// 				profile.cardholderName.should.equal(name);
+	// 				done();
+	// 			}, done);
+	// 	});
+	// });
 });

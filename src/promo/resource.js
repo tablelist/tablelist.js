@@ -8,5 +8,9 @@ angular
 		return resource(endpoint, {
 			id: '@id'
 		}, {
+			redeem: {
+				method: 'POST',
+				url: '/promo/redeem'
+			},
 		});
 	}]);
