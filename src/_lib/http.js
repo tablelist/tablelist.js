@@ -6,6 +6,10 @@ angular
             request: function(data) {
                 var token = keychain.authToken();
                 var isApi = data.url.indexOf(config.API) >= 0;
+                var hasParams = data.url.indexOf('?') >= 0;
+                if (isApi && !hasParams) {
+                    data.url = data.url += '?';
+                }
                 if (isApi && token) {
                     data.url = data.url + '&auth=' + token;
                 }
@@ -80,7 +84,9 @@ angular
 
             // create url
             var url = config.API + endpoint;
-            url += '?' + data.join('&');
+            if (data.length > 0) {
+                url += '?' + data.join('&');
+            }
             return url;
         };
 
