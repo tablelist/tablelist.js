@@ -41,19 +41,6 @@ describe('Venue Tests', function(){
 		});
 	});
 
-	// describe('List Inventory', function() {
-
-	// 	it('should return the inventory for a venue', function(done) {	//TODO: need some date utils - use moment js ????
-	// 		tlVenue.service.listInventory(venue.id, null, null, function(inventory) {
-
-	// 			inventory.should.not.be.empty;
-
-	// 			done();
-	// 		});
-	// 	});
-
-	// });
-
 	describe('Read', function(){
 		it('should get a single venue', function(done){
 			console.log(tlVenue.service);
