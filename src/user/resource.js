@@ -42,9 +42,17 @@ angular
 			},
 			requestVerificationCode: {
 				method: 'GET',
+				url: '/user/verify/:id'
+			},
+			requestVerificationCodeForCurrentUser: {
+				method: 'GET',
 				url: '/user/verify'
 			},
 			verifyPhoneNumber: {
+				method: 'PUT',
+				url: '/user/verify/:id'
+			},
+			verifyPhoneNumberForCurrentUser: {
 				method: 'PUT',
 				url: '/user/verify'
 			},

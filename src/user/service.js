@@ -88,14 +88,36 @@ angular
 		/**
 		 * Requests a verification code to verify a phone number
 		 */
-		UserService.prototype.requestVerificationCode = function(success, error) {
-			return User.requestVerificationCode({}, success, error);
+		UserService.prototype.requestVerificationCode = function(id, success, error) {
+			return User.requestVerificationCode({ id : id }, success, error);
+		};
+
+		/**
+		 * Requests a verification code to verify a phone number
+		 */
+		UserService.prototype.requestVerificationCodeForCurrentUser = function(success, error) {
+			return User.requestVerificationCodeForCurrentUser({}, success, error);
 		};
 
 		/**
 		 * Verifies the users phone number
 		 */
-		UserService.prototype.verifyPhoneNumber = function(code, success, error) {
+		UserService.prototype.verifyPhoneNumber = function(id, code, success, error) {
+			var _this = this;
+			var data = { id : id , verificationCode: code };
+			return User.verifyPhoneNumber({}, data).$promise.then(function(user){
+				_this.saveCurrentUser(user);
+				if (success) {
+					success(user);
+				}
+				return user;
+			}, error);
+		};
+
+		/**
+		 * Verifies the users phone number
+		 */
+		UserService.prototype.verifyPhoneNumberForCurrentUser = function(code, success, error) {
 			var _this = this;
 			var data = { verificationCode: code };
 			return User.verifyPhoneNumber({}, data).$promise.then(function(user){
