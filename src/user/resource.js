@@ -26,11 +26,6 @@ angular
 				url: '/notify/push',
 				isArray: false
 			},
-			listReferrals: { 
-				method: 'GET',
-				url: endpoint + '/referral',
-				isArray: true
-			},
 			listBookings: { 
 				method: 'GET',
 				url: endpoint + '/booking',

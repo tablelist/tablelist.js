@@ -142,7 +142,7 @@ angular
 		 */
 		UserService.prototype.listReferrals = function(userId, success, error) {
 			var _this = this;
-			return User.listPaymentProfiles({ id : userId });
+			return User.listReferrals({ id : userId });
 		};
 
 		/**
