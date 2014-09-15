@@ -57,8 +57,8 @@ angular
             return $http.delete(this.apiUrl(endpoint, params));  
         };
 
-        HTTP.prototype.upload = function(endpoint, body) {
-            return this.post(endpoint, body, {
+        HTTP.prototype.upload = function(endpoint, query, body) {
+            return $http.post(this.apiUrl(endpoint, query), body, {
                 headers: { 'Content-Type': undefined },
                 transformRequest: angular.identity
             });
