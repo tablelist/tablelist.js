@@ -26,5 +26,11 @@ angular
 			}, success, error);
 		};
 
+		BookingService.prototype.accept = function(id, success, error) {
+			return Booking.accept({}, {
+				id: id
+			}, success, error);
+		};
+
 		return new BookingService();
 	}]);

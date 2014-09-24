@@ -19,6 +19,10 @@ angular
 			join: {
 				method: 'POST',
 				url: 'booking/join'
+			},
+			accept: {
+				method: 'POST',
+				url: endpoint + '/accept'
 			}
 		});
 	}]);
