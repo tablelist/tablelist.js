@@ -177,5 +177,14 @@ angular
 			return User.listNotifications({ id : userId });
 		};
 
+		UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
+			var _this = this;
+			return User.addCredit({
+				id : userId,
+				amount: amount,
+				campaign: campaignId
+			}, success, error);
+		};
+
 		return new UserService();
 	}]);

@@ -80,6 +80,10 @@ angular
 				method: "GET",
 				url: '/notify/:id',
 				isArray: true
+			},
+			addCredit: {
+				method: "POST",
+				url: '/user/:id/credit'
 			}
 		});
 	}]);
