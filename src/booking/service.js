@@ -20,5 +20,17 @@ angular
 			}, success, error);
 		};
 
+		BookingService.prototype.join = function(splitCode, success, error) {
+			return Booking.join({}, {
+				splitCode: splitCode,
+			}, success, error);
+		};
+
+		BookingService.prototype.accept = function(id, success, error) {
+			return Booking.accept({}, {
+				id: id
+			}, success, error);
+		};
+
 		return new BookingService();
 	}]);

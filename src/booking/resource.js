@@ -15,6 +15,14 @@ angular
 			refund: {
 				method: 'POST',
 				url: endpoint + '/refund'
+			},
+			join: {
+				method: 'POST',
+				url: 'booking/join'
+			},
+			accept: {
+				method: 'POST',
+				url: endpoint + '/accept'
 			}
 		});
 	}]);

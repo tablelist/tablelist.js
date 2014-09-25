@@ -133,48 +133,42 @@ angular
 		 * Lists a user's payment profiles
 		 */
 		UserService.prototype.listPaymentProfiles = function(userId, success, error) {
-			var _this = this;
-			return User.listPaymentProfiles({ id : userId });
+			return User.listPaymentProfiles({ id : userId }, success, error);
 		};
 
 		/**
 		 * Lists a user's referrals
 		 */
 		UserService.prototype.listReferrals = function(userId, success, error) {
-			var _this = this;
-			return User.listReferrals({ id : userId });
+			return User.listReferrals({ id : userId }, success, error);
 		};
 
 		/**
 		 * Lists a user's bookings
 		 */
 		UserService.prototype.listBookings = function(userId, success, error) {
-			var _this = this;
-			return User.listBookings({ id : userId });
+			return User.listBookings({ id : userId }, success, error);
 		};
 
 		/**
 		 * Lists a user's promos
 		 */
 		UserService.prototype.listPromos = function(userId, success, error) {
-			var _this = this;
-			return User.listPromos({ id : userId });
+			return User.listPromos({ id : userId }, success, error);
 		};
 
 		/**
 		 * Lists a user's tasks
 		 */
 		UserService.prototype.listTasks = function(userId, success, error) {
-			var _this = this;
-			return User.listTasks({ id : userId });
+			return User.listTasks({ id : userId }, success, error);
 		};
 
 		/**
 		 * Lists a user's notifications
 		 */
 		UserService.prototype.listNotifications = function(userId, success, error) {
-			var _this = this;
-			return User.listNotifications({ id : userId });
+			return User.listNotifications({ id : userId }, success, error);
 		};
 
 		UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
