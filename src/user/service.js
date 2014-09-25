@@ -174,8 +174,11 @@ angular
 		/**
 		 * Lists a user's unanswered questions
 		 */
-		UserService.prototype.listQuestions = function(userId, success, error) {
-			return User.listQuestions({ id : userId }, success, error);
+		UserService.prototype.listQuestions = function(userId, type, success, error) {
+			return User.listQuestions({ 
+				id : userId,
+				type : type
+			}, success, error);
 		};
 
 		UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
