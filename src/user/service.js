@@ -171,6 +171,13 @@ angular
 			return User.listNotifications({ id : userId }, success, error);
 		};
 
+		/**
+		 * Lists a user's unanswered questions
+		 */
+		UserService.prototype.listQuestions = function(userId, success, error) {
+			return User.listQuestions({ id : userId }, success, error);
+		};
+
 		UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
 			var _this = this;
 			return User.addCredit({ id: userId }, {
