@@ -49,8 +49,7 @@ function prepareRelease () {
  * Watch for changes
  */
 function js() {
-	watch({ 
-		glob: 'src/**/*.js', 
+	watch('src/**/*.js', { 
 		emit: 'one', 
 		emitOnGlob: false
 	}, dev);
