@@ -181,6 +181,15 @@ angular
 			}, success, error);
 		};
 
+		/**
+		 * Lists a user's answers
+		 */
+		UserService.prototype.listAnswers = function(userId, success, error) {
+			return User.listAnswers({ 
+				id : userId
+			}, success, error);
+		};
+
 		UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
 			var _this = this;
 			return User.addCredit({ id: userId }, {

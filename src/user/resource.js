@@ -81,6 +81,11 @@ angular
 				url: '/user/:id/question',
 				isArray: true
 			},
+			listAnswers: { 
+				method: 'GET',
+				url: '/user/:id/answer',
+				isArray: true
+			},
 			listNotifications: {
 				method: "GET",
 				url: '/notify/:id',
