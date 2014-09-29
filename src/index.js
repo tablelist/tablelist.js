@@ -7,7 +7,8 @@
  */
 angular
 	.module('tl', [ 'ngResource' ])
-	.service('tl.config', function(){
+	.provider('TablelistSdk', function() {
+
 		var TL_ENV    = window.TL_ENV    || 'production';
 		var TL_CLIENT = window.TL_CLIENT || 'web';
 
@@ -25,7 +26,7 @@ angular
 			test: 'https://api-dev.tablelist.com',
 		};
 
-		return {
+		var config = {
 			ENV        : TL_ENV,
 			CLIENT     : TL_CLIENT,
 			SUB_CLIENT : null,
@@ -34,8 +35,39 @@ angular
 			ENV_LOCAL  : ENV_LOCAL,
 			ENV_TEST   : ENV_TEST,
 			API        : API[TL_ENV],
+
+			setSubclient: setSubclient,
 		}
-	});
+
+		function setEnv(env) {
+			var api = API[env];
+			if (! api) throw new Error('Enviroment : ' + env + ' is not valid');
+
+			config.ENV = env;
+			config.API = api;
+		}
+
+		function setSubclient(subclient) {
+			config.SUB_CLIENT = subclient;
+		}
+
+		return {
+			setEnv: setEnv,
+			setSubclient: setSubclient,
+
+			// needed for Provider
+			$get: function () {
+				return config
+			}
+
+		};
+
+	})
+	.service('tl.config', ['TablelistSdk', function (tablelist) {
+		return tablelist;
+	}])
+
+
 
 function tablelist(env, client) { 
 	window.TL_ENV = env; 
