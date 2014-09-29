@@ -22,14 +22,15 @@ angular
 		/**
 		 * Registers a new user
 		 */
-		AuthService.prototype.register = function(email, password, firstName, lastName, success, error) {
+		AuthService.prototype.register = function(email, password, firstName, lastName, promo, success, error) {
 			success = success || function(){};
 			var _this = this;
 			return Auth.register({}, {
 				email: email,
 				password: password,
 				firstName: firstName,
-				lastName: lastName
+				lastName: lastName,
+				promo : promo
 			})
 			.$promise.then(function(auth){
 				_this.setAuthToken(auth.token);
