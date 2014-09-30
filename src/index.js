@@ -37,7 +37,7 @@ angular
 			API        : API[TL_ENV],
 
 			setSubclient: setSubclient,
-		}
+		};
 
 		function setEnv(env) {
 			var api = API[env];
