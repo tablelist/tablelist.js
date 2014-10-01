@@ -44,6 +44,10 @@ angular
 			if (! api) throw new Error('Enviroment : ' + env + ' is not valid');
 
 			config.ENV = env;
+			config.ENV_DEV = (env == 'development');
+			config.ENV_PROD = (env == 'production');
+			config.ENV_LOCAL = (env == 'local');
+			config.ENV_TEST = (env == 'test');
 			config.API = api;
 		}
 

@@ -30,7 +30,7 @@ describe('Auth Tests', function(){
 
 		it('should register a new user', function(done){
 			tlAuth.service
-				.register(email, password, firstName, lastName, function(auth){
+				.register(email, password, firstName, lastName, null, function(auth){
 					console.log(auth);
 					var user = auth.user;
 					user.email.should.equal(email);
