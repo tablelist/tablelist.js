@@ -25,6 +25,9 @@ angular
 					device: window.navigator ? window.navigator.userAgent : null
 				}
 			};
+
+			if(config.SUB_CLIENT) track.client.device+=('-' + config.SUB_CLIENT);
+
 			return Track.save({}, track);
 		};
 
