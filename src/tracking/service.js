@@ -26,7 +26,7 @@ angular
 				}
 			};
 
-			if(config.SUB_CLIENT) track.client.device+=('-' + config.SUB_CLIENT);
+			if(config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
 
 			return Track.save({}, track);
 		};
