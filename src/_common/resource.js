@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.resource', ['$resource', 'tl.keychain', 'tl.http', function($resource, keychain, http){
+	.factory('tl.resource', ['$resource', 'tl.http', function($resource, http){
 
 		function _url(endpoint) {
 			return http.apiUrl(endpoint);
