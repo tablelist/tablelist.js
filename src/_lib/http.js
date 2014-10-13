@@ -12,7 +12,7 @@ angular
           data.url = data.url += '?';
         }
         if (isApi && token) {
-          if(config.authHeader) data.headers['x-access-token'] = token;
+          if(config.useAuthHeader) data.headers['x-access-token'] = token;
           else data.url = data.url + '&auth=' + token;
         }
         if (isApi && !token) {

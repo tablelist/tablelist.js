@@ -35,7 +35,7 @@ angular
       ENV_LOCAL: ENV_LOCAL,
       ENV_TEST: ENV_TEST,
       API: API[TL_ENV],
-      authHeader: false, //send auth token as query string, or header, defaults to query string
+      useAuthHeader: false, //send auth token as query string, or header, defaults to query string
 
       setSubclient: setSubclient,
     };
@@ -66,7 +66,7 @@ angular
       setUseAuthHeader: setUseAuthHeader,
 
       // needed for Provider
-        $get: function() {
+      $get: function() {
         return config
       }
 
