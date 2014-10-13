@@ -56,12 +56,17 @@ angular
       config.SUB_CLIENT = subclient;
     }
 
+    function setUseAuthHeader(useAuthHeader) {
+      config.useAuthHeader = useAuthHeader || false;
+    }
+
     return {
       setEnv: setEnv,
       setSubclient: setSubclient,
+      setUseAuthHeader: setUseAuthHeader
 
       // needed for Provider
-      $get: function() {
+        $get: function() {
         return config
       }
 
