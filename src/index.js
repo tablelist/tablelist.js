@@ -63,7 +63,7 @@ angular
     return {
       setEnv: setEnv,
       setSubclient: setSubclient,
-      setUseAuthHeader: setUseAuthHeader
+      setUseAuthHeader: setUseAuthHeader,
 
       // needed for Provider
         $get: function() {
