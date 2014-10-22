@@ -94,6 +94,10 @@ angular
 			addCredit: {
 				method: "POST",
 				url: '/user/:id/credit'
-			}
+			},
+      findByReferral: {
+        method: "GET",
+        url: '/referral/:code'
+      }
 		});
 	}]);

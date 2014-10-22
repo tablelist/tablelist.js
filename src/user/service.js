@@ -225,5 +225,14 @@ angular
       }, success, error);
     };
 
+    /**
+     * Find a user's name and photo by their referral code
+     */
+    UserService.prototype.findByReferral = function(code, success, error) {
+      return User.findByReferral({
+        code: code
+      }, success, error);
+    };
+
     return new UserService();
   }]);
