@@ -91,6 +91,11 @@ angular
 				url: '/notify/:id',
 				isArray: true
 			},
+			listHighPriority: {
+				method: "GET",
+				url: '/user/priority',
+				isArray: true
+			},
 			addCredit: {
 				method: "POST",
 				url: '/user/:id/credit'

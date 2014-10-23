@@ -215,6 +215,17 @@ angular
       }, success, error);
     };
 
+    /**
+     * Returns an array of high priority users
+     */
+    UserService.prototype.listHighPriority = function(hours, priority, cityId, success, error) {
+      return User.listHighPriority({
+        hours: hours || 24,
+        priority: priority || 7,
+        cityId: cityId
+      }, success, error);
+    };
+
     UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
       var _this = this;
       return User.addCredit({
