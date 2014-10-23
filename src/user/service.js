@@ -222,7 +222,7 @@ angular
       return User.listHighPriority({
         hours: hours || 24,
         priority: priority || 7,
-        cityId: cityId
+        city: cityId
       }, success, error);
     };
 
