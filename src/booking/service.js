@@ -35,5 +35,12 @@ angular
       }, success, error);
     };
 
+    BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
+      return Booking.updateBookingUser({
+        id: id,
+        userId: userId
+      }, updates, success, error);
+    };
+
     return new BookingService();
   }]);

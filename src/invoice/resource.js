@@ -9,7 +9,11 @@ angular
         id: '@id'
       }, {
         // add additional methods here
-
+        update: {
+          method: 'PUT',
+          url: endpoint,
+          isArray: false
+        },
         readPdf: {
           method: 'GET',
           url: endpoint + '/pdf',

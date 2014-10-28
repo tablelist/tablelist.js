@@ -37,7 +37,7 @@ angular
       API: API[TL_ENV],
       useAuthHeader: false, //send auth token as query string, or header, defaults to query string
 
-      setSubclient: setSubclient,
+      setSubclient: setSubclient
     };
 
     function setEnv(env) {

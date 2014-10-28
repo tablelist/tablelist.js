@@ -26,6 +26,10 @@ angular
       accept: {
         method: 'POST',
         url: endpoint + '/accept'
+      },
+      updateBookingUser: {
+        method: 'PUT',
+        url: endpoint + '/users/:userId/'
       }
     });
   }]);
