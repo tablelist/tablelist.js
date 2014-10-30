@@ -1,21 +1,31 @@
 {
-    "name": "tablelist.js",
-    "version": "0.0.73",
-    "description": "Tablelist Javascript SDK",
-    "url": "https://www.tablelist.com",
-    "author": "Tablelist, Inc.",
-
-    "engines" : {
-        "node" : "0.10.x"
-    },
-
-    "dependencies": {
-        "gulp": "latest",
-        "gulp-concat": "latest",
-        "gulp-ng-annotate": "latest",
-        "gulp-replace": "latest",
-        "gulp-uglify": "latest",
-        "gulp-watch": "latest",
-        "gulp-clean": "latest"
-    }
+  "name": "tablelist.js",
+  "version": "0.0.73",
+  "description": "Tablelist Javascript SDK",
+  "url": "https://www.tablelist.com",
+  "author": "Tablelist, Inc.",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "dependencies": {
+    "chai": "^1.9.2",
+    "gulp": "latest",
+    "gulp-clean": "latest",
+    "gulp-concat": "latest",
+    "gulp-ng-annotate": "latest",
+    "gulp-replace": "latest",
+    "gulp-uglify": "latest",
+    "gulp-watch": "latest",
+    "karma": "^0.12.24",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.1.5",
+    "karma-cli": "0.0.4",
+    "karma-mocha": "^0.1.9",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-script-launcher": "^0.1.0",
+    "mocha": "^2.0.1"
+  },
+  "scripts": {
+    "test": "make test"
+  }
 }
