@@ -9,10 +9,7 @@ js:
 	gulp
 	gulp watch
 
-build:
-	gulp
-
-test: build
+test: release
 	./node_modules/karma/bin/karma start karma.conf.js
 
 test-unit:

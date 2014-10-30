@@ -14,7 +14,7 @@ module.exports = function(config) {
       'unit/**/*.spec.js'
     ],
 
-    reporters: ['progress'],
+    reporters: ['spec'],
 
     port: 9876,
 
@@ -25,7 +25,8 @@ module.exports = function(config) {
       'karma-phantomjs-launcher',
       //'karma-script-launcher',
       'karma-mocha',
-      'karma-chai'
+      'karma-chai',
+      'karma-spec-reporter'
     ],
 
     client: {
@@ -37,7 +38,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_DEBUG,
+    logLevel: config.LOG_INFO,
 
     browsers: ['PhantomJS'],
 

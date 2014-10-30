@@ -11,24 +11,30 @@ var authService;
  * Test suite setup
  * ========================================================================= */
 beforeEach(function() {
-  inject(function($injector) {
-    authService = $injector.get('tl.auth.service');
-
-    console.log(authService);
-  });
+  inject(['tl.auth.service', function(_authService) {
+    authService = _authService;
+  }]);
 });
 
 /* =========================================================================
  * Tests
  * ========================================================================= */
-describe('foobar', function() {
-  it('should work', function(done) {
+describe('auth service', function() {
 
-    console.log('FOOOO');
-    console.log(authService);
+  describe('- set authToken()', function() {
 
-    true.should.be.true;
+    it('should set an auth token', function(done) {
 
-    done();
+      var token = '123456789abcdefghijklmbopqrstuvwxyz';
+
+      authService.setAuthToken(token);
+
+      var setToken = authService.authToken();
+
+      should.exist(setToken);
+      setToken.should.equal(token);
+
+      done();
+    });
   });
 });
