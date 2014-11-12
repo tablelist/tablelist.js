@@ -71,7 +71,7 @@ function js() {
 /**
  * Run unit tests - this task is run by Wercker when building our app
  */
-gulp.task('test', ['test-unit', 'release'], function() {});
+gulp.task('test', ['release', 'test-unit'], function() {});
 
 gulp.task('test-unit', function(done) {
   karma.start({
