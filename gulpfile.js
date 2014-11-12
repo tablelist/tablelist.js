@@ -7,6 +7,7 @@ var watch = require('gulp-watch');
 var concat = require('gulp-concat');
 var clean = require('gulp-clean');
 var karma = require('karma').server;
+var exec = require('gulp-exec');
 
 /**
  * Clean build folder
@@ -67,6 +68,10 @@ function js() {
   }, dev);
 }
 
+/**
+ * Run unit tests - this task is run by Wercker when building our app
+ */
+gulp.task('test', ['test-unit', 'release'], function() {});
 
 gulp.task('test-unit', function(done) {
   karma.start({
@@ -82,6 +87,21 @@ gulp.task('test-unit', function(done) {
     ]
   }, done);
 });
+
+// gulp.task('test-int', function(done) {
+//   karma.start({
+//     configFile: __dirname + '/tests/karma.conf.js',
+//     singleRun: true,
+//     files: [
+//       '../bower_components/angular/angular.js',
+//       '../bower_components/angular-mocks/angular-mocks.js',
+//       '../bower_components/angular-resource/angular-resource.js',
+//       '../bower_components/sinon/lib/sinon.js',
+//       '../build/tablelist.js',
+//       'integration/**/*.js'
+//     ]
+//   }, done);
+// });
 
 /**
  * Register steps
