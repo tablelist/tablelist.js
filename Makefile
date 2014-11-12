@@ -17,7 +17,7 @@ test-unit:
 	tests/unit/**/*.js \
 	-t 20000 -R spec
 
-test-integration:
+test-int:
 	./node_modules/.bin/_mocha \
 	tests/integration/**/*.js \
 	-t 20000 -R spec

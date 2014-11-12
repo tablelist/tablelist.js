@@ -1,8 +1,9 @@
 /* =========================================================================
- * Auth Service Tests
+ * Cookie Service Tests
  * ========================================================================= */
-describe('auth service', function() {
+describe('user service', function() {
 
+  var userService;
   var authService;
 
   /* =========================================================================
@@ -10,31 +11,33 @@ describe('auth service', function() {
    * ========================================================================= */
 
   beforeEach(function() {
-    module('tl');
+    module('tl')
 
-    inject(['tl.auth.service', function(_authService) {
-      authService = _authService;
-    }]);
+    inject([
+      'tl.user.service',
+      'tl.auth.service',
+      function(_userService, _authService) {
+        userService = _userService;
+        authService = _authService;
+      }
+    ]);
   });
 
   /* =========================================================================
-   * authToken()
+   * currentUser()
    * ========================================================================= */
 
-  describe('- set authToken()', function() {
+  describe('currentUser()', function() {
 
-    it('should set an auth token', function(done) {
+    describe('when no auth token set', function() {
+      it('should not return a user', function(done) {
 
-      var token = '123456789abcdefghijklmbopqrstuvwxyz';
+      	
 
-      authService.setAuthToken(token);
-
-      var setToken = authService.authToken();
-
-      should.exist(setToken);
-      setToken.should.equal(token);
-
-      done();
+        done();
+      });
     });
+
   });
+
 });

@@ -1,10 +1,12 @@
 var gulp = require('gulp');
+var jshint = require('gulp-jshint');
 var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var watch = require('gulp-watch');
 var concat = require('gulp-concat');
 var clean = require('gulp-clean');
+var karma = require('karma').server;
 
 /**
  * Clean build folder
@@ -38,6 +40,15 @@ function prod() {
 }
 
 /**
+ * Js Hint
+ */
+gulp.task('jshint', function() {
+  return gulp.src(['src/**/*.js'])
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
+/**
  * Copy build files to a version release directory
  */
 function prepareRelease() {
@@ -55,6 +66,22 @@ function js() {
     emitOnGlob: false
   }, dev);
 }
+
+
+gulp.task('test-unit', function(done) {
+  karma.start({
+    configFile: __dirname + '/tests/karma.conf.js',
+    singleRun: true,
+    files: [
+      '../bower_components/angular/angular.js',
+      '../bower_components/angular-mocks/angular-mocks.js',
+      '../bower_components/angular-resource/angular-resource.js',
+      '../bower_components/sinon/lib/sinon.js',
+      '../build/tablelist.js',
+      'unit/**/*.spec.js'
+    ]
+  }, done);
+});
 
 /**
  * Register steps

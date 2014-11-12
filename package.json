@@ -12,10 +12,12 @@
     "gulp": "latest",
     "gulp-clean": "latest",
     "gulp-concat": "latest",
+    "gulp-jshint": "^1.8.6",
     "gulp-ng-annotate": "latest",
     "gulp-replace": "latest",
     "gulp-uglify": "latest",
     "gulp-watch": "latest",
+    "jshint-stylish": "^1.0.0",
     "karma": "^0.12.24",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^0.1.5",
@@ -28,5 +30,8 @@
   },
   "scripts": {
     "test": "make test"
+  },
+  "devDependencies": {
+    "karma": "^0.12.24"
   }
 }
