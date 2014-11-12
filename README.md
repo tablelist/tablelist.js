@@ -3,6 +3,9 @@ tablelist.js
 
 Tablelist Javascript SDK for Angular.js
 
+### Installation
+`bower instal tablelist-js`
+
 #### Dependencies
 The SDK relies on Angular.js and ngResource
 ```
