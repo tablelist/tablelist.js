@@ -71,9 +71,9 @@ function js() {
 /**
  * Run unit tests - this task is run by Wercker when building our app
  */
-gulp.task('test', ['release', 'test-unit'], function() {});
+gulp.task('test', ['test-unit'], function() {});
 
-gulp.task('test-unit', function(done) {
+gulp.task('test-unit', ['release'], function(done) {
   karma.start({
     configFile: __dirname + '/tests/karma.conf.js',
     singleRun: true,
