@@ -8,6 +8,7 @@
     "node": "0.10.x"
   },
   "dependencies": {
+    "bower": "latest",
     "chai": "^1.9.2",
     "gulp": "latest",
     "gulp-clean": "latest",
