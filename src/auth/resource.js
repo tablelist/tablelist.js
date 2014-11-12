@@ -1,43 +1,42 @@
-
 angular
-	.module('tl')
-	.factory('tl.auth.resource', ['tl.resource', function(resource){
+  .module('tl')
+  .factory('tl.auth.resource', ['tl.resource', function(resource) {
 
-		var endpoint = '/auth';
+    var endpoint = '/auth';
 
-		return resource(endpoint, {
-			// nothing here
-		}, {
+    return resource(endpoint, {
+      // nothing here
+    }, {
 
-			register: {
-				method: 'POST',
-				url: endpoint + '/register',
-				isArray: false
-			},
+      register: {
+        method: 'POST',
+        url: endpoint + '/register',
+        isArray: false
+      },
 
-			login: {
-				method: 'POST',
-				url: endpoint + '/login',
-				isArray: false
-			},
+      login: {
+        method: 'POST',
+        url: endpoint + '/login',
+        isArray: false
+      },
 
-			loginFacebook: {
-				method: 'POST',
-				url: endpoint + '/facebook',
-				isArray: false
-			},
+      loginFacebook: {
+        method: 'POST',
+        url: endpoint + '/facebook',
+        isArray: false
+      },
 
-			forgotPassword: {
-				method: 'POST',
-				url: endpoint + '/forgot',
-				isArray: false
-			},
+      forgotPassword: {
+        method: 'POST',
+        url: endpoint + '/forgot',
+        isArray: false
+      },
 
-			resetPassword: {
-				method: 'POST',
-				url: endpoint + '/reset',
-				isArray: false
-			}
+      resetPassword: {
+        method: 'POST',
+        url: endpoint + '/reset',
+        isArray: false
+      }
 
-		});
-	}]);
+    });
+  }]);

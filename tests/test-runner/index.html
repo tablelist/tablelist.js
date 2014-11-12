@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html ng-app="test">
+
+<head>
+  <title>tablelist.js</title>
+  <link href="https://assets.tablelist.com/js/mocha/1.20.1/mocha.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div ng-controller="TestController" id="mocha"></div>
+
+  <!-- LIBRARIES -->
+  <script src="https://assets.tablelist.com/js/mocha/1.20.1/mocha.min.js"></script>
+  <script src="https://assets.tablelist.com/js/chai/1.9.1/chai.min.js"></script>
+
+  <!-- CONFIG -->
+  <script>
+  mocha.setup('bdd');
+  </script>
+  <script>
+  mocha.timeout(4 * 1000)
+  </script>
+  <script>
+  mocha.slow(2.0 * 1000);
+  </script>
+  <script>
+  chai.should();
+  </script>
+
+  <!-- ANGULAR -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular-resource.min.js"></script>
+
+  <!-- TABLELIST.JS -->
+  <script src="../../build/tablelist.js"></script>
+  <script>
+  tablelist('test');
+  </script>
+
+  <!-- REQUIRE TESTS -->
+  <script src="../integration/common.js"></script>
+  <script src="../integration/ee.js"></script>
+  <script src="../integration/status.js"></script>
+  <script src="../integration/settings.js"></script>
+  <script src="../integration/auth.js"></script>
+  <script src="../integration/city.js"></script>
+  <script src="../integration/venue.js"></script>
+  <script src="../integration/event.js"></script>
+  <script src="../integration/user.js"></script>
+  <script src="../integration/payment-profile.js"></script>
+
+  <!-- RUN TESTS -->
+  <script src="./test.js"></script>
+</body>
+
+</html>

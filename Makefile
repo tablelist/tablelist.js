@@ -9,6 +9,19 @@ js:
 	gulp
 	gulp watch
 
-tests:
+test: release
+	./node_modules/karma/bin/karma start karma.conf.js
+
+test-unit:
+	./node_modules/.bin/_mocha \
+	tests/unit/**/*.js \
+	-t 20000 -R spec
+
+test-int:
+	./node_modules/.bin/_mocha \
+	tests/integration/**/*.js \
+	-t 20000 -R spec
+
+test-runner:
 	gulp
-	open ./test/index.html
+	open ./tests/test-runner/index.html

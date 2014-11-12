@@ -1,22 +1,18 @@
-box: wercker/nodejs
-# Build definition
-build:
-    # The steps that will be executed on build
-    steps:
-       # A step that executes `npm install` command
-       - npm-install
-       # A step that executes `npm test` command
-       - npm-test
+box: wercker/ubuntu12.04-nodejs0.10
 
-       # A custom script step, name value is used in the UI
-       # and the code value contains the command that get executed
-       - script:
-           name: echo nodejs information
-           code: |
-             echo "node version $(node -v) running"
-             echo "npm version $(npm -v) running"
+build:
+    steps:
+      - npm-install
+      - plasticine/bower-install@0.0.4
+      - yeehaa/gulp@0.0.4
+      - script:
+          name: echo nodejs information
+          code: |
+            echo "node version $(node -v) running"
+            echo "npm version $(npm -v) running"
+
     after-steps:
-       - hipchat-notify:
-           token: $HIPCHAT_TOKEN
-           room-id: 232970
-           from-name: Wercker
+      - hipchat-notify:
+          token: $HIPCHAT_TOKEN
+          room-id: 232970
+          from-name: Wercker
