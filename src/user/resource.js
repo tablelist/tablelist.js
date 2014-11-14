@@ -98,6 +98,10 @@ angular
       findByReferral: {
         method: "GET",
         url: '/referral/:code'
+      },
+      getReferralStats: {
+        method: "GET",
+        url: '/user/:id/referral/stats'
       }
     });
   }]);

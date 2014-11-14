@@ -246,7 +246,14 @@ angular
           code: code
         }, success, error);
       };
+      /**
+       * Get a user's referral stats
+       */
+      UserService.prototype.getReferralStats = function(userId, success, error){
+        return User.getReferralStats({
+          id: userId
+        }, success, error);
+      };
 
       return new UserService();
-    }
-  ]);
+  }]);
