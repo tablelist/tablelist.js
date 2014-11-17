@@ -8,6 +8,9 @@ angular
 		return resource(endpoint, {
 			id: '@id'
 		}, {
-			// add additional methods here
+			reports: {
+				method: 'GET',
+				url: '/report/types'
+			}
 		});
 	}]);
