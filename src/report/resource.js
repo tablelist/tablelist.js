@@ -11,6 +11,10 @@ angular
 			reports: {
 				method: 'GET',
 				url: '/report/types'
+			},
+			download: {
+				method: 'GET',
+				url: endpoint + '/download'
 			}
 		});
 	}]);
