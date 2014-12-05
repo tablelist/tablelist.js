@@ -30,6 +30,10 @@ angular
       updateBookingUser: {
         method: 'PUT',
         url: endpoint + '/users/:userId/'
+      },
+      readOutgoingPayment: {
+        method: 'GET',
+        url: endpoint + '/outgoing-payment'
       }
     });
   }]);

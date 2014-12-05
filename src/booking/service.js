@@ -42,5 +42,11 @@ angular
       }, updates, success, error);
     };
 
+    BookingService.prototype.readOutgoingPayment = function(id, success, error) {
+      return Booking.readOutgoingPayment({
+        id: id,
+      }, success, error);
+    };
+
     return new BookingService();
   }]);
