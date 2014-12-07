@@ -228,15 +228,6 @@ angular
         }, success, error);
       };
 
-      /**
-       * Returns an array of a users venues (staff)
-       */
-      UserService.prototype.listVenues = function(listVenues, success, error) {
-        return User.listVenues({
-          listVenues: listVenues
-        }, success, error);
-      };
-
       UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
         var _this = this;
         return User.addCredit({

@@ -91,11 +91,6 @@ angular
         url: '/user/priority',
         isArray: true
       },
-      listVenues: {
-        method: 'GET',
-        url: endpoint + '/venues',
-        isArray: true
-      },
       addCredit: {
         method: "POST",
         url: '/user/:id/credit'

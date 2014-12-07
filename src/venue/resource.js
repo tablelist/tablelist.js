@@ -1,140 +1,146 @@
-
 angular
-	.module('tl')
-	.factory('tl.venue.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/venue/:id';		
-		
-		return resource(endpoint, {
-			id: '@id',
-			itemId: '@itemId',
-			imageId: '@imageId',
-			cityId: '@cityId'
-		}, {
+  .module('tl')
+  .factory('tl.venue.resource', ['tl.resource', function(resource) {
 
-			/*==============================================================*
+    var endpoint = '/venue/:id';
+
+    return resource(endpoint, {
+      id: '@id',
+      itemId: '@itemId',
+      imageId: '@imageId',
+      cityId: '@cityId'
+    }, {
+
+      /*==============================================================*
 			/* Cities
 			/*==============================================================*/
 
-			listForCity: {
-				method: 'GET',
-				url: '/city/:cityId/venue',
-				isArray: true
-			},
-			listCityFeatured: {
-				method: 'GET',
-				url: '/city/:cityId/venue/featured',
-				isArray: true
-			},
-			listCityTonight: {
-				method: 'GET',
-				url: '/city/:cityId/venue/tonight',
-				isArray: true
-			},
+      listForCity: {
+        method: 'GET',
+        url: '/city/:cityId/venue',
+        isArray: true
+      },
+      listCityFeatured: {
+        method: 'GET',
+        url: '/city/:cityId/venue/featured',
+        isArray: true
+      },
+      listCityTonight: {
+        method: 'GET',
+        url: '/city/:cityId/venue/tonight',
+        isArray: true
+      },
 
-			/*==============================================================*
+      /*==============================================================*
 			/* Schedule
 			/*==============================================================*/
 
-			schedule: {
-				method: 'GET',
-				url: endpoint + '/schedule',
-			},
-			updateSchedule: {
-				method: 'PUT',
-				url: endpoint + '/schedule',
-			},
+      schedule: {
+        method: 'GET',
+        url: endpoint + '/schedule',
+      },
+      updateSchedule: {
+        method: 'PUT',
+        url: endpoint + '/schedule',
+      },
 
-			/*==============================================================*
+      /*==============================================================*
 			/* Inventory
 			/*==============================================================*/
 
-			listInventory: {
-				method: 'GET',
-				url: endpoint + '/inventory',
-				isArray: false
-			},
-			listInventoryAdmin: {
-				method: 'GET',
-				url: endpoint + '/inventory/admin',
-				isArray: false
-			},
-			readInventory: {
-				method: 'GET',
-				url: endpoint + '/inventory/:tableId',
-				isArray: false
-			},
-			addInventory: {
-				method: 'POST',
-				url: endpoint + '/inventory',
-				isArray: false
-			},
-			updateInventory: {
-				method: 'PUT',
-				url: endpoint + '/inventory/:tableId',
-				isArray: false
-			},
+      listInventory: {
+        method: 'GET',
+        url: endpoint + '/inventory',
+        isArray: false
+      },
+      listInventoryAdmin: {
+        method: 'GET',
+        url: endpoint + '/inventory/admin',
+        isArray: false
+      },
+      readInventory: {
+        method: 'GET',
+        url: endpoint + '/inventory/:tableId',
+        isArray: false
+      },
+      addInventory: {
+        method: 'POST',
+        url: endpoint + '/inventory',
+        isArray: false
+      },
+      updateInventory: {
+        method: 'PUT',
+        url: endpoint + '/inventory/:tableId',
+        isArray: false
+      },
 
-			/*==============================================================*
+      /*==============================================================*
 			/* Events
 			/*==============================================================*/
 
-			listEvents: {
-				method: 'GET',
-				url: endpoint + '/event',
-				isArray: true
-			},
-			addEvent: {
-				method: 'POST',
-				url: '/event',
-				isArray: false
-			},
+      listEvents: {
+        method: 'GET',
+        url: endpoint + '/event',
+        isArray: true
+      },
+      addEvent: {
+        method: 'POST',
+        url: '/event',
+        isArray: false
+      },
 
-			/*==============================================================*
+      /*==============================================================*
 			/* Items
 			/*==============================================================*/
 
-			listItems: {
-				method: 'GET',
-				url: endpoint + '/item',
-				isArray: true
-			},
-			addItem: {
-				method: 'POST',
-				url: endpoint + '/item'
-			},
-			updateItem: {
-				method: 'PUT',
-				url: endpoint + '/item/:itemId'
-			},
-			deleteItem: {
-				method: 'DELETE',
-				url: endpoint + '/item/:itemId'
-			},
+      listItems: {
+        method: 'GET',
+        url: endpoint + '/item',
+        isArray: true
+      },
+      addItem: {
+        method: 'POST',
+        url: endpoint + '/item'
+      },
+      updateItem: {
+        method: 'PUT',
+        url: endpoint + '/item/:itemId'
+      },
+      deleteItem: {
+        method: 'DELETE',
+        url: endpoint + '/item/:itemId'
+      },
 
-			/*==============================================================*
+      /*==============================================================*
 			/* Staff
 			/*==============================================================*/
 
-			listStaff: {
-				method: 'GET',
-				url: endpoint + '/user',
-				isArray: true
-			},
-			addStaff: {
-				method: 'POST',
-				url: endpoint + '/user',
-				isArray: true
-			},
-			updateStaff: {
-				method: 'PUT',
-				url: endpoint + '/user/:userId',
-				isArray: true
-			},
-			removeStaff: {
-				method: 'DELETE',
-				url: endpoint + '/user/:userId',
-				isArray: true
-			}
-		});
-	}]);
+      listStaff: {
+        method: 'GET',
+        url: endpoint + '/user',
+        isArray: true
+      },
+      addStaff: {
+        method: 'POST',
+        url: endpoint + '/user',
+        isArray: true
+      },
+      updateStaff: {
+        method: 'PUT',
+        url: endpoint + '/user/:userId',
+        isArray: true
+      },
+      removeStaff: {
+        method: 'DELETE',
+        url: endpoint + '/user/:userId',
+        isArray: true
+      },
+
+
+      listVenues: {
+        method: 'GET',
+        url: '/user/:userId/venues',
+        isArray: true
+      }
+    });
+  }]);
