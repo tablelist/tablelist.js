@@ -53,7 +53,7 @@ gulp.task('jshint', function() {
  * Copy build files to a version release directory
  */
 function prepareRelease() {
-  var package = require('./package.json');
+  var package = require('./bower.json');
   return gulp.src('build/*')
     .pipe(gulp.dest('build/' + package.version));
 }
