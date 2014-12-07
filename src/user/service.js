@@ -228,6 +228,15 @@ angular
         }, success, error);
       };
 
+      /**
+       * Returns an array of a users venues (staff)
+       */
+      UserService.prototype.listVenues = function(listVenues, success, error) {
+        return User.listVenues({
+          listVenues: listVenues
+        }, success, error);
+      };
+
       UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
         var _this = this;
         return User.addCredit({
@@ -249,11 +258,12 @@ angular
       /**
        * Get a user's referral stats
        */
-      UserService.prototype.getReferralStats = function(userId, success, error){
+      UserService.prototype.getReferralStats = function(userId, success, error) {
         return User.getReferralStats({
           id: userId
         }, success, error);
       };
 
       return new UserService();
-  }]);
+    }
+  ]);
