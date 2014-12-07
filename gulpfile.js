@@ -55,7 +55,7 @@ gulp.task('jshint', function() {
 function prepareRelease() {
   //var package = require('./bower.json');
   return gulp.src('build/*')
-    .pipe(gulp.dest('build/release'));
+    .pipe(gulp.dest('release'));
 }
 
 /**
