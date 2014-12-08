@@ -51,16 +51,5 @@ angular
       }, success, error);
     };
 
-
-
-    /**
-     * Returns an array of a users venues (staff-only)
-     */
-    VenueService.prototype.listVenues = function(listVenues, success, error) {
-      return User.listVenues({
-        listVenues: listVenues
-      }, success, error);
-    };
-
     return new VenueService();
   }]);

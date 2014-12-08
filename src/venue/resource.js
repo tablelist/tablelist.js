@@ -134,13 +134,6 @@ angular
         method: 'DELETE',
         url: endpoint + '/user/:userId',
         isArray: true
-      },
-
-
-      listVenues: {
-        method: 'GET',
-        url: '/user/:userId/venues',
-        isArray: true
       }
     });
   }]);

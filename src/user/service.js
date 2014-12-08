@@ -255,6 +255,15 @@ angular
         }, success, error);
       };
 
+      /**
+       * Lists a user's venues
+       */
+      UserService.prototype.listVenues = function(userId, success, error) {
+        return User.listVenues({
+          id: userId
+        }, success, error);
+      };
+
       return new UserService();
     }
   ]);

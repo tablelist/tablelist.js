@@ -880,106 +880,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.booking.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/booking/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      create: {
-        method: 'POST',
-        url: 'booking',
-      },
-      void: {
-        method: 'POST',
-        url: endpoint + '/void'
-      },
-      refund: {
-        method: 'POST',
-        url: endpoint + '/refund'
-      },
-      join: {
-        method: 'POST',
-        url: 'booking/join'
-      },
-      accept: {
-        method: 'POST',
-        url: endpoint + '/accept'
-      },
-      updateBookingUser: {
-        method: 'PUT',
-        url: endpoint + '/users/:userId/'
-      },
-      readOutgoingPayment: {
-        method: 'GET',
-        url: endpoint + '/outgoing-payment'
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.booking.service', ['tl.booking.resource', 'tl.service', function(Booking, Service) {
-
-    var BookingService = Service.extend(Booking);
-
-    BookingService.prototype.create = function(data, success, error) {
-      return Booking.create({}, data, success, error);
-    };
-
-    BookingService.prototype.void = function(id, notify, success, error) {
-      return Booking.void({}, {
-        id: id,
-        notify: notify ? true : false
-      }, success, error);
-    };
-
-    BookingService.prototype.refund = function(id, amount, reason, success, error) {
-      return Booking.refund({}, {
-        id: id,
-        money: amount,
-        reason: reason
-      }, success, error);
-    };
-
-    BookingService.prototype.join = function(splitCode, success, error) {
-      return Booking.join({}, {
-        splitCode: splitCode,
-      }, success, error);
-    };
-
-    BookingService.prototype.accept = function(id, success, error) {
-      return Booking.accept({}, {
-        id: id
-      }, success, error);
-    };
-
-    BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
-      return Booking.updateBookingUser({
-        id: id,
-        userId: userId
-      }, updates, success, error);
-    };
-
-    BookingService.prototype.readOutgoingPayment = function(id, success, error) {
-      return Booking.readOutgoingPayment({
-        id: id,
-      }, success, error);
-    };
-
-    return new BookingService();
-  }]);
-
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1140,6 +1040,106 @@ angular
       return new AuthService();
     }
   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.booking.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/booking/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      create: {
+        method: 'POST',
+        url: 'booking',
+      },
+      void: {
+        method: 'POST',
+        url: endpoint + '/void'
+      },
+      refund: {
+        method: 'POST',
+        url: endpoint + '/refund'
+      },
+      join: {
+        method: 'POST',
+        url: 'booking/join'
+      },
+      accept: {
+        method: 'POST',
+        url: endpoint + '/accept'
+      },
+      updateBookingUser: {
+        method: 'PUT',
+        url: endpoint + '/users/:userId/'
+      },
+      readOutgoingPayment: {
+        method: 'GET',
+        url: endpoint + '/outgoing-payment'
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.booking.service', ['tl.booking.resource', 'tl.service', function(Booking, Service) {
+
+    var BookingService = Service.extend(Booking);
+
+    BookingService.prototype.create = function(data, success, error) {
+      return Booking.create({}, data, success, error);
+    };
+
+    BookingService.prototype.void = function(id, notify, success, error) {
+      return Booking.void({}, {
+        id: id,
+        notify: notify ? true : false
+      }, success, error);
+    };
+
+    BookingService.prototype.refund = function(id, amount, reason, success, error) {
+      return Booking.refund({}, {
+        id: id,
+        money: amount,
+        reason: reason
+      }, success, error);
+    };
+
+    BookingService.prototype.join = function(splitCode, success, error) {
+      return Booking.join({}, {
+        splitCode: splitCode,
+      }, success, error);
+    };
+
+    BookingService.prototype.accept = function(id, success, error) {
+      return Booking.accept({}, {
+        id: id
+      }, success, error);
+    };
+
+    BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
+      return Booking.updateBookingUser({
+        id: id,
+        userId: userId
+      }, updates, success, error);
+    };
+
+    BookingService.prototype.readOutgoingPayment = function(id, success, error) {
+      return Booking.readOutgoingPayment({
+        id: id,
+      }, success, error);
+    };
+
+    return new BookingService();
+  }]);
 
 
 angular
@@ -1508,6 +1508,51 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.promo.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/promo/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			redeem: {
+				method: 'POST',
+				url: '/promo/redeem'
+			},
+		});
+	}]);
+(function() {
+  'use strict';
+
+  angular
+    .module('tl')
+    .service('tl.promo.service', ['tl.storage', 'tl.promo.resource', 'tl.service',
+      function(storage, Promo, Service) {
+
+        var PromoService = Service.extend(Promo);
+
+        PromoService.prototype.redeem = function(promoCode, success, error) {
+          var _this = this;
+          return Promo.redeem({
+            code: promoCode
+          });
+        };
+
+        return new PromoService();
+      }
+    ]);
+}());
+
+
+angular
+	.module('tl')
 	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1576,51 +1621,6 @@ angular
       return new PaymentService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.promo.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/promo/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			redeem: {
-				method: 'POST',
-				url: '/promo/redeem'
-			},
-		});
-	}]);
-(function() {
-  'use strict';
-
-  angular
-    .module('tl')
-    .service('tl.promo.service', ['tl.storage', 'tl.promo.resource', 'tl.service',
-      function(storage, Promo, Service) {
-
-        var PromoService = Service.extend(Promo);
-
-        PromoService.prototype.redeem = function(promoCode, success, error) {
-          var _this = this;
-          return Promo.redeem({
-            code: promoCode
-          });
-        };
-
-        return new PromoService();
-      }
-    ]);
-}());
 
 
 angular
@@ -1772,35 +1772,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.reward.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/reward/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
-
-		var RewardService = Service.extend(Reward);
-
-		return new RewardService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1830,16 +1801,16 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
+	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 
 angular
 	.module('tl')
-	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+	.factory('tl.reward.resource', ['tl.resource', function(resource){
 
-		var endpoint = '/schedule/:id';
+		var endpoint = '/reward/:id';
 
 		return resource(endpoint, {
 			id: '@id'
@@ -1850,11 +1821,11 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
 
-		var ScheduleService = Service.extend(Schedule);
+		var RewardService = Service.extend(Reward);
 
-		return new ScheduleService();
+		return new RewardService();
 	}]);
 
 angular
@@ -1938,6 +1909,35 @@ angular
 		var TableService = Service.extend(Table);
 
 		return new TableService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/schedule/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+
+		var ScheduleService = Service.extend(Schedule);
+
+		return new ScheduleService();
 	}]);
 
 angular
@@ -2182,6 +2182,10 @@ angular
       getReferralStats: {
         method: "GET",
         url: '/user/:id/referral/stats'
+      },
+      listVenues: {
+        method: "GET",
+        url: '/user/:id/venues'
       }
     });
   }]);
@@ -2443,6 +2447,15 @@ angular
         }, success, error);
       };
 
+      /**
+       * Lists a user's venues
+       */
+      UserService.prototype.listVenues = function(userId, success, error) {
+        return User.listVenues({
+          id: userId
+        }, success, error);
+      };
+
       return new UserService();
     }
   ]);
@@ -2590,13 +2603,6 @@ angular
         method: 'DELETE',
         url: endpoint + '/user/:userId',
         isArray: true
-      },
-
-
-      listVenues: {
-        method: 'GET',
-        url: '/user/:userId/venues',
-        isArray: true
       }
     });
   }]);
@@ -2651,17 +2657,6 @@ angular
 
       return Venue.listItems({
         id: id
-      }, success, error);
-    };
-
-
-
-    /**
-     * Returns an array of a users venues (staff-only)
-     */
-    VenueService.prototype.listVenues = function(listVenues, success, error) {
-      return User.listVenues({
-        listVenues: listVenues
       }, success, error);
     };
 

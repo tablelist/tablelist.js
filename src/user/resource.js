@@ -102,6 +102,10 @@ angular
       getReferralStats: {
         method: "GET",
         url: '/user/:id/referral/stats'
+      },
+      listVenues: {
+        method: "GET",
+        url: '/user/:id/venues'
       }
     });
   }]);
