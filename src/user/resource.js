@@ -105,7 +105,18 @@ angular
       },
       listVenues: {
         method: "GET",
-        url: '/user/:id/venues'
+        url: '/user/:id/venue',
+        isArray: true
+      },
+      favorite: {
+        method: "POST",
+        url: '/user/:id/favorite',
+        isArray: false
+      },
+      unfavorite: {
+        method: "DELETE",
+        url: '/user/:id/favorite/{favoriteId}',
+        isArray: false
       }
     });
   }]);

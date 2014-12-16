@@ -51,5 +51,11 @@ angular
       }, success, error);
     };
 
+
+    VenueService.prototype.listBookings = function(params, success, error) {
+
+      return Venue.listBookings(params, success, error);
+    };
+
     return new VenueService();
   }]);

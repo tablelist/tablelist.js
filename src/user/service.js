@@ -264,6 +264,29 @@ angular
         }, success, error);
       };
 
+      /**
+       * Lists a user's venues
+       */
+      UserService.prototype.favorite = function(userId, venueId, eventId, success, error) {
+        return User.favorite({
+          id: userId
+        }, {
+          venueId: venueId,
+          eventId: eventId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's venues
+       */
+      UserService.prototype.unfavorite = function(userId, favoriteId, success, error) {
+        return User.unfavorite({
+          id: userId
+        }, {
+          favoriteId: favoriteId
+        }, success, error);
+      };
+
       return new UserService();
     }
   ]);
