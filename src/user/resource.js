@@ -115,7 +115,7 @@ angular
       },
       unfavorite: {
         method: "DELETE",
-        url: '/user/:id/favorite/{favoriteId}',
+        url: '/user/:id/favorite/:favoriteId',
         isArray: false
       }
     });

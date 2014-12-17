@@ -1,3 +1,9 @@
+UserService.prototype.unfavorite = function(userId, favoriteId, success, error) {
+  return User.unfavorite({
+    id: userId,
+    favoriteId: favoriteId
+  }, success, error);
+};
 angular
   .module('tl')
   .service('tl.user.service', ['$timeout', 'tl.storage', 'tl.keychain', 'tl.ee', 'tl.user.resource', 'tl.service',
@@ -281,8 +287,7 @@ angular
        */
       UserService.prototype.unfavorite = function(userId, favoriteId, success, error) {
         return User.unfavorite({
-          id: userId
-        }, {
+          id: userId,
           favoriteId: favoriteId
         }, success, error);
       };
