@@ -117,6 +117,11 @@ angular
         method: "DELETE",
         url: '/user/:id/favorite/:favoriteId',
         isArray: false
+      },
+      listFavorites: {
+        method: "GET",
+        url: '/user/:id/favorite',
+        isArray: true
       }
     });
   }]);

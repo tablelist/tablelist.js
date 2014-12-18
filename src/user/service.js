@@ -264,26 +264,44 @@ angular
         }, success, error);
       };
 
-      /**
-       * Lists a user's venues
-       */
-      UserService.prototype.favorite = function(userId, venueId, eventId, success, error) {
+      UserService.prototype.favorite = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        var userId = options.userId;
+        delete options.userId;
+
         return User.favorite({
           id: userId
-        }, {
-          venueId: venueId,
-          eventId: eventId
-        }, success, error);
+        }, options);
       };
 
-      /**
-       * Lists a user's venues
-       */
-      UserService.prototype.unfavorite = function(userId, favoriteId, success, error) {
+      UserService.prototype.unfavorite = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.favoriteId) throw new Error('options.favoriteId is required');
+
+        var userId = options.userId;
+        delete options.userId;
+        var favoriteId = options.favoriteId
+        delete options.favoriteId;
+
         return User.unfavorite({
           id: userId,
           favoriteId: favoriteId
-        }, success, error);
+        }, options);
+      };
+
+      UserService.prototype.listFavorites = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        var userId = options.userId;
+        delete options.userId;
+
+        return User.listFavorites({
+          id: userId
+        }, options);
       };
 
       return new UserService();
