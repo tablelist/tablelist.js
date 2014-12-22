@@ -1,61 +1,73 @@
 angular
   .module('tl')
-  .service('tl.venue.service', ['tl.service', 'tl.venue.resource', function(Service, Venue) {
+  .service('tl.venue.service', [
+    'tl.service',
+    'tl.venue.resource',
+    function(Service, Venue) {
+      'use strict';
 
-    var VenueService = Service.extend(Venue);
+      var VenueService = Service.extend(Venue);
 
-    /*==============================================================*
-		/* Cities
-		/*==============================================================*/
+      /*==============================================================*
+    /* Cities
+    /*==============================================================*/
 
-    VenueService.prototype.listForCity = function(cityId, success, error) {
-      return Venue.listForCity({
-        cityId: cityId
-      }, success, error);
-    };
+      VenueService.prototype.listForCity = function(cityId, success, error) {
+        return Venue.listForCity({
+          cityId: cityId
+        }, success, error);
+      };
 
-    VenueService.prototype.listCityFeatured = function(cityId, success, error) {
-      return Venue.listCityFeatured({
-        cityId: cityId
-      }, success, error);
-    };
+      VenueService.prototype.listCityFeatured = function(cityId, success, error) {
+        return Venue.listCityFeatured({
+          cityId: cityId
+        }, success, error);
+      };
 
-    VenueService.prototype.listCityTonight = function(cityId, success, error) {
-      return Venue.listCityTonight({
-        cityId: cityId
-      }, success, error);
-    };
+      VenueService.prototype.listCityTonight = function(cityId, success, error) {
+        return Venue.listCityTonight({
+          cityId: cityId
+        }, success, error);
+      };
 
-    /*==============================================================*
-		/* Inventory
-		/*==============================================================*/
+      /*==============================================================*
+    /* Inventory
+    /*==============================================================*/
 
-    VenueService.prototype.listInventory = function(id, start, end, ticket, success, error) {
+      VenueService.prototype.listInventory = function(options, id, start, end, ticket, success, error) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
 
-      return Venue.listInventory({
-        id: id,
-        start: start,
-        end: end,
-        ticket: ticket
-      }, success, error);
-    };
+        options.ticket = options.ticket || 'false';
 
-    /*==============================================================*
-		/* Items
-		/*==============================================================*/
+        //options.start
+        //options.end
 
-    VenueService.prototype.listItems = function(id, success, error) {
+        var venueId = options.id;
+        delete options.venueId;
 
-      return Venue.listItems({
-        id: id
-      }, success, error);
-    };
+        return Venue.listInventory({
+          id: venueId
+        }, options).$promise;
+      };
+
+      /*==============================================================*
+    /* Items
+    /*==============================================================*/
+
+      VenueService.prototype.listItems = function(id, success, error) {
+
+        return Venue.listItems({
+          id: id
+        }, success, error);
+      };
 
 
-    VenueService.prototype.listBookings = function(params, success, error) {
+      VenueService.prototype.listBookings = function(params, success, error) {
 
-      return Venue.listBookings(params, success, error);
-    };
+        return Venue.listBookings(params, success, error);
+      };
 
-    return new VenueService();
-  }]);
+      return new VenueService();
+    }
+  ]);
