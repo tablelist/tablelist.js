@@ -12,6 +12,18 @@ angular.module('tl').service('tl.booking.service', [
       return Booking.create({}, options).$promise;
     };
 
+    BookingService.prototype.complete = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var bookingId = options.id;
+      delete options.id;
+
+      return Booking.complete({
+        id: bookingId
+      }, options).$promise;
+    };
+
     BookingService.prototype.void = function(id, notify, success, error) {
       return Booking.void({}, {
         id: id,

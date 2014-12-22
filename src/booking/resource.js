@@ -12,6 +12,10 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: 'booking'
       },
+      complete: {
+        method: 'POST',
+        url: endpoint + '/complete'
+      },
       void: {
         method: 'POST',
         url: endpoint + '/void'
