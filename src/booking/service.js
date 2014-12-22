@@ -13,7 +13,7 @@ angular.module('tl').service('tl.booking.service', [
       var bookingId = options.id;
       delete options.id;
 
-      return Booking.create({
+      return Booking.read({
         id: bookingId
       }, options).$promise;
     };
