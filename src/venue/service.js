@@ -38,17 +38,11 @@ angular
         if (!options) throw new Error('options.required');
         if (!options.id) throw new Error('options.id is required');
 
+        options.start = options.start || moment().startOf('month');
+        options.end = options.end || moment().endOf('month');
         options.ticket = options.ticket || 'false';
 
-        //options.start
-        //options.end
-
-        var venueId = options.id;
-        delete options.venueId;
-
-        return Venue.listInventory({
-          id: venueId
-        }, options).$promise;
+        return Venue.listInventory(options).$promise;
       };
 
       /*==============================================================*
