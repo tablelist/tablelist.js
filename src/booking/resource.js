@@ -8,6 +8,10 @@ angular.module('tl').factory('tl.booking.resource', [
     return resource(endpoint, {
       id: '@id'
     }, {
+      read: {
+        method: 'GET',
+        url: endpoint
+      },
       create: {
         method: 'POST',
         url: 'booking'

@@ -6,6 +6,18 @@ angular.module('tl').service('tl.booking.service', [
 
     var BookingService = Service.extend(Booking);
 
+    BookingService.prototype.read = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var bookingId = options.id;
+      delete options.id;
+
+      return Booking.create({
+        id: bookingId
+      }, options).$promise;
+    };
+
     BookingService.prototype.create = function(options) {
       if (!options) throw new Error('options is required');
 
