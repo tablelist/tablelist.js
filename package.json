@@ -34,6 +34,8 @@
   },
   "devDependencies": {
     "gulp-exec": "^2.1.1",
-    "karma": "^0.12.24"
+    "gulp-if": "^1.2.5",
+    "karma": "^0.12.24",
+    "shelljs": "^0.3.0"
   }
 }

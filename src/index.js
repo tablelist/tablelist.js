@@ -67,7 +67,7 @@ angular
 
       // needed for Provider
       $get: function() {
-        return config
+        return config;
       }
 
     };
@@ -82,4 +82,4 @@ angular
 function tablelist(env, client) {
   window.TL_ENV = env;
   window.TL_CLIENT = client;
-};
+}

@@ -1,6 +1,9 @@
+/* =========================================================================
+ * Dependencies
+ * ========================================================================= */
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
-var ngAnnotate = require('gulp-ng-annotate');
+//var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var watch = require('gulp-watch');
@@ -8,37 +11,75 @@ var concat = require('gulp-concat');
 var clean = require('gulp-clean');
 var karma = require('karma').server;
 var exec = require('gulp-exec');
+var sh = require('shelljs');
+var gulpIf = require('gulp-if');
+
+/* =========================================================================
+ * Constants
+ * ========================================================================= */
+var SRCDIR = 'src';
+var BUILDDIR = 'release';
+//js
+var UGLIFYOPTIONS = {
+  //http://davidwalsh.name/compress-uglify
+  mangle: true,
+  compress: {
+    sequences: true,
+    dead_code: true,
+    conditionals: true,
+    booleans: true,
+    unused: true,
+    if_return: true,
+    join_vars: true,
+    drop_console: true
+  }
+};
+var UNMINIFIEDSCRIPT = 'tablelist.js';
+var MINIFIEDSCRIPT = 'tablelist.min.js';
+
+/* =========================================================================
+ * Tasks
+ * ========================================================================= */
+gulp.task('default', ['release']);
 
 /**
- * Clean build folder
+ * Clean the build directory
  */
-function cleanTask() {
-  return gulp.src('build/*', {
-      read: false
-    })
-    .pipe(clean());
-}
+gulp.task('clean', function(next) {
+  sh.rm('-rf', BUILDDIR);
+  next();
+});
+
+gulp.task('copy-bower', function(next) {
+  sh.cp('bower.json', BUILDDIR + '/');
+  next();
+});
+
+gulp.task('prepare-release-dir', ['clean'], function(next) {
+  sh.mkdir(BUILDDIR);
+  next();
+});
 
 /**
- * Concatenate javascript files for dev
+ * Minify javascript files
  */
-function dev() {
-  return gulp.src(['src/**/*.js'])
-    .pipe(concat('tablelist.js'))
-    .pipe(ngAnnotate())
-    .pipe(gulp.dest('build'));
-}
+gulp.task('js', ['js-dev', 'js-prod']);
+gulp.task('js-dev', function() {
+  return gulp.src([SRCDIR + '/**/**/*.js'])
+    .pipe(concat(UNMINIFIEDSCRIPT))
+    .pipe(gulp.dest(BUILDDIR));
+});
+gulp.task('js-prod', function() {
+  return gulp.src([SRCDIR + '/**/**/*.js'])
+    .pipe(concat(MINIFIEDSCRIPT))
+    .pipe(uglify(MINIFIEDSCRIPT, UGLIFYOPTIONS))
+    .pipe(gulp.dest(BUILDDIR));
+});
 
 /**
- * Minify javascript files for prod
- */
-function prod() {
-  return gulp.src(['src/**/*.js'])
-    .pipe(concat('tablelist.min.js'))
-    .pipe(ngAnnotate())
-    .pipe(uglify())
-    .pipe(gulp.dest('build'));
-}
+ * Release - creates the release directory with all the necesarry files for our Bower package
+ **/
+gulp.task('release', ['prepare-release-dir', 'js', 'copy-bower']);
 
 /**
  * Js Hint
@@ -50,23 +91,16 @@ gulp.task('jshint', function() {
 });
 
 /**
- * Copy build files to a version release directory
+ * Watch
  */
-function prepareRelease() {
-  //var package = require('./bower.json');
-  return gulp.src('build/*')
-    .pipe(gulp.dest('release'));
-}
-
-/**
- * Watch for changes
- */
-function js() {
-  watch('src/**/*.js', {
+gulp.task('watch', function() {
+  watch(SRCDIR + '/**/**/*.*', {
     emit: 'one',
     emitOnGlob: false
-  }, dev);
-}
+  }, function(files) {
+    sh.exec('gulp release');
+  });
+});
 
 /**
  * Run unit tests - this task is run by Wercker when building our app
@@ -103,13 +137,6 @@ gulp.task('test-unit', ['release'], function(done) {
 //   }, done);
 // });
 
-/**
- * Register steps
- */
-gulp.task('js-dev', dev);
-gulp.task('js-prod', prod);
-gulp.task('watch', js);
-gulp.task('clean', cleanTask);
-gulp.task('prepare-release', ['js-dev', 'js-prod'], prepareRelease);
-gulp.task('release', ['clean', 'js-dev', 'js-prod', 'prepare-release']);
-gulp.task('default', ['clean', 'js-dev', 'js-prod']);
+/* =========================================================================
+ * Helper Functions
+ * ========================================================================= */
