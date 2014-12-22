@@ -116,7 +116,7 @@ gulp.task('test-unit', ['release'], function(done) {
       '../bower_components/angular-mocks/angular-mocks.js',
       '../bower_components/angular-resource/angular-resource.js',
       '../bower_components/sinon/lib/sinon.js',
-      '../build/tablelist.js',
+      '../release/tablelist.js',
       'unit/**/*.spec.js'
     ]
   }, done);

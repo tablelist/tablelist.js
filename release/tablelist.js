@@ -880,113 +880,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.booking.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/booking/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      create: {
-        method: 'POST',
-        url: 'booking',
-      },
-      void: {
-        method: 'POST',
-        url: endpoint + '/void'
-      },
-      refund: {
-        method: 'POST',
-        url: endpoint + '/refund'
-      },
-      join: {
-        method: 'POST',
-        url: 'booking/join'
-      },
-      accept: {
-        method: 'POST',
-        url: endpoint + '/accept'
-      },
-      updateBookingUser: {
-        method: 'PUT',
-        url: endpoint + '/users/:userId/'
-      },
-      readOutgoingPayment: {
-        method: 'GET',
-        url: endpoint + '/outgoing-payment'
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.booking.service', [
-    'tl.booking.resource',
-    'tl.service',
-    function(Booking, Service) {
-      'use strict';
-
-      var BookingService = Service.extend(Booking);
-
-      BookingService.prototype.create = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return Booking.create({}, options);
-      };
-
-      BookingService.prototype.void = function(id, notify, success, error) {
-        return Booking.void({}, {
-          id: id,
-          notify: notify ? true : false
-        }, success, error);
-      };
-
-      BookingService.prototype.refund = function(id, amount, reason, success, error) {
-        return Booking.refund({}, {
-          id: id,
-          money: amount,
-          reason: reason
-        }, success, error);
-      };
-
-      BookingService.prototype.join = function(splitCode, success, error) {
-        return Booking.join({}, {
-          splitCode: splitCode,
-        }, success, error);
-      };
-
-      BookingService.prototype.accept = function(id, success, error) {
-        return Booking.accept({}, {
-          id: id
-        }, success, error);
-      };
-
-      BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
-        return Booking.updateBookingUser({
-          id: id,
-          userId: userId
-        }, updates, success, error);
-      };
-
-      BookingService.prototype.readOutgoingPayment = function(id, success, error) {
-        return Booking.readOutgoingPayment({
-          id: id,
-        }, success, error);
-      };
-
-      return new BookingService();
-    }
-  ]);
-
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1184,6 +1077,113 @@ angular
 
 		return new CampaignService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.booking.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/booking/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      create: {
+        method: 'POST',
+        url: 'booking',
+      },
+      void: {
+        method: 'POST',
+        url: endpoint + '/void'
+      },
+      refund: {
+        method: 'POST',
+        url: endpoint + '/refund'
+      },
+      join: {
+        method: 'POST',
+        url: 'booking/join'
+      },
+      accept: {
+        method: 'POST',
+        url: endpoint + '/accept'
+      },
+      updateBookingUser: {
+        method: 'PUT',
+        url: endpoint + '/users/:userId/'
+      },
+      readOutgoingPayment: {
+        method: 'GET',
+        url: endpoint + '/outgoing-payment'
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.booking.service', [
+    'tl.booking.resource',
+    'tl.service',
+    function(Booking, Service) {
+      'use strict';
+
+      var BookingService = Service.extend(Booking);
+
+      BookingService.prototype.create = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return Booking.create({}, options);
+      };
+
+      BookingService.prototype.void = function(id, notify, success, error) {
+        return Booking.void({}, {
+          id: id,
+          notify: notify ? true : false
+        }, success, error);
+      };
+
+      BookingService.prototype.refund = function(id, amount, reason, success, error) {
+        return Booking.refund({}, {
+          id: id,
+          money: amount,
+          reason: reason
+        }, success, error);
+      };
+
+      BookingService.prototype.join = function(splitCode, success, error) {
+        return Booking.join({}, {
+          splitCode: splitCode,
+        }, success, error);
+      };
+
+      BookingService.prototype.accept = function(id, success, error) {
+        return Booking.accept({}, {
+          id: id
+        }, success, error);
+      };
+
+      BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
+        return Booking.updateBookingUser({
+          id: id,
+          userId: userId
+        }, updates, success, error);
+      };
+
+      BookingService.prototype.readOutgoingPayment = function(id, success, error) {
+        return Booking.readOutgoingPayment({
+          id: id,
+        }, success, error);
+      };
+
+      return new BookingService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -1587,6 +1587,45 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.prospect.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/prospect/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
+
+		var ProspectService = Service.extend(Prospect);
+
+		/**
+		 * Updates the current prospect
+		 */
+		ProspectService.prototype.updateProspect = function(data, success, error) {
+			delete data._id;
+			delete data.id;
+			
+			return Prospect.update({}, data, success, error);
+		};
+
+		return new ProspectService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1629,45 +1668,6 @@ angular
     ]);
 }());
 
-
-angular
-	.module('tl')
-	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.prospect.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/prospect/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
-
-		var ProspectService = Service.extend(Prospect);
-
-		/**
-		 * Updates the current prospect
-		 */
-		ProspectService.prototype.updateProspect = function(data, success, error) {
-			delete data._id;
-			delete data.id;
-			
-			return Prospect.update({}, data, success, error);
-		};
-
-		return new ProspectService();
-	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -1731,35 +1731,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.review.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/review/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
-
-		var ReviewService = Service.extend(Review);
-
-		return new ReviewService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1804,6 +1775,35 @@ angular
 		};
 
 		return new ReportService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.review.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/review/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
+
+		var ReviewService = Service.extend(Review);
+
+		return new ReviewService();
 	}]);
 
 angular
