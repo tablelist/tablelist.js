@@ -1,6 +1,7 @@
-angular
-  .module('tl')
-  .factory('tl.booking.resource', ['tl.resource', function(resource) {
+angular.module('tl').factory('tl.booking.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
 
     var endpoint = '/booking/:id';
 
@@ -9,7 +10,7 @@ angular
     }, {
       create: {
         method: 'POST',
-        url: 'booking',
+        url: 'booking'
       },
       void: {
         method: 'POST',
@@ -29,11 +30,12 @@ angular
       },
       updateBookingUser: {
         method: 'PUT',
-        url: endpoint + '/users/:userId/'
+        url: endpoint + '/users/:userId'
       },
       readOutgoingPayment: {
         method: 'GET',
         url: endpoint + '/outgoing-payment'
       }
     });
-  }]);
+  }
+]);

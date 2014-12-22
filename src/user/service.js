@@ -289,7 +289,7 @@ angular
         return User.unfavorite({
           id: userId,
           favoriteId: favoriteId
-        }, options);
+        }, options).$promise;
       };
 
       UserService.prototype.listFavorites = function(options) {
@@ -301,7 +301,7 @@ angular
 
         return User.listFavorites({
           id: userId
-        }, options);
+        }, options).$promise;
       };
 
       return new UserService();
