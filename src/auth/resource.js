@@ -1,6 +1,7 @@
-angular
-  .module('tl')
-  .factory('tl.auth.resource', ['tl.resource', function(resource) {
+angular.module('tl').factory('tl.auth.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
 
     var endpoint = '/auth';
 
@@ -39,4 +40,5 @@ angular
       }
 
     });
-  }]);
+  }
+]);

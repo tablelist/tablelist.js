@@ -854,37 +854,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -894,9 +863,10 @@ angular
     }
   ]);
 
-angular
-  .module('tl')
-  .factory('tl.auth.resource', ['tl.resource', function(resource) {
+angular.module('tl').factory('tl.auth.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
 
     var endpoint = '/auth';
 
@@ -935,114 +905,146 @@ angular
       }
 
     });
-  }]);
+  }
+]);
+
+angular.module('tl').service('tl.auth.service', [
+  'tl.auth.resource',
+  'tl.keychain',
+  'tl.user.service',
+  'tl.facebook',
+  function(Auth, keychain, user, fb) {
+    'use strict';
+
+    var AuthService = function() {};
+
+    /**
+     * Gets the current users auth token from the keychain
+     */
+    AuthService.prototype.authToken = function() {
+      return keychain.authToken();
+    };
+
+    /**
+     * Stores an auth token in the keychain
+     */
+    AuthService.prototype.setAuthToken = function(token) {
+      return keychain.setAuthToken(token);
+    };
+
+    /**
+     * Registers a new user
+     */
+    AuthService.prototype.register = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.email) throw new Error('options.email is required');
+      if (!options.password) throw new Error('options.password is required');
+      if (!options.firstName) throw new Error('options.firstName is required');
+      if (!options.lastName) throw new Error('options.lastName is required');
+
+      var _this = this;
+
+      return Auth.register({}, options).$promise.then(function success(auth) {
+        _this.setAuthToken(auth.token);
+        user.setCurrentUser(auth.user);
+      });
+    };
+
+    /**
+     * Logs in a user via email and password
+     */
+    AuthService.prototype.login = function(email, password, success, error) {
+      success = success || function() {};
+      var _this = this;
+      return Auth.login({}, {
+          email: email,
+          password: password
+        })
+        .$promise.then(function(auth) {
+          _this.setAuthToken(auth.token);
+          user.setCurrentUser(auth.user);
+          success(auth);
+        }, error);
+    };
+
+    /**
+     * Attempts to login a user via Facebook
+     */
+    AuthService.prototype.loginWithFacebook = function(success, error) {
+      success = success || function() {};
+      var _this = this;
+      fb.login(function(err, token) {
+        return Auth.loginFacebook({}, {
+            facebookToken: token
+          })
+          .$promise.then(function(auth) {
+            _this.setAuthToken(auth.token);
+            user.setCurrentUser(auth.user);
+            success(auth);
+          }, error);
+      });
+    };
+
+    /**
+     * Logs out the current user
+     */
+    AuthService.prototype.logout = function() {
+      this.setAuthToken(null);
+      user.setCurrentUser(null);
+      return true;
+    };
+
+    /**
+     * Sends a reset password to the given email address
+     */
+    AuthService.prototype.forgotPassword = function(email, success, error) {
+      return Auth.forgotPassword({}, {
+        email: email
+      }, success, error);
+    };
+
+    /**
+     * Resets a users password based on token recieved from forgot password email
+     */
+    AuthService.prototype.resetPassword = function(token, password, success, error) {
+      return Auth.resetPassword({}, {
+        resetToken: token,
+        password: password
+      }, success, error);
+    };
+
+    return new AuthService();
+  }
+]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
 
 angular
   .module('tl')
-  .service('tl.auth.service', ['tl.auth.resource', 'tl.keychain', 'tl.user.service', 'tl.facebook',
-    function(Auth, keychain, user, fb) {
-      'use strict';
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
 
-      var AuthService = function() {};
+      var AnswerService = Service.extend(Answer);
 
-      /**
-       * Gets the current users auth token from the keychain
-       */
-      AuthService.prototype.authToken = function() {
-        return keychain.authToken();
-      };
-
-      /**
-       * Stores an auth token in the keychain
-       */
-      AuthService.prototype.setAuthToken = function(token) {
-        return keychain.setAuthToken(token);
-      };
-
-      /**
-       * Registers a new user
-       */
-      AuthService.prototype.register = function(email, password, firstName, lastName, promo, success, error) {
-        success = success || function() {};
-        var _this = this;
-        return Auth.register({}, {
-            email: email,
-            password: password,
-            firstName: firstName,
-            lastName: lastName,
-            promo: promo
-          })
-          .$promise.then(function(auth) {
-            _this.setAuthToken(auth.token);
-            user.setCurrentUser(auth.user);
-            success(auth);
-          }, error);
-      };
-
-      /**
-       * Logs in a user via email and password
-       */
-      AuthService.prototype.login = function(email, password, success, error) {
-        success = success || function() {};
-        var _this = this;
-        return Auth.login({}, {
-            email: email,
-            password: password
-          })
-          .$promise.then(function(auth) {
-            _this.setAuthToken(auth.token);
-            user.setCurrentUser(auth.user);
-            success(auth);
-          }, error);
-      };
-
-      /**
-       * Attempts to login a user via Facebook
-       */
-      AuthService.prototype.loginWithFacebook = function(success, error) {
-        success = success || function() {};
-        var _this = this;
-        fb.login(function(err, token) {
-          return Auth.loginFacebook({}, {
-              facebookToken: token
-            })
-            .$promise.then(function(auth) {
-              _this.setAuthToken(auth.token);
-              user.setCurrentUser(auth.user);
-              success(auth);
-            }, error);
-        });
-      };
-
-      /**
-       * Logs out the current user
-       */
-      AuthService.prototype.logout = function() {
-        this.setAuthToken(null);
-        user.setCurrentUser(null);
-        return true;
-      };
-
-      /**
-       * Sends a reset password to the given email address
-       */
-      AuthService.prototype.forgotPassword = function(email, success, error) {
-        return Auth.forgotPassword({}, {
-          email: email
-        }, success, error);
-      };
-
-      /**
-       * Resets a users password based on token recieved from forgot password email
-       */
-      AuthService.prototype.resetPassword = function(token, password, success, error) {
-        return Auth.resetPassword({}, {
-          resetToken: token,
-          password: password
-        }, success, error);
-      };
-
-      return new AuthService();
+      return new AnswerService();
     }
   ]);
 
@@ -1647,6 +1649,45 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.prospect.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/prospect/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
+
+		var ProspectService = Service.extend(Prospect);
+
+		/**
+		 * Updates the current prospect
+		 */
+		ProspectService.prototype.updateProspect = function(data, success, error) {
+			delete data._id;
+			delete data.id;
+			
+			return Prospect.update({}, data, success, error);
+		};
+
+		return new ProspectService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1689,93 +1730,6 @@ angular
     ]);
 }());
 
-
-angular
-	.module('tl')
-	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.prospect.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/prospect/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
-
-		var ProspectService = Service.extend(Prospect);
-
-		/**
-		 * Updates the current prospect
-		 */
-		ProspectService.prototype.updateProspect = function(data, success, error) {
-			delete data._id;
-			delete data.id;
-			
-			return Prospect.update({}, data, success, error);
-		};
-
-		return new ProspectService();
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.report.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/report/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			reports: {
-				method: 'GET',
-				url: '/report/types'
-			},
-			download: {
-				method: 'GET',
-				url: endpoint + '/download'
-			}
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
-
-		var ReportService = Service.extend(Report);
-
-		ReportService.prototype.reports = function(success, error) {
-			return Report.reports({}, success, error);
-		};
-
-		ReportService.prototype.listReports = function(key, success, error) {
-			return Report.query({ report: key }, success, error);
-		};
-
-		ReportService.prototype.download = function(reportId, success, error) {
-			return Report.download({ id: reportId }, success, error);
-		};
-
-		return new ReportService();
-	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -1836,6 +1790,54 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.report.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/report/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			reports: {
+				method: 'GET',
+				url: '/report/types'
+			},
+			download: {
+				method: 'GET',
+				url: endpoint + '/download'
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
+
+		var ReportService = Service.extend(Report);
+
+		ReportService.prototype.reports = function(success, error) {
+			return Report.reports({}, success, error);
+		};
+
+		ReportService.prototype.listReports = function(key, success, error) {
+			return Report.query({ report: key }, success, error);
+		};
+
+		ReportService.prototype.download = function(reportId, success, error) {
+			return Report.download({ id: reportId }, success, error);
+		};
+
+		return new ReportService();
+	}]);
 
 angular
 	.module('tl')
