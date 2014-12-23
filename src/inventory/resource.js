@@ -12,7 +12,8 @@ angular
       }, {
         listForVenue: {
           method: 'GET',
-          url: '/inventory'
+          url: '/inventory',
+          isArray: true
         }
       });
     }
