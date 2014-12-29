@@ -165,10 +165,11 @@ angular
       /**
        * Lists a user's bookings
        */
-      UserService.prototype.listBookings = function(userId, success, error) {
-        return User.listBookings({
-          id: userId
-        }, success, error);
+      UserService.prototype.listBookings = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        return User.listBookings(options).$promise;
       };
 
       /**
@@ -273,7 +274,7 @@ angular
 
         return User.favorite({
           id: userId
-        }, options);
+        }, options).$promise;
       };
 
       UserService.prototype.unfavorite = function(options) {
@@ -299,9 +300,7 @@ angular
         var userId = options.userId;
         delete options.userId;
 
-        return User.listFavorites({
-          id: userId
-        }, options).$promise;
+        return User.listFavorites(options).$promise;
       };
 
       return new UserService();

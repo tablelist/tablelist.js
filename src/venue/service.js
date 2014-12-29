@@ -34,7 +34,7 @@ angular
     /* Inventory
     /*==============================================================*/
 
-      VenueService.prototype.listInventory = function(options, id, start, end, ticket, success, error) {
+      VenueService.prototype.listInventory = function(options) {
         if (!options) throw new Error('options.required');
         if (!options.id) throw new Error('options.id is required');
 

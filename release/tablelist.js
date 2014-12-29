@@ -854,6 +854,37 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1020,37 +1051,6 @@ angular.module('tl').service('tl.auth.service', [
 
 angular
 	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1117,12 +1117,7 @@ angular.module('tl').service('tl.booking.service', [
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      var bookingId = options.id;
-      delete options.id;
-
-      return Booking.read({
-        id: bookingId
-      }, options).$promise;
+      return Booking.read(options).$promise;
     };
 
     BookingService.prototype.create = function(options) {
@@ -1649,45 +1644,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.prospect.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/prospect/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
-
-		var ProspectService = Service.extend(Prospect);
-
-		/**
-		 * Updates the current prospect
-		 */
-		ProspectService.prototype.updateProspect = function(data, success, error) {
-			delete data._id;
-			delete data.id;
-			
-			return Prospect.update({}, data, success, error);
-		};
-
-		return new ProspectService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1730,6 +1686,45 @@ angular
     ]);
 }());
 
+
+angular
+	.module('tl')
+	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.prospect.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/prospect/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
+
+		var ProspectService = Service.extend(Prospect);
+
+		/**
+		 * Updates the current prospect
+		 */
+		ProspectService.prototype.updateProspect = function(data, success, error) {
+			delete data._id;
+			delete data.id;
+			
+			return Prospect.update({}, data, success, error);
+		};
+
+		return new ProspectService();
+	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -1899,35 +1894,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.schedule.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/schedule/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
-
-		var ScheduleService = Service.extend(Schedule);
-
-		return new ScheduleService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1978,6 +1944,35 @@ angular
 		};
 
 		return new SettingsService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/schedule/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+
+		var ScheduleService = Service.extend(Schedule);
+
+		return new ScheduleService();
 	}]);
 
 angular
@@ -2442,10 +2437,11 @@ angular
       /**
        * Lists a user's bookings
        */
-      UserService.prototype.listBookings = function(userId, success, error) {
-        return User.listBookings({
-          id: userId
-        }, success, error);
+      UserService.prototype.listBookings = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        return User.listBookings(options).$promise;
       };
 
       /**
@@ -2550,7 +2546,7 @@ angular
 
         return User.favorite({
           id: userId
-        }, options);
+        }, options).$promise;
       };
 
       UserService.prototype.unfavorite = function(options) {
@@ -2576,9 +2572,7 @@ angular
         var userId = options.userId;
         delete options.userId;
 
-        return User.listFavorites({
-          id: userId
-        }, options).$promise;
+        return User.listFavorites(options).$promise;
       };
 
       return new UserService();
@@ -2774,7 +2768,7 @@ angular
     /* Inventory
     /*==============================================================*/
 
-      VenueService.prototype.listInventory = function(options, id, start, end, ticket, success, error) {
+      VenueService.prototype.listInventory = function(options) {
         if (!options) throw new Error('options.required');
         if (!options.id) throw new Error('options.id is required');
 
