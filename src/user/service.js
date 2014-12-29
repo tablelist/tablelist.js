@@ -167,7 +167,7 @@ angular
        */
       UserService.prototype.listBookings = function(options) {
         if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.id) throw new Error('options.id is required');
 
         return User.listBookings(options).$promise;
       };
