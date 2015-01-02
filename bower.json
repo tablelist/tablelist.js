@@ -1,6 +1,10 @@
 {
   "name": "Tablelist JS SDK",
+<<<<<<< HEAD
   "version": "0.3.1",
+=======
+  "version": "0.3.2",
+>>>>>>> master
   "homepage": "https://github.com/tablelist/tablelist.js",
   "authors": [
     "Andrew Barba <andrew@tablelist.com>",
