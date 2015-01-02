@@ -9,7 +9,7 @@ angular
       return Metric.available({}, success, error);
     };
 
-    MetricService.prototype.query = function(metrics, period, range, options, success, error) {
+    MetricService.prototype.queryMetrics = function(metrics, period, range, options, success, error) {
       if (arguments.length < 6) {
         error = success;
         success = options;
