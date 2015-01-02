@@ -308,339 +308,6 @@ angular
     }
   }]);
 
-
-angular
-	.module('tl')
-	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.ambassador.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/ambassador';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        getAll: {
-          method: 'GET',
-          url: 'ambassador',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
-    function(Service, Ambassador) {
-
-      var AmbassadorService = Service.extend(Ambassador);
-
-      AmbassadorService.prototype.getAll = function(){
-        return Ambassador.getAll();
-      };
-
-      return new AmbassadorService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.auth.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/auth';
-
-    return resource(endpoint, {
-      // nothing here
-    }, {
-
-      register: {
-        method: 'POST',
-        url: endpoint + '/register',
-        isArray: false
-      },
-
-      login: {
-        method: 'POST',
-        url: endpoint + '/login',
-        isArray: false
-      },
-
-      loginFacebook: {
-        method: 'POST',
-        url: endpoint + '/facebook',
-        isArray: false
-      },
-
-      forgotPassword: {
-        method: 'POST',
-        url: endpoint + '/forgot',
-        isArray: false
-      },
-
-      resetPassword: {
-        method: 'POST',
-        url: endpoint + '/reset',
-        isArray: false
-      }
-
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.auth.service', ['tl.auth.resource', 'tl.keychain', 'tl.user.service', 'tl.facebook',
-    function(Auth, keychain, user, fb) {
-      'use strict';
-
-      var AuthService = function() {};
-
-      /**
-       * Gets the current users auth token from the keychain
-       */
-      AuthService.prototype.authToken = function() {
-        return keychain.authToken();
-      };
-
-      /**
-       * Stores an auth token in the keychain
-       */
-      AuthService.prototype.setAuthToken = function(token) {
-        return keychain.setAuthToken(token);
-      };
-
-      /**
-       * Registers a new user
-       */
-      AuthService.prototype.register = function(email, password, firstName, lastName, promo, success, error) {
-        success = success || function() {};
-        var _this = this;
-        return Auth.register({}, {
-            email: email,
-            password: password,
-            firstName: firstName,
-            lastName: lastName,
-            promo: promo
-          })
-          .$promise.then(function(auth) {
-            _this.setAuthToken(auth.token);
-            user.setCurrentUser(auth.user);
-            success(auth);
-          }, error);
-      };
-
-      /**
-       * Logs in a user via email and password
-       */
-      AuthService.prototype.login = function(email, password, success, error) {
-        success = success || function() {};
-        var _this = this;
-        return Auth.login({}, {
-            email: email,
-            password: password
-          })
-          .$promise.then(function(auth) {
-            _this.setAuthToken(auth.token);
-            user.setCurrentUser(auth.user);
-            success(auth);
-          }, error);
-      };
-
-      /**
-       * Attempts to login a user via Facebook
-       */
-      AuthService.prototype.loginWithFacebook = function(success, error) {
-        success = success || function() {};
-        var _this = this;
-        fb.login(function(err, token) {
-          return Auth.loginFacebook({}, {
-              facebookToken: token
-            })
-            .$promise.then(function(auth) {
-              _this.setAuthToken(auth.token);
-              user.setCurrentUser(auth.user);
-              success(auth);
-            }, error);
-        });
-      };
-
-      /**
-       * Logs out the current user
-       */
-      AuthService.prototype.logout = function() {
-        this.setAuthToken(null);
-        user.setCurrentUser(null);
-        return true;
-      };
-
-      /**
-       * Sends a reset password to the given email address
-       */
-      AuthService.prototype.forgotPassword = function(email, success, error) {
-        return Auth.forgotPassword({}, {
-          email: email
-        }, success, error);
-      };
-
-      /**
-       * Resets a users password based on token recieved from forgot password email
-       */
-      AuthService.prototype.resetPassword = function(token, password, success, error) {
-        return Auth.resetPassword({}, {
-          resetToken: token,
-          password: password
-        }, success, error);
-      };
-
-      return new AuthService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.booking.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/booking/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      create: {
-        method: 'POST',
-        url: 'booking',
-      },
-      void: {
-        method: 'POST',
-        url: endpoint + '/void'
-      },
-      refund: {
-        method: 'POST',
-        url: endpoint + '/refund'
-      },
-      join: {
-        method: 'POST',
-        url: 'booking/join'
-      },
-      accept: {
-        method: 'POST',
-        url: endpoint + '/accept'
-      },
-      updateBookingUser: {
-        method: 'PUT',
-        url: endpoint + '/users/:userId/'
-      },
-      readOutgoingPayment: {
-        method: 'GET',
-        url: endpoint + '/outgoing-payment'
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.booking.service', ['tl.booking.resource', 'tl.service', function(Booking, Service) {
-
-    var BookingService = Service.extend(Booking);
-
-    BookingService.prototype.create = function(data, success, error) {
-      return Booking.create({}, data, success, error);
-    };
-
-    BookingService.prototype.void = function(id, notify, success, error) {
-      return Booking.void({}, {
-        id: id,
-        notify: notify ? true : false
-      }, success, error);
-    };
-
-    BookingService.prototype.refund = function(id, amount, reason, success, error) {
-      return Booking.refund({}, {
-        id: id,
-        money: amount,
-        reason: reason
-      }, success, error);
-    };
-
-    BookingService.prototype.join = function(splitCode, success, error) {
-      return Booking.join({}, {
-        splitCode: splitCode,
-      }, success, error);
-    };
-
-    BookingService.prototype.accept = function(id, success, error) {
-      return Booking.accept({}, {
-        id: id
-      }, success, error);
-    };
-
-    BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
-      return Booking.updateBookingUser({
-        id: id,
-        userId: userId
-      }, updates, success, error);
-    };
-
-    BookingService.prototype.readOutgoingPayment = function(id, success, error) {
-      return Booking.readOutgoingPayment({
-        id: id,
-      }, success, error);
-    };
-
-    return new BookingService();
-  }]);
-
 /**
  * Angular module for setting, reading and removing cookies
  *
@@ -1144,6 +811,339 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.ambassador.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/ambassador';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        getAll: {
+          method: 'GET',
+          url: 'ambassador',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
+    function(Service, Ambassador) {
+
+      var AmbassadorService = Service.extend(Ambassador);
+
+      AmbassadorService.prototype.getAll = function(){
+        return Ambassador.getAll();
+      };
+
+      return new AmbassadorService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.auth.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/auth';
+
+    return resource(endpoint, {
+      // nothing here
+    }, {
+
+      register: {
+        method: 'POST',
+        url: endpoint + '/register',
+        isArray: false
+      },
+
+      login: {
+        method: 'POST',
+        url: endpoint + '/login',
+        isArray: false
+      },
+
+      loginFacebook: {
+        method: 'POST',
+        url: endpoint + '/facebook',
+        isArray: false
+      },
+
+      forgotPassword: {
+        method: 'POST',
+        url: endpoint + '/forgot',
+        isArray: false
+      },
+
+      resetPassword: {
+        method: 'POST',
+        url: endpoint + '/reset',
+        isArray: false
+      }
+
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.auth.service', ['tl.auth.resource', 'tl.keychain', 'tl.user.service', 'tl.facebook',
+    function(Auth, keychain, user, fb) {
+      'use strict';
+
+      var AuthService = function() {};
+
+      /**
+       * Gets the current users auth token from the keychain
+       */
+      AuthService.prototype.authToken = function() {
+        return keychain.authToken();
+      };
+
+      /**
+       * Stores an auth token in the keychain
+       */
+      AuthService.prototype.setAuthToken = function(token) {
+        return keychain.setAuthToken(token);
+      };
+
+      /**
+       * Registers a new user
+       */
+      AuthService.prototype.register = function(email, password, firstName, lastName, promo, success, error) {
+        success = success || function() {};
+        var _this = this;
+        return Auth.register({}, {
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName,
+            promo: promo
+          })
+          .$promise.then(function(auth) {
+            _this.setAuthToken(auth.token);
+            user.setCurrentUser(auth.user);
+            success(auth);
+          }, error);
+      };
+
+      /**
+       * Logs in a user via email and password
+       */
+      AuthService.prototype.login = function(email, password, success, error) {
+        success = success || function() {};
+        var _this = this;
+        return Auth.login({}, {
+            email: email,
+            password: password
+          })
+          .$promise.then(function(auth) {
+            _this.setAuthToken(auth.token);
+            user.setCurrentUser(auth.user);
+            success(auth);
+          }, error);
+      };
+
+      /**
+       * Attempts to login a user via Facebook
+       */
+      AuthService.prototype.loginWithFacebook = function(success, error) {
+        success = success || function() {};
+        var _this = this;
+        fb.login(function(err, token) {
+          return Auth.loginFacebook({}, {
+              facebookToken: token
+            })
+            .$promise.then(function(auth) {
+              _this.setAuthToken(auth.token);
+              user.setCurrentUser(auth.user);
+              success(auth);
+            }, error);
+        });
+      };
+
+      /**
+       * Logs out the current user
+       */
+      AuthService.prototype.logout = function() {
+        this.setAuthToken(null);
+        user.setCurrentUser(null);
+        return true;
+      };
+
+      /**
+       * Sends a reset password to the given email address
+       */
+      AuthService.prototype.forgotPassword = function(email, success, error) {
+        return Auth.forgotPassword({}, {
+          email: email
+        }, success, error);
+      };
+
+      /**
+       * Resets a users password based on token recieved from forgot password email
+       */
+      AuthService.prototype.resetPassword = function(token, password, success, error) {
+        return Auth.resetPassword({}, {
+          resetToken: token,
+          password: password
+        }, success, error);
+      };
+
+      return new AuthService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.booking.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/booking/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      create: {
+        method: 'POST',
+        url: 'booking',
+      },
+      void: {
+        method: 'POST',
+        url: endpoint + '/void'
+      },
+      refund: {
+        method: 'POST',
+        url: endpoint + '/refund'
+      },
+      join: {
+        method: 'POST',
+        url: 'booking/join'
+      },
+      accept: {
+        method: 'POST',
+        url: endpoint + '/accept'
+      },
+      updateBookingUser: {
+        method: 'PUT',
+        url: endpoint + '/users/:userId/'
+      },
+      readOutgoingPayment: {
+        method: 'GET',
+        url: endpoint + '/outgoing-payment'
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.booking.service', ['tl.booking.resource', 'tl.service', function(Booking, Service) {
+
+    var BookingService = Service.extend(Booking);
+
+    BookingService.prototype.create = function(data, success, error) {
+      return Booking.create({}, data, success, error);
+    };
+
+    BookingService.prototype.void = function(id, notify, success, error) {
+      return Booking.void({}, {
+        id: id,
+        notify: notify ? true : false
+      }, success, error);
+    };
+
+    BookingService.prototype.refund = function(id, amount, reason, success, error) {
+      return Booking.refund({}, {
+        id: id,
+        money: amount,
+        reason: reason
+      }, success, error);
+    };
+
+    BookingService.prototype.join = function(splitCode, success, error) {
+      return Booking.join({}, {
+        splitCode: splitCode,
+      }, success, error);
+    };
+
+    BookingService.prototype.accept = function(id, success, error) {
+      return Booking.accept({}, {
+        id: id
+      }, success, error);
+    };
+
+    BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
+      return Booking.updateBookingUser({
+        id: id,
+        userId: userId
+      }, updates, success, error);
+    };
+
+    BookingService.prototype.readOutgoingPayment = function(id, success, error) {
+      return Booking.readOutgoingPayment({
+        id: id,
+      }, success, error);
+    };
+
+    return new BookingService();
+  }]);
+
+
+angular
+	.module('tl')
 	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1384,6 +1384,35 @@ angular
 
 		return new InquiryService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.inventory.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/inventory/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.inventory.service', ['tl.service', 'tl.inventory.resource', function(Service, Inventory){
+
+		var InventoryService = Service.extend(Inventory);
+
+		return new InventoryService();
+	}]);
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -1447,35 +1476,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.inventory.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/inventory/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.inventory.service', ['tl.service', 'tl.inventory.resource', function(Service, Inventory){
-
-		var InventoryService = Service.extend(Inventory);
-
-		return new InventoryService();
-	}]);
 
 angular
 	.module('tl')
