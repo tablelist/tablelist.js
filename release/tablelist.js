@@ -1221,6 +1221,32 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.city.resource', ['tl.resource', function(resource){
+		return resource('/city/:id', {
+			id: '@id'
+		}, {
+			// no extra methods
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.city.service', ['tl.service', 'tl.city.resource', function(Service, City){
+
+		var CityService = Service.extend(City);
+
+		return new CityService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1305,32 +1331,6 @@ angular
     return new EventService();
   }]);
 
-
-angular
-	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.city.resource', ['tl.resource', function(resource){
-		return resource('/city/:id', {
-			id: '@id'
-		}, {
-			// no extra methods
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.city.service', ['tl.service', 'tl.city.resource', function(Service, City){
-
-		var CityService = Service.extend(City);
-
-		return new CityService();
-	}]);
 angular
   .module('tl')
   .service('tl.image', ['tl.image.resource', 'tl.image.service',
@@ -1569,6 +1569,73 @@ angular
 
 		return new ItemService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.metric', ['tl.metric.resource', 'tl.metric.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.metric.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/metric/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			available: {
+				method: 'GET',
+				url: '/metric/available',
+				isArray: true
+			},
+
+			queryMetrics: {
+				method: 'GET',
+				url: '/metric'
+			}
+		});
+	}]);
+
+angular
+  .module('tl')
+  .service('tl.metric.service', ['tl.service', 'tl.metric.resource', function(Service, Metric){
+
+    var MetricService = Service.extend(Metric);
+
+    MetricService.prototype.availableMetrics = function(success, error) {
+      return Metric.available({}, success, error);
+    };
+
+    MetricService.prototype.query = function(metrics, period, range, options, success, error) {
+      if (arguments.length < 6) {
+        error = success;
+        success = options;
+        options = null;
+      }
+
+      var query = {
+        metric: metrics,
+        period: period,
+        start: range[0].getTime(),
+        end: range[1].getTime()
+      }
+
+      if (options) {
+        var keys = Object.keys(options);
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          query[key] = options[key];
+        }
+      }
+
+      return Metric.queryMetrics(query, success, error);
+    };
+
+    return new MetricService();
+  }]);
 
 angular
 	.module('tl')
@@ -2138,227 +2205,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.venue', ['tl.venue.resource', 'tl.venue.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.venue.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/venue/:id';
-
-    return resource(endpoint, {
-      id: '@id',
-      itemId: '@itemId',
-      imageId: '@imageId',
-      cityId: '@cityId'
-    }, {
-
-      /*==============================================================*
-      /* Cities
-      /*==============================================================*/
-
-      listForCity: {
-        method: 'GET',
-        url: '/city/:cityId/venue',
-        isArray: true
-      },
-      listCityFeatured: {
-        method: 'GET',
-        url: '/city/:cityId/venue/featured',
-        isArray: true
-      },
-      listCityTonight: {
-        method: 'GET',
-        url: '/city/:cityId/venue/tonight',
-        isArray: true
-      },
-
-      /*==============================================================*
-      /* Schedule
-      /*==============================================================*/
-
-      schedule: {
-        method: 'GET',
-        url: endpoint + '/schedule',
-      },
-      updateSchedule: {
-        method: 'PUT',
-        url: endpoint + '/schedule',
-      },
-
-      /*==============================================================*
-      /* Inventory
-      /*==============================================================*/
-
-      listInventory: {
-        method: 'GET',
-        url: endpoint + '/inventory',
-        isArray: false
-      },
-      listInventoryAdmin: {
-        method: 'GET',
-        url: endpoint + '/inventory/admin',
-        isArray: false
-      },
-      readInventory: {
-        method: 'GET',
-        url: endpoint + '/inventory/:tableId',
-        isArray: false
-      },
-      addInventory: {
-        method: 'POST',
-        url: endpoint + '/inventory',
-        isArray: false
-      },
-      updateInventory: {
-        method: 'PUT',
-        url: endpoint + '/inventory/:tableId',
-        isArray: false
-      },
-
-      /*==============================================================*
-      /* Events
-      /*==============================================================*/
-
-      listEvents: {
-        method: 'GET',
-        url: endpoint + '/event',
-        isArray: true
-      },
-      addEvent: {
-        method: 'POST',
-        url: '/event',
-        isArray: false
-      },
-
-      /*==============================================================*
-      /* Items
-      /*==============================================================*/
-
-      listItems: {
-        method: 'GET',
-        url: endpoint + '/item',
-        isArray: true
-      },
-      addItem: {
-        method: 'POST',
-        url: endpoint + '/item'
-      },
-      updateItem: {
-        method: 'PUT',
-        url: endpoint + '/item/:itemId'
-      },
-      deleteItem: {
-        method: 'DELETE',
-        url: endpoint + '/item/:itemId'
-      },
-
-      /*==============================================================*
-      /* Staff
-      /*==============================================================*/
-
-      listStaff: {
-        method: 'GET',
-        url: endpoint + '/user',
-        isArray: true
-      },
-      addStaff: {
-        method: 'POST',
-        url: endpoint + '/user',
-        isArray: true
-      },
-      updateStaff: {
-        method: 'PUT',
-        url: endpoint + '/user/:userId',
-        isArray: true
-      },
-      removeStaff: {
-        method: 'DELETE',
-        url: endpoint + '/user/:userId',
-        isArray: true
-      },
-
-      listBookings: {
-        method: 'GET',
-        url: endpoint + '/booking',
-        isArray: true
-      },
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.venue.service', [
-    'tl.service',
-    'tl.venue.resource',
-    function(Service, Venue) {
-      'use strict';
-
-      var VenueService = Service.extend(Venue);
-
-      /*==============================================================*
-    /* Cities
-    /*==============================================================*/
-
-      VenueService.prototype.listForCity = function(cityId, success, error) {
-        return Venue.listForCity({
-          cityId: cityId
-        }, success, error);
-      };
-
-      VenueService.prototype.listCityFeatured = function(cityId, success, error) {
-        return Venue.listCityFeatured({
-          cityId: cityId
-        }, success, error);
-      };
-
-      VenueService.prototype.listCityTonight = function(cityId, success, error) {
-        return Venue.listCityTonight({
-          cityId: cityId
-        }, success, error);
-      };
-
-      /*==============================================================*
-    /* Inventory
-    /*==============================================================*/
-
-      VenueService.prototype.listInventory = function(options) {
-        if (!options) throw new Error('options.required');
-        if (!options.id) throw new Error('options.id is required');
-
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-        options.ticket = options.ticket || 'false';
-
-        return Venue.listInventory(options).$promise;
-      };
-
-      /*==============================================================*
-    /* Items
-    /*==============================================================*/
-
-      VenueService.prototype.listItems = function(id, success, error) {
-
-        return Venue.listItems({
-          id: id
-        }, success, error);
-      };
-
-
-      VenueService.prototype.listBookings = function(params, success, error) {
-
-        return Venue.listBookings(params, success, error);
-      };
-
-      return new VenueService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.user', ['tl.user.resource', 'tl.user.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2797,5 +2643,226 @@ angular
       };
 
       return new UserService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.venue', ['tl.venue.resource', 'tl.venue.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.venue.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/venue/:id';
+
+    return resource(endpoint, {
+      id: '@id',
+      itemId: '@itemId',
+      imageId: '@imageId',
+      cityId: '@cityId'
+    }, {
+
+      /*==============================================================*
+      /* Cities
+      /*==============================================================*/
+
+      listForCity: {
+        method: 'GET',
+        url: '/city/:cityId/venue',
+        isArray: true
+      },
+      listCityFeatured: {
+        method: 'GET',
+        url: '/city/:cityId/venue/featured',
+        isArray: true
+      },
+      listCityTonight: {
+        method: 'GET',
+        url: '/city/:cityId/venue/tonight',
+        isArray: true
+      },
+
+      /*==============================================================*
+      /* Schedule
+      /*==============================================================*/
+
+      schedule: {
+        method: 'GET',
+        url: endpoint + '/schedule',
+      },
+      updateSchedule: {
+        method: 'PUT',
+        url: endpoint + '/schedule',
+      },
+
+      /*==============================================================*
+      /* Inventory
+      /*==============================================================*/
+
+      listInventory: {
+        method: 'GET',
+        url: endpoint + '/inventory',
+        isArray: false
+      },
+      listInventoryAdmin: {
+        method: 'GET',
+        url: endpoint + '/inventory/admin',
+        isArray: false
+      },
+      readInventory: {
+        method: 'GET',
+        url: endpoint + '/inventory/:tableId',
+        isArray: false
+      },
+      addInventory: {
+        method: 'POST',
+        url: endpoint + '/inventory',
+        isArray: false
+      },
+      updateInventory: {
+        method: 'PUT',
+        url: endpoint + '/inventory/:tableId',
+        isArray: false
+      },
+
+      /*==============================================================*
+      /* Events
+      /*==============================================================*/
+
+      listEvents: {
+        method: 'GET',
+        url: endpoint + '/event',
+        isArray: true
+      },
+      addEvent: {
+        method: 'POST',
+        url: '/event',
+        isArray: false
+      },
+
+      /*==============================================================*
+      /* Items
+      /*==============================================================*/
+
+      listItems: {
+        method: 'GET',
+        url: endpoint + '/item',
+        isArray: true
+      },
+      addItem: {
+        method: 'POST',
+        url: endpoint + '/item'
+      },
+      updateItem: {
+        method: 'PUT',
+        url: endpoint + '/item/:itemId'
+      },
+      deleteItem: {
+        method: 'DELETE',
+        url: endpoint + '/item/:itemId'
+      },
+
+      /*==============================================================*
+      /* Staff
+      /*==============================================================*/
+
+      listStaff: {
+        method: 'GET',
+        url: endpoint + '/user',
+        isArray: true
+      },
+      addStaff: {
+        method: 'POST',
+        url: endpoint + '/user',
+        isArray: true
+      },
+      updateStaff: {
+        method: 'PUT',
+        url: endpoint + '/user/:userId',
+        isArray: true
+      },
+      removeStaff: {
+        method: 'DELETE',
+        url: endpoint + '/user/:userId',
+        isArray: true
+      },
+
+      listBookings: {
+        method: 'GET',
+        url: endpoint + '/booking',
+        isArray: true
+      },
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.venue.service', [
+    'tl.service',
+    'tl.venue.resource',
+    function(Service, Venue) {
+      'use strict';
+
+      var VenueService = Service.extend(Venue);
+
+      /*==============================================================*
+    /* Cities
+    /*==============================================================*/
+
+      VenueService.prototype.listForCity = function(cityId, success, error) {
+        return Venue.listForCity({
+          cityId: cityId
+        }, success, error);
+      };
+
+      VenueService.prototype.listCityFeatured = function(cityId, success, error) {
+        return Venue.listCityFeatured({
+          cityId: cityId
+        }, success, error);
+      };
+
+      VenueService.prototype.listCityTonight = function(cityId, success, error) {
+        return Venue.listCityTonight({
+          cityId: cityId
+        }, success, error);
+      };
+
+      /*==============================================================*
+    /* Inventory
+    /*==============================================================*/
+
+      VenueService.prototype.listInventory = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+        options.ticket = options.ticket || 'false';
+
+        return Venue.listInventory(options).$promise;
+      };
+
+      /*==============================================================*
+    /* Items
+    /*==============================================================*/
+
+      VenueService.prototype.listItems = function(id, success, error) {
+
+        return Venue.listItems({
+          id: id
+        }, success, error);
+      };
+
+
+      VenueService.prototype.listBookings = function(params, success, error) {
+
+        return Venue.listBookings(params, success, error);
+      };
+
+      return new VenueService();
     }
   ]);
