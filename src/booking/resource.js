@@ -36,6 +36,10 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: endpoint + '/accept'
       },
+      decline : {
+        method: 'POST',
+        url: endpoint + '/decline'
+      },
       updateBookingUser: {
         method: 'PUT',
         url: endpoint + '/users/:userId'
