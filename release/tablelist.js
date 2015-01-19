@@ -1093,6 +1093,10 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: endpoint + '/accept'
       },
+      decline : {
+        method: 'POST',
+        url: endpoint + '/decline'
+      },
       updateBookingUser: {
         method: 'PUT',
         url: endpoint + '/users/:userId'
@@ -1162,6 +1166,13 @@ angular.module('tl').service('tl.booking.service', [
     BookingService.prototype.accept = function(id, success, error) {
       return Booking.accept({}, {
         id: id
+      }, success, error);
+    };
+
+    BookingService.prototype.decline = function(id, userId, success, error) {
+      return Booking.decline({}, {
+        id: id,
+        userId: userId
       }, success, error);
     };
 
@@ -1425,6 +1436,58 @@ angular
 
 		return new InquiryService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.inventory.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        listForVenue: {
+          method: 'GET',
+          url: '/inventory',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory.service', [
+    'tl.service',
+    'tl.inventory.resource',
+    function(Service, Inventory) {
+      'use strict';
+
+      var InventoryService = Service.extend(Inventory);
+
+      InventoryService.prototype.listForVenue = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.venue) throw new Error('options.venue is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+
+        return Inventory.listForVenue(options).$promise;
+      };
+
+      return new InventoryService();
+    }
+  ]);
+
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -1485,58 +1548,6 @@ angular
       };
 
       return new InvoiceService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.inventory.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        listForVenue: {
-          method: 'GET',
-          url: '/inventory',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory.service', [
-    'tl.service',
-    'tl.inventory.resource',
-    function(Service, Inventory) {
-      'use strict';
-
-      var InventoryService = Service.extend(Inventory);
-
-      InventoryService.prototype.listForVenue = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.venue) throw new Error('options.venue is required');
-
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-
-        return Inventory.listForVenue(options).$promise;
-      };
-
-      return new InventoryService();
     }
   ]);
 
