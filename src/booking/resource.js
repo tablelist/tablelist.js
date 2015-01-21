@@ -47,6 +47,10 @@ angular.module('tl').factory('tl.booking.resource', [
       readOutgoingPayment: {
         method: 'GET',
         url: endpoint + '/outgoing-payment'
+      },
+      readSplitTable: {
+        method: 'GET',
+        url: 'booking/split/:code'
       }
     });
   }

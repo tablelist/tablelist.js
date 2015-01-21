@@ -79,6 +79,12 @@ angular.module('tl').service('tl.booking.service', [
       }, success, error);
     };
 
+    BookingService.prototype.readSplitTable = function(splitCode, success, error){
+      return Booking.readSplitTable({
+        code: splitCode
+      },{}, success, error);
+    };
+
     return new BookingService();
   }
 ]);
