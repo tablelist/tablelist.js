@@ -84,6 +84,276 @@ function tablelist(env, client) {
   window.TL_CLIENT = client;
 }
 
+angular
+  .module('tl')
+  .factory('tl.resource', [
+    '$resource',
+    'tl.http',
+    function($resource, http) {
+      'use strict';
+
+      function _url(endpoint) {
+        return http.apiUrl(endpoint);
+      }
+
+      function _params(params) {
+        // do nothing for now
+        return params;
+      }
+
+      function _actions(actions) {
+        var _data = _commonActions();
+        var actionKeys = Object.keys(actions);
+        for (var i = 0; i < actionKeys.length; i++) {
+          var key = actionKeys[i];
+          _data[key] = actions[key];
+        }
+
+        var keys = Object.keys(_data);
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          var action = _data[key];
+          if (action.url) {
+            action.url = _url(action.url);
+          }
+        }
+
+        return _data;
+      }
+
+      function _commonActions(endpoint) {
+        return {
+
+          /*==============================================================*
+				/* CRUD: Default actions - get, query, save, remove|delete
+				/*==============================================================*/
+
+          update: {
+            method: 'PUT',
+            url: endpoint
+          },
+
+          /*==============================================================*
+				/* Images
+				/*==============================================================*/
+
+          listImages: {
+            method: 'GET',
+            url: endpoint + '/image',
+            isArray: true
+          },
+          addImage: {
+            method: 'POST',
+            url: endpoint + '/image',
+            isArray: true
+          },
+          deleteImage: {
+            method: 'DELETE',
+            url: endpoint + '/image/:imageId',
+            isArray: true
+          },
+          setPrimaryImage: {
+            method: 'PUT',
+            url: endpoint + '/image/:imageId',
+            isArray: true
+          }
+        };
+      }
+
+      function _resource(endpoint, url, params, actions) {
+        var resource = $resource(url, params, actions);
+        resource.ENDPOINT = endpoint;
+        resource.URL = url;
+        return resource;
+      }
+
+      return function(endpoint, urlParams, defaultActions) {
+
+        var url = _url(endpoint);
+        var params = _params(urlParams);
+        var actions = _actions(defaultActions);
+
+        return _resource(endpoint, url, params, actions);
+      }
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.service', ['tl.http', function(http) {
+    'use strict';
+
+    var Service = function(resource) {
+      this.resource = resource;
+    };
+
+    var extend = function(resource) {
+      var ExtendedService = function() {
+        Service.call(this, resource);
+      };
+
+      var proto = Service.prototype;
+      var keys = Object.keys(proto);
+      for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (key != 'constructor') {
+          ExtendedService.prototype[key] = proto[key];
+        }
+      }
+
+      return ExtendedService;
+    };
+
+    /*==============================================================*
+		/* Constants
+		/*==============================================================*/
+
+    var DEFAULT_LIMIT = 100;
+    var DEFAULT_SORT = '-created';
+
+    /*==============================================================*
+		/* CRUD
+		/*==============================================================*/
+
+    Service.prototype.create = function(data, success, error) {
+      return this.resource.save({}, data, success, error);
+    };
+
+    Service.prototype.read = function(id, success, error) {
+      return this.resource.get({
+        id: id
+      }, success, error);
+    };
+
+    Service.prototype.update = function(id, data, success, error) {
+      return this.resource.update({
+        id: id
+      }, data, success, error);
+    };
+
+    Service.prototype.delete = function(id, success, error) {
+      return this.resource.delete({
+        id: id
+      }, success, error);
+    };
+
+    Service.prototype.list = function(limit, sort, success, error) {
+      return this.resource.query({
+        sort: sort || DEFAULT_SORT,
+        limit: limit || DEFAULT_LIMIT
+      }, success, error);
+    };
+
+    /*==============================================================*
+		/* Query
+		/*==============================================================*/
+
+    Service.prototype.query = function(query, limit, sort, success, error) {
+      var queryString = this.buildQueryString(query);
+      if (!queryString) return null;
+
+      return this.resource.query({
+        query: queryString,
+        sort: sort || DEFAULT_SORT,
+        limit: limit || DEFAULT_LIMIT
+      }, success, error);
+    };
+
+    Service.prototype.totals = function(query, sort, success, error) {
+      var queryString = this.buildQueryString(query);
+      if (!queryString) return null;
+
+      return this.resource.query({
+        total: true,
+        query: queryString,
+        sort: sort || DEFAULT_SORT
+      }, success, error);
+    };
+
+    Service.prototype.buildQueryString = function(query, next) {
+      try {
+        return JSON.stringify(query);
+      } catch (err) {
+        return null;
+      }
+    };
+
+    /*==============================================================*
+		/* Images
+		/*==============================================================*/
+
+    Service.prototype.listImages = function(id, success, error) {
+      return this.resource.listImages({
+        id: id
+      }, success, error);
+    };
+
+    Service.prototype.addImage = function(id, image, success, error) {
+      image.id = id;
+      return this.resource.addImage(image, success, error);
+    };
+
+    Service.prototype.deleteImage = function(id, imageId, success, error) {
+      return this.resource.deleteImage({
+        id: id,
+        imageId: imageId
+      }, success, error);
+    };
+
+    Service.prototype.setPrimaryImage = function(id, imageId, success, error) {
+      return this.resource.setPrimaryImage({
+        id: id,
+        imageId: imageId
+      }, success, error);
+    };
+
+    return {
+      extend: extend,
+      common: Service
+    }
+  }]);
+
+
+angular
+	.module('tl')
+	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.ambassador.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/ambassador';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        getAll: {
+          method: 'GET',
+          url: 'ambassador',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
+    function(Service, Ambassador) {
+
+      var AmbassadorService = Service.extend(Ambassador);
+
+      AmbassadorService.prototype.getAll = function(){
+        return Ambassador.getAll();
+      };
+
+      return new AmbassadorService();
+    }
+  ]);
+
 /**
  * Angular module for setting, reading and removing cookies
  *
@@ -584,273 +854,34 @@ angular
     }
   }]);
 
-angular
-  .module('tl')
-  .factory('tl.resource', [
-    '$resource',
-    'tl.http',
-    function($resource, http) {
-      'use strict';
-
-      function _url(endpoint) {
-        return http.apiUrl(endpoint);
-      }
-
-      function _params(params) {
-        // do nothing for now
-        return params;
-      }
-
-      function _actions(actions) {
-        var _data = _commonActions();
-        var actionKeys = Object.keys(actions);
-        for (var i = 0; i < actionKeys.length; i++) {
-          var key = actionKeys[i];
-          _data[key] = actions[key];
-        }
-
-        var keys = Object.keys(_data);
-        for (var i = 0; i < keys.length; i++) {
-          var key = keys[i];
-          var action = _data[key];
-          if (action.url) {
-            action.url = _url(action.url);
-          }
-        }
-
-        return _data;
-      }
-
-      function _commonActions(endpoint) {
-        return {
-
-          /*==============================================================*
-				/* CRUD: Default actions - get, query, save, remove|delete
-				/*==============================================================*/
-
-          update: {
-            method: 'PUT',
-            url: endpoint
-          },
-
-          /*==============================================================*
-				/* Images
-				/*==============================================================*/
-
-          listImages: {
-            method: 'GET',
-            url: endpoint + '/image',
-            isArray: true
-          },
-          addImage: {
-            method: 'POST',
-            url: endpoint + '/image',
-            isArray: true
-          },
-          deleteImage: {
-            method: 'DELETE',
-            url: endpoint + '/image/:imageId',
-            isArray: true
-          },
-          setPrimaryImage: {
-            method: 'PUT',
-            url: endpoint + '/image/:imageId',
-            isArray: true
-          }
-        };
-      }
-
-      function _resource(endpoint, url, params, actions) {
-        var resource = $resource(url, params, actions);
-        resource.ENDPOINT = endpoint;
-        resource.URL = url;
-        return resource;
-      }
-
-      return function(endpoint, urlParams, defaultActions) {
-
-        var url = _url(endpoint);
-        var params = _params(urlParams);
-        var actions = _actions(defaultActions);
-
-        return _resource(endpoint, url, params, actions);
-      }
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.service', ['tl.http', function(http) {
-    'use strict';
-
-    var Service = function(resource) {
-      this.resource = resource;
-    };
-
-    var extend = function(resource) {
-      var ExtendedService = function() {
-        Service.call(this, resource);
-      };
-
-      var proto = Service.prototype;
-      var keys = Object.keys(proto);
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        if (key != 'constructor') {
-          ExtendedService.prototype[key] = proto[key];
-        }
-      }
-
-      return ExtendedService;
-    };
-
-    /*==============================================================*
-		/* Constants
-		/*==============================================================*/
-
-    var DEFAULT_LIMIT = 100;
-    var DEFAULT_SORT = '-created';
-
-    /*==============================================================*
-		/* CRUD
-		/*==============================================================*/
-
-    Service.prototype.create = function(data, success, error) {
-      return this.resource.save({}, data, success, error);
-    };
-
-    Service.prototype.read = function(id, success, error) {
-      return this.resource.get({
-        id: id
-      }, success, error);
-    };
-
-    Service.prototype.update = function(id, data, success, error) {
-      return this.resource.update({
-        id: id
-      }, data, success, error);
-    };
-
-    Service.prototype.delete = function(id, success, error) {
-      return this.resource.delete({
-        id: id
-      }, success, error);
-    };
-
-    Service.prototype.list = function(limit, sort, success, error) {
-      return this.resource.query({
-        sort: sort || DEFAULT_SORT,
-        limit: limit || DEFAULT_LIMIT
-      }, success, error);
-    };
-
-    /*==============================================================*
-		/* Query
-		/*==============================================================*/
-
-    Service.prototype.query = function(query, limit, sort, success, error) {
-      var queryString = this.buildQueryString(query);
-      if (!queryString) return null;
-
-      return this.resource.query({
-        query: queryString,
-        sort: sort || DEFAULT_SORT,
-        limit: limit || DEFAULT_LIMIT
-      }, success, error);
-    };
-
-    Service.prototype.totals = function(query, sort, success, error) {
-      var queryString = this.buildQueryString(query);
-      if (!queryString) return null;
-
-      return this.resource.query({
-        total: true,
-        query: queryString,
-        sort: sort || DEFAULT_SORT
-      }, success, error);
-    };
-
-    Service.prototype.buildQueryString = function(query, next) {
-      try {
-        return JSON.stringify(query);
-      } catch (err) {
-        return null;
-      }
-    };
-
-    /*==============================================================*
-		/* Images
-		/*==============================================================*/
-
-    Service.prototype.listImages = function(id, success, error) {
-      return this.resource.listImages({
-        id: id
-      }, success, error);
-    };
-
-    Service.prototype.addImage = function(id, image, success, error) {
-      image.id = id;
-      return this.resource.addImage(image, success, error);
-    };
-
-    Service.prototype.deleteImage = function(id, imageId, success, error) {
-      return this.resource.deleteImage({
-        id: id,
-        imageId: imageId
-      }, success, error);
-    };
-
-    Service.prototype.setPrimaryImage = function(id, imageId, success, error) {
-      return this.resource.setPrimaryImage({
-        id: id,
-        imageId: imageId
-      }, success, error);
-    };
-
-    return {
-      extend: extend,
-      common: Service
-    }
-  }]);
-
 
 angular
 	.module('tl')
-	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 angular
   .module('tl')
-  .factory('tl.ambassador.resource', ['tl.resource',
+  .factory('tl.answer.resource', ['tl.resource',
     function(resource) {
 
-      var endpoint = '/ambassador';
+      var endpoint = '/answer';
 
       return resource(endpoint, {
-        id: '@id'
-      }, {
-        getAll: {
-          method: 'GET',
-          url: 'ambassador',
-          isArray: true
-        }
-      });
+        // nothing here
+      }, {});
     }
   ]);
 
 angular
   .module('tl')
-  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
-    function(Service, Ambassador) {
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
 
-      var AmbassadorService = Service.extend(Ambassador);
+      var AnswerService = Service.extend(Answer);
 
-      AmbassadorService.prototype.getAll = function(){
-        return Ambassador.getAll();
-      };
-
-      return new AmbassadorService();
+      return new AnswerService();
     }
   ]);
 
@@ -1020,37 +1051,6 @@ angular.module('tl').service('tl.auth.service', [
 
 angular
 	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1104,6 +1104,10 @@ angular.module('tl').factory('tl.booking.resource', [
       readOutgoingPayment: {
         method: 'GET',
         url: endpoint + '/outgoing-payment'
+      },
+      readSplitTable: {
+        method: 'GET',
+        url: 'booking/split/:code'
       }
     });
   }
@@ -1188,6 +1192,12 @@ angular.module('tl').service('tl.booking.service', [
       return Booking.readOutgoingPayment({
         id: id,
       }, success, error);
+    };
+
+    BookingService.prototype.readSplitTable = function(splitCode, success, error){
+      return Booking.readSplitTable({
+        code: splitCode
+      },{}, success, error);
     };
 
     return new BookingService();
@@ -1489,6 +1499,98 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.invoice.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/invoice/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        // add additional methods here
+        update: {
+          method: 'PUT',
+          url: endpoint,
+          isArray: false
+        },
+        readPdf: {
+          method: 'GET',
+          url: endpoint + '/pdf',
+          isArray: false
+        },
+        createPdf: {
+          method: 'POST',
+          url: endpoint + '/pdf',
+          isArray: false
+        }
+
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.invoice.service', ['tl.service', 'tl.invoice.resource',
+    function(Service, Invoice) {
+
+      var InvoiceService = Service.extend(Invoice);
+
+      InvoiceService.prototype.readPdf = function(invoiceId) {
+        return Invoice.readPdf({
+          id: invoiceId
+        });
+      };
+
+      InvoiceService.prototype.createPdf = function(invoiceId) {
+        return Invoice.createPdf({
+          id: invoiceId
+        });
+      };
+
+      return new InvoiceService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.item.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/item/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
+
+		var ItemService = Service.extend(Item);
+
+		return new ItemService();
+	}]);
 
 angular
 	.module('tl')
@@ -1556,98 +1658,6 @@ angular
 
     return new MetricService();
   }]);
-
-angular
-	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.item.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/item/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
-
-		var ItemService = Service.extend(Item);
-
-		return new ItemService();
-	}]);
-angular
-  .module('tl')
-  .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.invoice.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/invoice/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        // add additional methods here
-        update: {
-          method: 'PUT',
-          url: endpoint,
-          isArray: false
-        },
-        readPdf: {
-          method: 'GET',
-          url: endpoint + '/pdf',
-          isArray: false
-        },
-        createPdf: {
-          method: 'POST',
-          url: endpoint + '/pdf',
-          isArray: false
-        }
-
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.invoice.service', ['tl.service', 'tl.invoice.resource',
-    function(Service, Invoice) {
-
-      var InvoiceService = Service.extend(Invoice);
-
-      InvoiceService.prototype.readPdf = function(invoiceId) {
-        return Invoice.readPdf({
-          id: invoiceId
-        });
-      };
-
-      InvoiceService.prototype.createPdf = function(invoiceId) {
-        return Invoice.createPdf({
-          id: invoiceId
-        });
-      };
-
-      return new InvoiceService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
@@ -1973,35 +1983,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.schedule.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/schedule/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
-
-		var ScheduleService = Service.extend(Schedule);
-
-		return new ScheduleService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2056,16 +2037,16 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 
 angular
 	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
+	.factory('tl.schedule.resource', ['tl.resource', function(resource){
 
-		var endpoint = '/table/:id';
+		var endpoint = '/schedule/:id';
 
 		return resource(endpoint, {
 			id: '@id'
@@ -2076,11 +2057,11 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
 
-		var TableService = Service.extend(Table);
+		var ScheduleService = Service.extend(Schedule);
 
-		return new TableService();
+		return new ScheduleService();
 	}]);
 
 angular
@@ -2213,6 +2194,35 @@ angular
 		};
 
 		return new TrackService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
 	}]);
 
 angular
