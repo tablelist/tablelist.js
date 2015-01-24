@@ -44,9 +44,10 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'PUT',
         url: endpoint + '/users/:userId'
       },
-      readOutgoingPayment: {
+      listOutgoingPayment: {
         method: 'GET',
-        url: endpoint + '/outgoing-payment'
+        url: endpoint + '/outgoing-payment',
+        isArray: true
       },
       readSplitTable: {
         method: 'GET',

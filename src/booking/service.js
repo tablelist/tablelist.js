@@ -73,8 +73,8 @@ angular.module('tl').service('tl.booking.service', [
       }, updates, success, error);
     };
 
-    BookingService.prototype.readOutgoingPayment = function(id, success, error) {
-      return Booking.readOutgoingPayment({
+    BookingService.prototype.listOutgoingPayment = function(id, success, error) {
+      return Booking.listOutgoingPayment({
         id: id,
       }, success, error);
     };
