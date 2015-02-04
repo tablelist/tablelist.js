@@ -313,6 +313,210 @@ angular
     }
   }]);
 
+
+angular
+	.module('tl')
+	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.ambassador.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/ambassador';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        getAll: {
+          method: 'GET',
+          url: 'ambassador',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
+    function(Service, Ambassador) {
+
+      var AmbassadorService = Service.extend(Ambassador);
+
+      AmbassadorService.prototype.getAll = function(){
+        return Ambassador.getAll();
+      };
+
+      return new AmbassadorService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular.module('tl').factory('tl.auth.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/auth';
+
+    return resource(endpoint, {
+      // nothing here
+    }, {
+
+      register: {
+        method: 'POST',
+        url: endpoint + '/register',
+        isArray: false
+      },
+
+      login: {
+        method: 'POST',
+        url: endpoint + '/login',
+        isArray: false
+      },
+
+      loginFacebook: {
+        method: 'POST',
+        url: endpoint + '/facebook',
+        isArray: false
+      },
+
+      forgotPassword: {
+        method: 'POST',
+        url: endpoint + '/forgot',
+        isArray: false
+      },
+
+      resetPassword: {
+        method: 'POST',
+        url: endpoint + '/reset',
+        isArray: false
+      }
+
+    });
+  }
+]);
+
+angular.module('tl').service('tl.auth.service', [
+  'tl.auth.resource',
+  'tl.keychain',
+  'tl.user.service',
+  'tl.facebook',
+  function(Auth, keychain, user, fb) {
+    'use strict';
+
+    var AuthService = function() {};
+
+    /**
+     * Gets the current users auth token from the keychain
+     */
+    AuthService.prototype.authToken = function() {
+      return keychain.authToken();
+    };
+
+    /**
+     * Stores an auth token in the keychain
+     */
+    AuthService.prototype.setAuthToken = function(token) {
+      return keychain.setAuthToken(token);
+    };
+
+    /**
+     * Registers a new user
+     */
+    AuthService.prototype.register = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.email) throw new Error('options.email is required');
+      if (!options.password) throw new Error('options.password is required');
+      if (!options.firstName) throw new Error('options.firstName is required');
+      if (!options.lastName) throw new Error('options.lastName is required');
+
+      var _this = this;
+
+      return Auth.register({}, options).$promise.then(function success(auth) {
+        _this.setAuthToken(auth.token);
+        user.setCurrentUser(auth.user);
+      });
+    };
+
+    /**
+     * Logs in a user via email and password
+     */
+    AuthService.prototype.login = function(email, password, success, error) {
+      success = success || function() {};
+      var _this = this;
+      return Auth.login({}, {
+          email: email,
+          password: password
+        })
+        .$promise.then(function(auth) {
+          _this.setAuthToken(auth.token);
+          user.setCurrentUser(auth.user);
+          success(auth);
+        }, error);
+    };
+
+    /**
+     * Attempts to login a user via Facebook
+     */
+    AuthService.prototype.loginWithFacebook = function(success, error) {
+      success = success || function() {};
+      var _this = this;
+      fb.login(function(err, token) {
+        return Auth.loginFacebook({}, {
+            facebookToken: token
+          })
+          .$promise.then(function(auth) {
+            _this.setAuthToken(auth.token);
+            user.setCurrentUser(auth.user);
+            success(auth);
+          }, error);
+      });
+    };
+
+    /**
+     * Logs out the current user
+     */
+    AuthService.prototype.logout = function() {
+      this.setAuthToken(null);
+      user.setCurrentUser(null);
+      return true;
+    };
+
+    /**
+     * Sends a reset password to the given email address
+     */
+    AuthService.prototype.forgotPassword = function(email, success, error) {
+      return Auth.forgotPassword({}, {
+        email: email
+      }, success, error);
+    };
+
+    /**
+     * Resets a users password based on token recieved from forgot password email
+     */
+    AuthService.prototype.resetPassword = function(token, password, success, error) {
+      return Auth.resetPassword({}, {
+        resetToken: token,
+        password: password
+      }, success, error);
+    };
+
+    return new AuthService();
+  }
+]);
+
 /**
  * Angular module for setting, reading and removing cookies
  *
@@ -816,273 +1020,28 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.ambassador.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/ambassador';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        getAll: {
-          method: 'GET',
-          url: 'ambassador',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
-    function(Service, Ambassador) {
-
-      var AmbassadorService = Service.extend(Ambassador);
-
-      AmbassadorService.prototype.getAll = function(){
-        return Ambassador.getAll();
-      };
-
-      return new AmbassadorService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular.module('tl').factory('tl.auth.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/auth';
-
-    return resource(endpoint, {
-      // nothing here
-    }, {
-
-      register: {
-        method: 'POST',
-        url: endpoint + '/register',
-        isArray: false
-      },
-
-      login: {
-        method: 'POST',
-        url: endpoint + '/login',
-        isArray: false
-      },
-
-      loginFacebook: {
-        method: 'POST',
-        url: endpoint + '/facebook',
-        isArray: false
-      },
-
-      forgotPassword: {
-        method: 'POST',
-        url: endpoint + '/forgot',
-        isArray: false
-      },
-
-      resetPassword: {
-        method: 'POST',
-        url: endpoint + '/reset',
-        isArray: false
-      }
-
-    });
-  }
-]);
-
-angular.module('tl').service('tl.auth.service', [
-  'tl.auth.resource',
-  'tl.keychain',
-  'tl.user.service',
-  'tl.facebook',
-  function(Auth, keychain, user, fb) {
-    'use strict';
-
-    var AuthService = function() {};
-
-    /**
-     * Gets the current users auth token from the keychain
-     */
-    AuthService.prototype.authToken = function() {
-      return keychain.authToken();
-    };
-
-    /**
-     * Stores an auth token in the keychain
-     */
-    AuthService.prototype.setAuthToken = function(token) {
-      return keychain.setAuthToken(token);
-    };
-
-    /**
-     * Registers a new user
-     */
-    AuthService.prototype.register = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.email) throw new Error('options.email is required');
-      if (!options.password) throw new Error('options.password is required');
-      if (!options.firstName) throw new Error('options.firstName is required');
-      if (!options.lastName) throw new Error('options.lastName is required');
-
-      var _this = this;
-
-      return Auth.register({}, options).$promise.then(function success(auth) {
-        _this.setAuthToken(auth.token);
-        user.setCurrentUser(auth.user);
-      });
-    };
-
-    /**
-     * Logs in a user via email and password
-     */
-    AuthService.prototype.login = function(email, password, success, error) {
-      success = success || function() {};
-      var _this = this;
-      return Auth.login({}, {
-          email: email,
-          password: password
-        })
-        .$promise.then(function(auth) {
-          _this.setAuthToken(auth.token);
-          user.setCurrentUser(auth.user);
-          success(auth);
-        }, error);
-    };
-
-    /**
-     * Attempts to login a user via Facebook
-     */
-    AuthService.prototype.loginWithFacebook = function(success, error) {
-      success = success || function() {};
-      var _this = this;
-      fb.login(function(err, token) {
-        return Auth.loginFacebook({}, {
-            facebookToken: token
-          })
-          .$promise.then(function(auth) {
-            _this.setAuthToken(auth.token);
-            user.setCurrentUser(auth.user);
-            success(auth);
-          }, error);
-      });
-    };
-
-    /**
-     * Logs out the current user
-     */
-    AuthService.prototype.logout = function() {
-      this.setAuthToken(null);
-      user.setCurrentUser(null);
-      return true;
-    };
-
-    /**
-     * Sends a reset password to the given email address
-     */
-    AuthService.prototype.forgotPassword = function(email, success, error) {
-      return Auth.forgotPassword({}, {
-        email: email
-      }, success, error);
-    };
-
-    /**
-     * Resets a users password based on token recieved from forgot password email
-     */
-    AuthService.prototype.resetPassword = function(token, password, success, error) {
-      return Auth.resetPassword({}, {
-        resetToken: token,
-        password: password
-      }, success, error);
-    };
-
-    return new AuthService();
-  }
-]);
-
-
-angular
-	.module('tl')
-	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 
 angular
 	.module('tl')
-	.factory('tl.campaign.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/campaign/:id';
-
-		return resource(endpoint, {
+	.factory('tl.city.resource', ['tl.resource', function(resource){
+		return resource('/city/:id', {
 			id: '@id'
 		}, {
-			
+			// no extra methods
 		});
 	}]);
 
 angular
 	.module('tl')
-	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
-		
-		var CampaignService = Service.extend(User);
+	.service('tl.city.service', ['tl.service', 'tl.city.resource', function(Service, City){
 
-		/**
-		 * List internal campaigns
-		 */
-		CampaignService.prototype.listInternal = function() {
-			return Campaign.list({ internal : true }).$promise;
-		};
+		var CityService = Service.extend(City);
 
-		return new CampaignService();
+		return new CityService();
 	}]);
 
 angular
@@ -1244,29 +1203,250 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 
 angular
 	.module('tl')
-	.factory('tl.city.resource', ['tl.resource', function(resource){
-		return resource('/city/:id', {
+	.factory('tl.campaign.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/campaign/:id';
+
+		return resource(endpoint, {
 			id: '@id'
 		}, {
-			// no extra methods
+			
 		});
 	}]);
 
 angular
 	.module('tl')
-	.service('tl.city.service', ['tl.service', 'tl.city.resource', function(Service, City){
+	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
+		
+		var CampaignService = Service.extend(User);
 
-		var CityService = Service.extend(City);
+		/**
+		 * List internal campaigns
+		 */
+		CampaignService.prototype.listInternal = function() {
+			return Campaign.list({ internal : true }).$promise;
+		};
 
-		return new CityService();
+		return new CampaignService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 4000000; //4mb
+
+        if (file.size > maxFileSize) deferred.reject('File cannot be greater than 4mb');
+
+        tlhttp.upload('/image', {
+          size: 'smallSquare'
+        }, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/inquiry/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+	      approve: {
+	        method: 'POST',
+	        url: endpoint + '/approve',
+	        isArray: false
+	      },
+	      decline: {
+	        method: 'POST',
+	        url: endpoint + '/decline',
+	        isArray: false
+	      },
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.inquiry.service', ['tl.service', 'tl.inquiry.resource', function(Service, Inquiry){
+
+		var InquiryService = Service.extend(Inquiry);
+
+
+	    InquiryService.prototype.approve = function(inquiryId, success, error) {
+	      return Inquiry.approve({
+	        id: inquiryId
+	      }, success, error);
+	    };
+
+	    InquiryService.prototype.decline = function(inquiryId, reason, success, error) {
+	      return Inquiry.decline({
+	        id: inquiryId,
+	        reason: reason
+	      }, success, error);
+	    };
+
+		return new InquiryService();
+	}]);
+angular
+  .module('tl')
+  .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.invoice.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/invoice/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        // add additional methods here
+        update: {
+          method: 'PUT',
+          url: endpoint,
+          isArray: false
+        },
+        readPdf: {
+          method: 'GET',
+          url: endpoint + '/pdf',
+          isArray: false
+        },
+        createPdf: {
+          method: 'POST',
+          url: endpoint + '/pdf',
+          isArray: false
+        }
+
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.invoice.service', ['tl.service', 'tl.invoice.resource',
+    function(Service, Invoice) {
+
+      var InvoiceService = Service.extend(Invoice);
+
+      InvoiceService.prototype.readPdf = function(invoiceId) {
+        return Invoice.readPdf({
+          id: invoiceId
+        });
+      };
+
+      InvoiceService.prototype.createPdf = function(invoiceId) {
+        return Invoice.createPdf({
+          id: invoiceId
+        });
+      };
+
+      return new InvoiceService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -1354,244 +1534,6 @@ angular
     return new EventService();
   }]);
 
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 4000000; //4mb
-
-        if (file.size > maxFileSize) deferred.reject('File cannot be greater than 4mb');
-
-        tlhttp.upload('/image', {
-          size: 'smallSquare'
-        }, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/inquiry/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.inquiry.service', ['tl.service', 'tl.inquiry.resource', function(Service, Inquiry){
-
-		var InquiryService = Service.extend(Inquiry);
-
-		return new InquiryService();
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.inventory.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        listForVenue: {
-          method: 'GET',
-          url: '/inventory',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory.service', [
-    'tl.service',
-    'tl.inventory.resource',
-    function(Service, Inventory) {
-      'use strict';
-
-      var InventoryService = Service.extend(Inventory);
-
-      InventoryService.prototype.listForVenue = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.venue) throw new Error('options.venue is required');
-
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-
-        return Inventory.listForVenue(options).$promise;
-      };
-
-      return new InventoryService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.item.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/item/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
-
-		var ItemService = Service.extend(Item);
-
-		return new ItemService();
-	}]);
-angular
-  .module('tl')
-  .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.invoice.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/invoice/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        // add additional methods here
-        update: {
-          method: 'PUT',
-          url: endpoint,
-          isArray: false
-        },
-        readPdf: {
-          method: 'GET',
-          url: endpoint + '/pdf',
-          isArray: false
-        },
-        createPdf: {
-          method: 'POST',
-          url: endpoint + '/pdf',
-          isArray: false
-        }
-
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.invoice.service', ['tl.service', 'tl.invoice.resource',
-    function(Service, Invoice) {
-
-      var InvoiceService = Service.extend(Invoice);
-
-      InvoiceService.prototype.readPdf = function(invoiceId) {
-        return Invoice.readPdf({
-          id: invoiceId
-        });
-      };
-
-      InvoiceService.prototype.createPdf = function(invoiceId) {
-        return Invoice.createPdf({
-          id: invoiceId
-        });
-      };
-
-      return new InvoiceService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
@@ -1662,72 +1604,52 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
+	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
-
-angular
-	.module('tl')
-	.factory('tl.payment.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/paymentProfile/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
 angular
   .module('tl')
-  .service('tl.payment.service', ['tl.service', 'tl.payment.resource',
-    function(Service, Payment) {
+  .factory('tl.inventory.resource', [
+    'tl.resource',
+    function(resource) {
       'use strict';
 
-      var PaymentService = Service.extend(Payment);
+      var endpoint = '/inventory/:id';
 
-      PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
-        var data = {
-          cardholderName: name,
-          cardNumber: number,
-          cardExpMonth: month,
-          cardExpYear: year,
-          cardCvv: cvv,
-          cardZip: zip,
-          address: {
-            address: address,
-            city: city,
-            state: state
-          }
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        listForVenue: {
+          method: 'GET',
+          url: '/inventory',
+          isArray: true
         }
+      });
+    }
+  ]);
 
-        return this.create(data, success, error);
+angular
+  .module('tl')
+  .service('tl.inventory.service', [
+    'tl.service',
+    'tl.inventory.resource',
+    function(Service, Inventory) {
+      'use strict';
+
+      var InventoryService = Service.extend(Inventory);
+
+      InventoryService.prototype.listForVenue = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.venue) throw new Error('options.venue is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+
+        return Inventory.listForVenue(options).$promise;
       };
 
-      PaymentService.prototype.updateProfile = function(profileId, name, number, month, year, cvv, address, city, state, zip, success, error) {
-        if (!profileId) {
-          return this.addProfile(name, number, month, year, cvv, address, city, state, zip, success, error);
-        }
-
-        var data = {
-          cardholderName: name,
-          cardNumber: number,
-          cardExpMonth: month,
-          cardExpYear: year,
-          cardCvv: cvv,
-          cardZip: zip,
-          address: {
-            address: address,
-            city: city,
-            state: state
-          }
-        }
-
-        return this.update(profileId, data, success, error);
-      };
-
-      return new PaymentService();
+      return new InventoryService();
     }
   ]);
 
@@ -1776,45 +1698,6 @@ angular
     ]);
 }());
 
-
-angular
-	.module('tl')
-	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.prospect.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/prospect/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
-
-		var ProspectService = Service.extend(Prospect);
-
-		/**
-		 * Updates the current prospect
-		 */
-		ProspectService.prototype.updateProspect = function(data, success, error) {
-			delete data._id;
-			delete data.id;
-			
-			return Prospect.update({}, data, success, error);
-		};
-
-		return new ProspectService();
-	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -2010,6 +1893,107 @@ angular
 
 		return new ScheduleService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.item.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/item/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
+
+		var ItemService = Service.extend(Item);
+
+		return new ItemService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.payment.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/paymentProfile/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.payment.service', ['tl.service', 'tl.payment.resource',
+    function(Service, Payment) {
+      'use strict';
+
+      var PaymentService = Service.extend(Payment);
+
+      PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
+        var data = {
+          cardholderName: name,
+          cardNumber: number,
+          cardExpMonth: month,
+          cardExpYear: year,
+          cardCvv: cvv,
+          cardZip: zip,
+          address: {
+            address: address,
+            city: city,
+            state: state
+          }
+        }
+
+        return this.create(data, success, error);
+      };
+
+      PaymentService.prototype.updateProfile = function(profileId, name, number, month, year, cvv, address, city, state, zip, success, error) {
+        if (!profileId) {
+          return this.addProfile(name, number, month, year, cvv, address, city, state, zip, success, error);
+        }
+
+        var data = {
+          cardholderName: name,
+          cardNumber: number,
+          cardExpMonth: month,
+          cardExpYear: year,
+          cardCvv: cvv,
+          cardZip: zip,
+          address: {
+            address: address,
+            city: city,
+            state: state
+          }
+        }
+
+        return this.update(profileId, data, success, error);
+      };
+
+      return new PaymentService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -2225,6 +2209,266 @@ angular
 
 		return new TrackService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.prospect.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/prospect/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
+
+		var ProspectService = Service.extend(Prospect);
+
+		/**
+		 * Updates the current prospect
+		 */
+		ProspectService.prototype.updateProspect = function(data, success, error) {
+			delete data._id;
+			delete data.id;
+			
+			return Prospect.update({}, data, success, error);
+		};
+
+		return new ProspectService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.venue', ['tl.venue.resource', 'tl.venue.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.venue.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/venue/:id';
+
+    return resource(endpoint, {
+      id: '@id',
+      itemId: '@itemId',
+      imageId: '@imageId',
+      cityId: '@cityId'
+    }, {
+
+      /*==============================================================*
+      /* Cities
+      /*==============================================================*/
+
+      listForCity: {
+        method: 'GET',
+        url: '/city/:cityId/venue',
+        isArray: true
+      },
+      listCityFeatured: {
+        method: 'GET',
+        url: '/city/:cityId/venue/featured',
+        isArray: true
+      },
+      listCityTonight: {
+        method: 'GET',
+        url: '/city/:cityId/venue/tonight',
+        isArray: true
+      },
+
+      /*==============================================================*
+      /* Schedule
+      /*==============================================================*/
+
+      schedule: {
+        method: 'GET',
+        url: endpoint + '/schedule',
+      },
+      updateSchedule: {
+        method: 'PUT',
+        url: endpoint + '/schedule',
+      },
+
+      /*==============================================================*
+      /* Inventory
+      /*==============================================================*/
+
+      listInventory: {
+        method: 'GET',
+        url: endpoint + '/inventory',
+        isArray: false
+      },
+      listInventoryAdmin: {
+        method: 'GET',
+        url: endpoint + '/inventory/admin',
+        isArray: false
+      },
+      readInventory: {
+        method: 'GET',
+        url: endpoint + '/inventory/:tableId',
+        isArray: false
+      },
+      addInventory: {
+        method: 'POST',
+        url: endpoint + '/inventory',
+        isArray: false
+      },
+      updateInventory: {
+        method: 'PUT',
+        url: endpoint + '/inventory/:tableId',
+        isArray: false
+      },
+
+      /*==============================================================*
+      /* Events
+      /*==============================================================*/
+
+      listEvents: {
+        method: 'GET',
+        url: endpoint + '/event',
+        isArray: true
+      },
+      addEvent: {
+        method: 'POST',
+        url: '/event',
+        isArray: false
+      },
+
+      /*==============================================================*
+      /* Items
+      /*==============================================================*/
+
+      listItems: {
+        method: 'GET',
+        url: endpoint + '/item',
+        isArray: true
+      },
+      addItem: {
+        method: 'POST',
+        url: endpoint + '/item'
+      },
+      updateItem: {
+        method: 'PUT',
+        url: endpoint + '/item/:itemId'
+      },
+      deleteItem: {
+        method: 'DELETE',
+        url: endpoint + '/item/:itemId'
+      },
+
+      /*==============================================================*
+      /* Staff
+      /*==============================================================*/
+
+      listStaff: {
+        method: 'GET',
+        url: endpoint + '/user',
+        isArray: true
+      },
+      addStaff: {
+        method: 'POST',
+        url: endpoint + '/user',
+        isArray: true
+      },
+      updateStaff: {
+        method: 'PUT',
+        url: endpoint + '/user/:userId',
+        isArray: true
+      },
+      removeStaff: {
+        method: 'DELETE',
+        url: endpoint + '/user/:userId',
+        isArray: true
+      },
+
+      listBookings: {
+        method: 'GET',
+        url: endpoint + '/booking',
+        isArray: true
+      },
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.venue.service', [
+    'tl.service',
+    'tl.venue.resource',
+    function(Service, Venue) {
+      'use strict';
+
+      var VenueService = Service.extend(Venue);
+
+      /*==============================================================*
+    /* Cities
+    /*==============================================================*/
+
+      VenueService.prototype.listForCity = function(cityId, success, error) {
+        return Venue.listForCity({
+          cityId: cityId
+        }, success, error);
+      };
+
+      VenueService.prototype.listCityFeatured = function(cityId, success, error) {
+        return Venue.listCityFeatured({
+          cityId: cityId
+        }, success, error);
+      };
+
+      VenueService.prototype.listCityTonight = function(cityId, success, error) {
+        return Venue.listCityTonight({
+          cityId: cityId
+        }, success, error);
+      };
+
+      /*==============================================================*
+    /* Inventory
+    /*==============================================================*/
+
+      VenueService.prototype.listInventory = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+        options.ticket = options.ticket || 'false';
+
+        return Venue.listInventory(options).$promise;
+      };
+
+      /*==============================================================*
+    /* Items
+    /*==============================================================*/
+
+      VenueService.prototype.listItems = function(id, success, error) {
+
+        return Venue.listItems({
+          id: id
+        }, success, error);
+      };
+
+
+      VenueService.prototype.listBookings = function(params, success, error) {
+
+        return Venue.listBookings(params, success, error);
+      };
+
+      return new VenueService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -2666,226 +2910,5 @@ angular
       };
 
       return new UserService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.venue', ['tl.venue.resource', 'tl.venue.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.venue.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/venue/:id';
-
-    return resource(endpoint, {
-      id: '@id',
-      itemId: '@itemId',
-      imageId: '@imageId',
-      cityId: '@cityId'
-    }, {
-
-      /*==============================================================*
-      /* Cities
-      /*==============================================================*/
-
-      listForCity: {
-        method: 'GET',
-        url: '/city/:cityId/venue',
-        isArray: true
-      },
-      listCityFeatured: {
-        method: 'GET',
-        url: '/city/:cityId/venue/featured',
-        isArray: true
-      },
-      listCityTonight: {
-        method: 'GET',
-        url: '/city/:cityId/venue/tonight',
-        isArray: true
-      },
-
-      /*==============================================================*
-      /* Schedule
-      /*==============================================================*/
-
-      schedule: {
-        method: 'GET',
-        url: endpoint + '/schedule',
-      },
-      updateSchedule: {
-        method: 'PUT',
-        url: endpoint + '/schedule',
-      },
-
-      /*==============================================================*
-      /* Inventory
-      /*==============================================================*/
-
-      listInventory: {
-        method: 'GET',
-        url: endpoint + '/inventory',
-        isArray: false
-      },
-      listInventoryAdmin: {
-        method: 'GET',
-        url: endpoint + '/inventory/admin',
-        isArray: false
-      },
-      readInventory: {
-        method: 'GET',
-        url: endpoint + '/inventory/:tableId',
-        isArray: false
-      },
-      addInventory: {
-        method: 'POST',
-        url: endpoint + '/inventory',
-        isArray: false
-      },
-      updateInventory: {
-        method: 'PUT',
-        url: endpoint + '/inventory/:tableId',
-        isArray: false
-      },
-
-      /*==============================================================*
-      /* Events
-      /*==============================================================*/
-
-      listEvents: {
-        method: 'GET',
-        url: endpoint + '/event',
-        isArray: true
-      },
-      addEvent: {
-        method: 'POST',
-        url: '/event',
-        isArray: false
-      },
-
-      /*==============================================================*
-      /* Items
-      /*==============================================================*/
-
-      listItems: {
-        method: 'GET',
-        url: endpoint + '/item',
-        isArray: true
-      },
-      addItem: {
-        method: 'POST',
-        url: endpoint + '/item'
-      },
-      updateItem: {
-        method: 'PUT',
-        url: endpoint + '/item/:itemId'
-      },
-      deleteItem: {
-        method: 'DELETE',
-        url: endpoint + '/item/:itemId'
-      },
-
-      /*==============================================================*
-      /* Staff
-      /*==============================================================*/
-
-      listStaff: {
-        method: 'GET',
-        url: endpoint + '/user',
-        isArray: true
-      },
-      addStaff: {
-        method: 'POST',
-        url: endpoint + '/user',
-        isArray: true
-      },
-      updateStaff: {
-        method: 'PUT',
-        url: endpoint + '/user/:userId',
-        isArray: true
-      },
-      removeStaff: {
-        method: 'DELETE',
-        url: endpoint + '/user/:userId',
-        isArray: true
-      },
-
-      listBookings: {
-        method: 'GET',
-        url: endpoint + '/booking',
-        isArray: true
-      },
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.venue.service', [
-    'tl.service',
-    'tl.venue.resource',
-    function(Service, Venue) {
-      'use strict';
-
-      var VenueService = Service.extend(Venue);
-
-      /*==============================================================*
-    /* Cities
-    /*==============================================================*/
-
-      VenueService.prototype.listForCity = function(cityId, success, error) {
-        return Venue.listForCity({
-          cityId: cityId
-        }, success, error);
-      };
-
-      VenueService.prototype.listCityFeatured = function(cityId, success, error) {
-        return Venue.listCityFeatured({
-          cityId: cityId
-        }, success, error);
-      };
-
-      VenueService.prototype.listCityTonight = function(cityId, success, error) {
-        return Venue.listCityTonight({
-          cityId: cityId
-        }, success, error);
-      };
-
-      /*==============================================================*
-    /* Inventory
-    /*==============================================================*/
-
-      VenueService.prototype.listInventory = function(options) {
-        if (!options) throw new Error('options.required');
-        if (!options.id) throw new Error('options.id is required');
-
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-        options.ticket = options.ticket || 'false';
-
-        return Venue.listInventory(options).$promise;
-      };
-
-      /*==============================================================*
-    /* Items
-    /*==============================================================*/
-
-      VenueService.prototype.listItems = function(id, success, error) {
-
-        return Venue.listItems({
-          id: id
-        }, success, error);
-      };
-
-
-      VenueService.prototype.listBookings = function(params, success, error) {
-
-        return Venue.listBookings(params, success, error);
-      };
-
-      return new VenueService();
     }
   ]);
