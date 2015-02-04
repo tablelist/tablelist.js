@@ -8,6 +8,15 @@ angular
 		return resource(endpoint, {
 			id: '@id'
 		}, {
-			// add additional methods here
+	      approve: {
+	        method: 'POST',
+	        url: endpoint + '/approve',
+	        isArray: false
+	      },
+	      decline: {
+	        method: 'POST',
+	        url: endpoint + '/decline',
+	        isArray: false
+	      },
 		});
 	}]);
