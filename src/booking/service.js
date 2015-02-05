@@ -22,13 +22,17 @@ angular.module('tl').service('tl.booking.service', [
       return Booking.read(options).$promise;
     };
 
-    BookingService.prototype.list = function(options) {
+    BookingService.prototype.query = function(options) {
       if (!options) throw new Error('options is required');
 
-      options.sort = options.sort || DEFAULT_SORT;
-      options.limit = options.limit || DEFAULT_LIMIT;
+      var opts = {}
+      opts.sort = options.sort || DEFAULT_SORT;
+      opts.limit = options.limit || DEFAULT_LIMIT;
+      delete options.sort;
+      delete options.limit;
+      opts.query = options;
 
-      return Booking.query(options).$promise;
+      return Booking.query(opts).$promise;
     };
 
     BookingService.prototype.create = function(options) {
