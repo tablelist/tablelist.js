@@ -297,7 +297,7 @@ angular
         if (!options) throw new Error('options is required');
         if (!options.userId) throw new Error('options.userId is required');
 
-        var userId = options.userId;
+        options.id = options.userId;
         delete options.userId;
 
         return User.listFavorites(options).$promise;
