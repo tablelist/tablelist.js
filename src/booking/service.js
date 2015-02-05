@@ -4,6 +4,15 @@ angular.module('tl').service('tl.booking.service', [
   function(Booking, Service) {
     'use strict';
 
+    /*==============================================================*
+    /* Constants
+    /*==============================================================*/
+    var DEFAULT_LIMIT = 100;
+    var DEFAULT_SORT = '-created';
+
+    /*==============================================================*
+    /* Constructor
+    /*==============================================================*/
     var BookingService = Service.extend(Booking);
 
     BookingService.prototype.read = function(options) {
@@ -11,6 +20,15 @@ angular.module('tl').service('tl.booking.service', [
       if (!options.id) throw new Error('options.id is required');
 
       return Booking.read(options).$promise;
+    };
+
+    BookingService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.sort = options.sort || DEFAULT_SORT;
+      options.limit = options.limit || DEFAULT_LIMIT;
+
+      return Booking.query(options).$promise;
     };
 
     BookingService.prototype.create = function(options) {
@@ -79,10 +97,10 @@ angular.module('tl').service('tl.booking.service', [
       }, success, error);
     };
 
-    BookingService.prototype.readSplitTable = function(splitCode, success, error){
+    BookingService.prototype.readSplitTable = function(splitCode, success, error) {
       return Booking.readSplitTable({
         code: splitCode
-      },{}, success, error);
+      }, {}, success, error);
     };
 
     return new BookingService();

@@ -313,47 +313,6 @@ angular
     }
   }]);
 
-
-angular
-	.module('tl')
-	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.ambassador.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/ambassador';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        getAll: {
-          method: 'GET',
-          url: 'ambassador',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
-    function(Service, Ambassador) {
-
-      var AmbassadorService = Service.extend(Ambassador);
-
-      AmbassadorService.prototype.getAll = function(){
-        return Ambassador.getAll();
-      };
-
-      return new AmbassadorService();
-    }
-  ]);
-
 /**
  * Angular module for setting, reading and removing cookies
  *
@@ -854,6 +813,78 @@ angular
     }
   }]);
 
+
+angular
+	.module('tl')
+	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.ambassador.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/ambassador';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        getAll: {
+          method: 'GET',
+          url: 'ambassador',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
+    function(Service, Ambassador) {
+
+      var AmbassadorService = Service.extend(Ambassador);
+
+      AmbassadorService.prototype.getAll = function(){
+        return Ambassador.getAll();
+      };
+
+      return new AmbassadorService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1020,37 +1051,6 @@ angular.module('tl').service('tl.auth.service', [
 
 angular
 	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1120,6 +1120,15 @@ angular.module('tl').service('tl.booking.service', [
   function(Booking, Service) {
     'use strict';
 
+    /*==============================================================*
+    /* Constants
+    /*==============================================================*/
+    var DEFAULT_LIMIT = 100;
+    var DEFAULT_SORT = '-created';
+
+    /*==============================================================*
+    /* Constructor
+    /*==============================================================*/
     var BookingService = Service.extend(Booking);
 
     BookingService.prototype.read = function(options) {
@@ -1127,6 +1136,15 @@ angular.module('tl').service('tl.booking.service', [
       if (!options.id) throw new Error('options.id is required');
 
       return Booking.read(options).$promise;
+    };
+
+    BookingService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.sort = options.sort || DEFAULT_SORT;
+      options.limit = options.limit || DEFAULT_LIMIT;
+
+      return Booking.query(options).$promise;
     };
 
     BookingService.prototype.create = function(options) {
@@ -1195,10 +1213,10 @@ angular.module('tl').service('tl.booking.service', [
       }, success, error);
     };
 
-    BookingService.prototype.readSplitTable = function(splitCode, success, error){
+    BookingService.prototype.readSplitTable = function(splitCode, success, error) {
       return Booking.readSplitTable({
         code: splitCode
-      },{}, success, error);
+      }, {}, success, error);
     };
 
     return new BookingService();
@@ -1240,6 +1258,32 @@ angular
 		};
 
 		return new CampaignService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.city.resource', ['tl.resource', function(resource){
+		return resource('/city/:id', {
+			id: '@id'
+		}, {
+			// no extra methods
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.city.service', ['tl.service', 'tl.city.resource', function(Service, City){
+
+		var CityService = Service.extend(City);
+
+		return new CityService();
 	}]);
 
 angular
@@ -1328,32 +1372,6 @@ angular
     return new EventService();
   }]);
 
-
-angular
-	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.city.resource', ['tl.resource', function(resource){
-		return resource('/city/:id', {
-			id: '@id'
-		}, {
-			// no extra methods
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.city.service', ['tl.service', 'tl.city.resource', function(Service, City){
-
-		var CityService = Service.extend(City);
-
-		return new CityService();
-	}]);
 angular
   .module('tl')
   .service('tl.image', ['tl.image.resource', 'tl.image.service',
@@ -1647,73 +1665,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.metric', ['tl.metric.resource', 'tl.metric.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.metric.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/metric/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			available: {
-				method: 'GET',
-				url: '/metric/available',
-				isArray: true
-			},
-
-			queryMetrics: {
-				method: 'GET',
-				url: '/metric'
-			}
-		});
-	}]);
-
-angular
-  .module('tl')
-  .service('tl.metric.service', ['tl.service', 'tl.metric.resource', function(Service, Metric){
-
-    var MetricService = Service.extend(Metric);
-
-    MetricService.prototype.availableMetrics = function(success, error) {
-      return Metric.available({}, success, error);
-    };
-
-    MetricService.prototype.queryMetrics = function(metrics, period, range, options, success, error) {
-      if (arguments.length < 6) {
-        error = success;
-        success = options;
-        options = null;
-      }
-
-      var query = {
-        metric: metrics,
-        period: period,
-        start: range[0].getTime(),
-        end: range[1].getTime()
-      }
-
-      if (options) {
-        var keys = Object.keys(options);
-        for (var i = 0; i < keys.length; i++) {
-          var key = keys[i];
-          query[key] = options[key];
-        }
-      }
-
-      return Metric.queryMetrics(query, success, error);
-    };
-
-    return new MetricService();
-  }]);
-
-angular
-	.module('tl')
 	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1783,6 +1734,73 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.metric', ['tl.metric.resource', 'tl.metric.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.metric.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/metric/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			available: {
+				method: 'GET',
+				url: '/metric/available',
+				isArray: true
+			},
+
+			queryMetrics: {
+				method: 'GET',
+				url: '/metric'
+			}
+		});
+	}]);
+
+angular
+  .module('tl')
+  .service('tl.metric.service', ['tl.service', 'tl.metric.resource', function(Service, Metric){
+
+    var MetricService = Service.extend(Metric);
+
+    MetricService.prototype.availableMetrics = function(success, error) {
+      return Metric.available({}, success, error);
+    };
+
+    MetricService.prototype.queryMetrics = function(metrics, period, range, options, success, error) {
+      if (arguments.length < 6) {
+        error = success;
+        success = options;
+        options = null;
+      }
+
+      var query = {
+        metric: metrics,
+        period: period,
+        start: range[0].getTime(),
+        end: range[1].getTime()
+      }
+
+      if (options) {
+        var keys = Object.keys(options);
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          query[key] = options[key];
+        }
+      }
+
+      return Metric.queryMetrics(query, success, error);
+    };
+
+    return new MetricService();
+  }]);
 
 angular
 	.module('tl')
