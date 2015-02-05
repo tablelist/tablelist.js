@@ -28,8 +28,10 @@ angular.module('tl').service('tl.booking.service', [
       var opts = {}
       opts.sort = options.sort || DEFAULT_SORT;
       opts.limit = options.limit || DEFAULT_LIMIT;
+      opts.admin = options.admin || false;
       delete options.sort;
       delete options.limit;
+      delete options.admin;
       opts.query = options;
 
       return Booking.query(opts).$promise;
