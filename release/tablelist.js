@@ -885,163 +885,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.booking.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/booking/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      read: {
-        method: 'GET',
-        url: endpoint
-      },
-      create: {
-        method: 'POST',
-        url: 'booking'
-      },
-      complete: {
-        method: 'POST',
-        url: endpoint + '/complete'
-      },
-      void: {
-        method: 'POST',
-        url: endpoint + '/void'
-      },
-      refund: {
-        method: 'POST',
-        url: endpoint + '/refund'
-      },
-      join: {
-        method: 'POST',
-        url: 'booking/join'
-      },
-      accept: {
-        method: 'POST',
-        url: endpoint + '/accept'
-      },
-      decline : {
-        method: 'POST',
-        url: endpoint + '/decline'
-      },
-      updateBookingUser: {
-        method: 'PUT',
-        url: endpoint + '/users/:userId'
-      },
-      listOutgoingPayment: {
-        method: 'GET',
-        url: endpoint + '/outgoing-payment',
-        isArray: true
-      },
-      readSplitTable: {
-        method: 'GET',
-        url: 'booking/split/:code'
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.booking.service', [
-  'tl.booking.resource',
-  'tl.service',
-  function(Booking, Service) {
-    'use strict';
-
-    var BookingService = Service.extend(Booking);
-
-    BookingService.prototype.read = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Booking.read(options).$promise;
-    };
-
-    BookingService.prototype.create = function(options) {
-      if (!options) throw new Error('options is required');
-
-      return Booking.create({}, options).$promise;
-    };
-
-    BookingService.prototype.complete = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      var bookingId = options.id;
-      delete options.id;
-
-      return Booking.complete({
-        id: bookingId
-      }, options).$promise;
-    };
-
-    BookingService.prototype.void = function(id, notify, success, error) {
-      return Booking.void({}, {
-        id: id,
-        notify: notify ? true : false
-      }, success, error);
-    };
-
-    BookingService.prototype.refund = function(id, amount, reason, success, error) {
-      return Booking.refund({}, {
-        id: id,
-        money: amount,
-        reason: reason
-      }, success, error);
-    };
-
-    BookingService.prototype.join = function(splitCode, success, error) {
-      return Booking.join({}, {
-        splitCode: splitCode,
-      }, success, error);
-    };
-
-    BookingService.prototype.accept = function(id, success, error) {
-      return Booking.accept({}, {
-        id: id
-      }, success, error);
-    };
-
-    BookingService.prototype.decline = function(id, userId, success, error) {
-      return Booking.decline({
-        id: id
-      }, {
-        userId: userId
-      }, success, error);
-    };
-
-    BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
-      return Booking.updateBookingUser({
-        id: id,
-        userId: userId
-      }, updates, success, error);
-    };
-
-    BookingService.prototype.listOutgoingPayment = function(id, success, error) {
-      return Booking.listOutgoingPayment({
-        id: id,
-      }, success, error);
-    };
-
-    BookingService.prototype.readSplitTable = function(splitCode, success, error){
-      return Booking.readSplitTable({
-        code: splitCode
-      },{}, success, error);
-    };
-
-    return new BookingService();
-  }
-]);
-
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1202,6 +1045,163 @@ angular.module('tl').service('tl.auth.service', [
     };
 
     return new AuthService();
+  }
+]);
+
+
+angular
+	.module('tl')
+	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.booking.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/booking/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      read: {
+        method: 'GET',
+        url: endpoint
+      },
+      create: {
+        method: 'POST',
+        url: 'booking'
+      },
+      complete: {
+        method: 'POST',
+        url: endpoint + '/complete'
+      },
+      void: {
+        method: 'POST',
+        url: endpoint + '/void'
+      },
+      refund: {
+        method: 'POST',
+        url: endpoint + '/refund'
+      },
+      join: {
+        method: 'POST',
+        url: 'booking/join'
+      },
+      accept: {
+        method: 'POST',
+        url: endpoint + '/accept'
+      },
+      decline : {
+        method: 'POST',
+        url: endpoint + '/decline'
+      },
+      updateBookingUser: {
+        method: 'PUT',
+        url: endpoint + '/users/:userId'
+      },
+      listOutgoingPayment: {
+        method: 'GET',
+        url: endpoint + '/outgoing-payment',
+        isArray: true
+      },
+      readSplitTable: {
+        method: 'GET',
+        url: 'booking/split/:code'
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.booking.service', [
+  'tl.booking.resource',
+  'tl.service',
+  function(Booking, Service) {
+    'use strict';
+
+    var BookingService = Service.extend(Booking);
+
+    BookingService.prototype.read = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Booking.read(options).$promise;
+    };
+
+    BookingService.prototype.create = function(options) {
+      if (!options) throw new Error('options is required');
+
+      return Booking.create({}, options).$promise;
+    };
+
+    BookingService.prototype.complete = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var bookingId = options.id;
+      delete options.id;
+
+      return Booking.complete({
+        id: bookingId
+      }, options).$promise;
+    };
+
+    BookingService.prototype.void = function(id, notify, success, error) {
+      return Booking.void({}, {
+        id: id,
+        notify: notify ? true : false
+      }, success, error);
+    };
+
+    BookingService.prototype.refund = function(id, amount, reason, success, error) {
+      return Booking.refund({}, {
+        id: id,
+        money: amount,
+        reason: reason
+      }, success, error);
+    };
+
+    BookingService.prototype.join = function(splitCode, success, error) {
+      return Booking.join({}, {
+        splitCode: splitCode,
+      }, success, error);
+    };
+
+    BookingService.prototype.accept = function(id, success, error) {
+      return Booking.accept({}, {
+        id: id
+      }, success, error);
+    };
+
+    BookingService.prototype.decline = function(id, userId, success, error) {
+      return Booking.decline({
+        id: id
+      }, {
+        userId: userId
+      }, success, error);
+    };
+
+    BookingService.prototype.updateBookingUser = function(id, userId, updates, success, error) {
+      return Booking.updateBookingUser({
+        id: id,
+        userId: userId
+      }, updates, success, error);
+    };
+
+    BookingService.prototype.listOutgoingPayment = function(id, success, error) {
+      return Booking.listOutgoingPayment({
+        id: id,
+      }, success, error);
+    };
+
+    BookingService.prototype.readSplitTable = function(splitCode, success, error){
+      return Booking.readSplitTable({
+        code: splitCode
+      },{}, success, error);
+    };
+
+    return new BookingService();
   }
 ]);
 
@@ -1500,58 +1500,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.inventory.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        listForVenue: {
-          method: 'GET',
-          url: '/inventory',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory.service', [
-    'tl.service',
-    'tl.inventory.resource',
-    function(Service, Inventory) {
-      'use strict';
-
-      var InventoryService = Service.extend(Inventory);
-
-      InventoryService.prototype.listForVenue = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.venue) throw new Error('options.venue is required');
-
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-
-        return Inventory.listForVenue(options).$promise;
-      };
-
-      return new InventoryService();
-    }
-  ]);
-
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -1612,6 +1560,58 @@ angular
       };
 
       return new InvoiceService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.inventory.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        listForVenue: {
+          method: 'GET',
+          url: '/inventory',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory.service', [
+    'tl.service',
+    'tl.inventory.resource',
+    function(Service, Inventory) {
+      'use strict';
+
+      var InventoryService = Service.extend(Inventory);
+
+      InventoryService.prototype.listForVenue = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.venue) throw new Error('options.venue is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+
+        return Inventory.listForVenue(options).$promise;
+      };
+
+      return new InventoryService();
     }
   ]);
 
@@ -2007,35 +2007,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.reward.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/reward/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
-
-		var RewardService = Service.extend(Reward);
-
-		return new RewardService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2061,6 +2032,35 @@ angular
 		var ScheduleService = Service.extend(Schedule);
 
 		return new ScheduleService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.reward.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/reward/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
+
+		var RewardService = Service.extend(Reward);
+
+		return new RewardService();
 	}]);
 
 angular
