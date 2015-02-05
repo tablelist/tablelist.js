@@ -15,7 +15,7 @@ angular
       /*==============================================================*
       /* Constructor
       /*==============================================================*/
-      var InquiryService = Service.extend(Inquiry);
+      var InquiryService = Service.extend(Inquiry); 
 
       InquiryService.prototype.list = function(options) {
         if (!options) throw new Error('options is required');
