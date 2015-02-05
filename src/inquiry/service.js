@@ -23,7 +23,7 @@ angular
         options.sort = options.sort || DEFAULT_SORT;
         options.limit = options.limit || DEFAULT_LIMIT;
 
-        return Inquiry.list(options).$promise;
+        return Inquiry.query(options).$promise;
       };
 
       InquiryService.prototype.approve = function(options) {
