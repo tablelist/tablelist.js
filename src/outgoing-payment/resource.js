@@ -8,12 +8,12 @@ angular.module('tl').factory('tl.outgoingPayment.resource', [
     return resource(endpoint, {
       id: '@id'
     }, {
-      listTransactions: {
+      listTransaction: {
         method: 'GET',
         url: endpoint + '/transaction',
         isArray: true
       },
-      listAuthorizations: {
+      listAuthorization: {
         method: 'GET',
         url: endpoint + '/authorization',
         isArray: true
