@@ -25,15 +25,15 @@ angular
     };
 
     /*==============================================================*
-		/* Constants
-		/*==============================================================*/
+    /* Constants
+    /*==============================================================*/
 
     var DEFAULT_LIMIT = 100;
     var DEFAULT_SORT = '-created';
 
     /*==============================================================*
-		/* CRUD
-		/*==============================================================*/
+    /* CRUD
+    /*==============================================================*/
 
     Service.prototype.create = function(data, success, error) {
       return this.resource.save({}, data, success, error);
@@ -65,8 +65,8 @@ angular
     };
 
     /*==============================================================*
-		/* Query
-		/*==============================================================*/
+    /* Query
+    /*==============================================================*/
 
     Service.prototype.query = function(query, limit, sort, success, error) {
       var queryString = this.buildQueryString(query);
@@ -99,8 +99,8 @@ angular
     };
 
     /*==============================================================*
-		/* Images
-		/*==============================================================*/
+    /* Images
+    /*==============================================================*/
 
     Service.prototype.listImages = function(id, success, error) {
       return this.resource.listImages({
@@ -125,6 +125,19 @@ angular
         id: id,
         imageId: imageId
       }, success, error);
+    };
+
+    Service.prototype.exportUrl = function(query, sort, format) {
+      var endpoint = this.resource.ENDPOINT;
+      var index = this.resource.ENDPOINT.indexOf(":");
+      if (index > -1) endpoint = endpoint.substring(0, index);
+      var url = this.resource.URL.substring(0, this.resource.URL.lastIndexOf(":") - 1);
+      url += "?query=" + encodeURIComponent(JSON.stringify(query));
+      url += "&sort=" + sort;
+      url += "&admin=" + true;
+      url += "&csv=" + true;
+      url += "&auth=" + tlKeychain.authToken();
+      return url;
     };
 
     return {
