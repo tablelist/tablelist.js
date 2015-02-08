@@ -205,15 +205,15 @@ angular
     };
 
     /*==============================================================*
-		/* Constants
-		/*==============================================================*/
+    /* Constants
+    /*==============================================================*/
 
     var DEFAULT_LIMIT = 100;
     var DEFAULT_SORT = '-created';
 
     /*==============================================================*
-		/* CRUD
-		/*==============================================================*/
+    /* CRUD
+    /*==============================================================*/
 
     Service.prototype.create = function(data, success, error) {
       return this.resource.save({}, data, success, error);
@@ -245,8 +245,8 @@ angular
     };
 
     /*==============================================================*
-		/* Query
-		/*==============================================================*/
+    /* Query
+    /*==============================================================*/
 
     Service.prototype.query = function(query, limit, sort, success, error) {
       var queryString = this.buildQueryString(query);
@@ -279,8 +279,8 @@ angular
     };
 
     /*==============================================================*
-		/* Images
-		/*==============================================================*/
+    /* Images
+    /*==============================================================*/
 
     Service.prototype.listImages = function(id, success, error) {
       return this.resource.listImages({
@@ -305,6 +305,19 @@ angular
         id: id,
         imageId: imageId
       }, success, error);
+    };
+
+    Service.prototype.exportUrl = function(query, sort, format) {
+      var endpoint = this.resource.ENDPOINT;
+      var index = this.resource.ENDPOINT.indexOf(":");
+      if (index > -1) endpoint = endpoint.substring(0, index);
+      var url = this.resource.URL.substring(0, this.resource.URL.lastIndexOf(":") - 1);
+      url += "?query=" + encodeURIComponent(JSON.stringify(query));
+      url += "&sort=" + sort;
+      url += "&admin=" + true;
+      url += "&csv=" + true;
+      url += "&auth=" + tlKeychain.authToken();
+      return url;
     };
 
     return {
@@ -2064,35 +2077,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.reward.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/reward/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
-
-		var RewardService = Service.extend(Reward);
-
-		return new RewardService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2122,6 +2106,35 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.reward.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/reward/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
+
+		var RewardService = Service.extend(Reward);
+
+		return new RewardService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2147,35 +2160,6 @@ angular
 		var ScheduleService = Service.extend(Schedule);
 
 		return new ScheduleService();
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
 	}]);
 
 angular
@@ -2230,6 +2214,35 @@ angular
 		};
 
 		return new SettingsService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
 	}]);
 
 angular
