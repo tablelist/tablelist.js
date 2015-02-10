@@ -259,10 +259,14 @@ angular
       /**
        * Lists a user's venues
        */
-      UserService.prototype.listVenues = function(userId, success, error) {
-        return User.listVenues({
-          id: userId
-        }, success, error);
+      UserService.prototype.listVenues = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listVenues(options).$promise;
       };
 
       UserService.prototype.favorite = function(options) {
