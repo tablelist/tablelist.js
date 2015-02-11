@@ -8,10 +8,19 @@ angular
 
       var VenueService = Service.extend(Venue);
 
-      VenueService.prototype.create = function creat(data) {
-        if (!data) throw new Error('data is required');
+      VenueService.prototype.create = function create(options) {
+        if (!options) throw new Error('options is required');
 
-        return Venue.save({}, data).$promise;
+        return Venue.save({}, options).$promise;
+      };
+
+      VenueService.prototype.update = function update(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.update({
+          id: options.id
+        }, options).$promise;
       };
 
       /*==============================================================*
