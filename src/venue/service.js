@@ -8,9 +8,15 @@ angular
 
       var VenueService = Service.extend(Venue);
 
+      VenueService.prototype.create = function creat(data) {
+        if (!data) throw new Error('data is required');
+
+        return Venue.save({}, data).$promise;
+      };
+
       /*==============================================================*
-    /* Cities
-    /*==============================================================*/
+      /* Cities
+      /*==============================================================*/
 
       VenueService.prototype.listForCity = function(cityId, success, error) {
         return Venue.listForCity({
@@ -31,8 +37,8 @@ angular
       };
 
       /*==============================================================*
-    /* Inventory
-    /*==============================================================*/
+      /* Inventory
+      /*==============================================================*/
 
       VenueService.prototype.listInventory = function(options) {
         if (!options) throw new Error('options.required');
@@ -46,8 +52,8 @@ angular
       };
 
       /*==============================================================*
-    /* Items
-    /*==============================================================*/
+      /* Items
+      /*==============================================================*/
 
       VenueService.prototype.listItems = function(id, success, error) {
 
@@ -56,9 +62,7 @@ angular
         }, success, error);
       };
 
-
       VenueService.prototype.listBookings = function(params, success, error) {
-
         return Venue.listBookings(params, success, error);
       };
 
