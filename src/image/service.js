@@ -5,7 +5,7 @@ angular
 
       var ImageService = Service.extend(Image);
 
-      ImageService.prototype.upload = function(file) {
+      ImageService.prototype.upload = function(file, options) {
 
         var deferred = $q.defer();
 
@@ -16,9 +16,7 @@ angular
 
         if (file.size > maxFileSize) deferred.reject('File cannot be greater than 4mb');
 
-        tlhttp.upload('/image', {
-          size: 'smallSquare'
-        }, formData)
+        tlhttp.upload('/image', options, formData)
           .success(function(data, status, headers, config) {
             deferred.resolve(data, status, headers, config);
           })
