@@ -28,7 +28,7 @@ angular
         return Venue.update({
           id: options.id
         }, options).$promise;
-      };
+      }; 
 
       /*==============================================================*
       /* Cities
