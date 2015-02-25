@@ -1467,6 +1467,58 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.inventory.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        listForVenue: {
+          method: 'GET',
+          url: '/inventory',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory.service', [
+    'tl.service',
+    'tl.inventory.resource',
+    function(Service, Inventory) {
+      'use strict';
+
+      var InventoryService = Service.extend(Inventory);
+
+      InventoryService.prototype.listForVenue = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.venue) throw new Error('options.venue is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+
+        return Inventory.listForVenue(options).$promise;
+      };
+
+      return new InventoryService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
 	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1542,58 +1594,6 @@ angular
       };
 
       return new InquiryService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.inventory.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        listForVenue: {
-          method: 'GET',
-          url: '/inventory',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory.service', [
-    'tl.service',
-    'tl.inventory.resource',
-    function(Service, Inventory) {
-      'use strict';
-
-      var InventoryService = Service.extend(Inventory);
-
-      InventoryService.prototype.listForVenue = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.venue) throw new Error('options.venue is required');
-
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-
-        return Inventory.listForVenue(options).$promise;
-      };
-
-      return new InventoryService();
     }
   ]);
 
@@ -1756,6 +1756,102 @@ angular
 
     return new MetricService();
   }]);
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.metric.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Metric);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
+  }]);
+
+
+angular
+	.module('tl')
+	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.outgoingPayment.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/outgoing-payment/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listTransaction: {
+        method: 'GET',
+        url: endpoint + '/transaction',
+        isArray: true
+      },
+      listAuthorization: {
+        method: 'GET',
+        url: endpoint + '/authorization',
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.outgoingPayment.service', [
+  'tl.outgoingPayment.resource',
+  'tl.service',
+  function(OutgoingPayment, Service) {
+    'use strict';
+
+    /*==============================================================*
+    /* Constructor
+    /*==============================================================*/
+
+    var OutgoingPaymentService = Service.extend(OutgoingPayment);
+
+    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
+      return OutgoingPayment.listTransaction({
+        id: id,
+      }, success, error);
+    };
+
+    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
+      return OutgoingPayment.listAuthorization({
+        id: id,
+      }, success, error);
+    };
+
+    return new OutgoingPaymentService();
+  }
+]);
+
 
 angular
 	.module('tl')
@@ -1872,65 +1968,6 @@ angular
       }
     ]);
 }());
-
-
-angular
-	.module('tl')
-	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.outgoingPayment.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/outgoing-payment/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listTransaction: {
-        method: 'GET',
-        url: endpoint + '/transaction',
-        isArray: true
-      },
-      listAuthorization: {
-        method: 'GET',
-        url: endpoint + '/authorization',
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.outgoingPayment.service', [
-  'tl.outgoingPayment.resource',
-  'tl.service',
-  function(OutgoingPayment, Service) {
-    'use strict';
-
-    /*==============================================================*
-    /* Constructor
-    /*==============================================================*/
-
-    var OutgoingPaymentService = Service.extend(OutgoingPayment);
-
-    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
-      return OutgoingPayment.listTransaction({
-        id: id,
-      }, success, error);
-    };
-
-    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
-      return OutgoingPayment.listAuthorization({
-        id: id,
-      }, success, error);
-    };
-
-    return new OutgoingPaymentService();
-  }
-]);
 
 
 angular
@@ -2391,41 +2428,41 @@ angular
 			// add additional methods here
 		});
 	}]);
-
 angular
-	.module('tl')
-	.service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config){
+  .module('tl')
+  .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
 
-		var TrackService = Service.extend(Track);
-		
-		/**
-		 * Returns a map of valid tracking events
-		 */
-		TrackService.prototype.trackingEvents = function() {
-			return EVENTS;
-		};
+    var TrackService = Service.extend(Track);
 
-		/**
-		 * Send a tracking event to the server
-		 */
-		TrackService.prototype.send = function(eventName, data) {
-			var track = {
-				event: eventName,
-				data: data,
-				client: {
-					os: config.CLIENT,
-					version: config.VERSION,
-					device: window.navigator ? window.navigator.userAgent : null
-				}
-			};
+    /**
+     * Returns a map of valid tracking events
+     */
+    TrackService.prototype.trackingEvents = function() {
+      return EVENTS;
+    };
 
-			if(config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
+    /**
+     * Send a tracking event to the server
+     */
+    TrackService.prototype.send = function(eventName, data) {
+      var track = {
+        event: eventName,
+        data: data,
+        client: {
+          os: config.CLIENT,
+          version: config.VERSION,
+          device: window.navigator ? window.navigator.userAgent : null
+        }
+      };
 
-			return Track.save({}, track);
-		};
+      if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
 
-		return new TrackService();
-	}]);
+      return Track.save({}, track);
+    };
+
+    return new TrackService();
+  }]);
+
 
 angular
 	.module('tl')
