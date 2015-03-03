@@ -30,6 +30,10 @@ angular
       return Track.save({}, track);
     };
 
+    TrackService.prototype.listPossibleEvents = function(success, error) {
+      return Track.listPossibleEvents({}, success, error).$promise;
+    };
+
 		TrackService.prototype.funnel = function(events, options, success, error) {
 			return Track.funnel({}, {
 				events: events,

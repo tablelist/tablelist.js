@@ -833,37 +833,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -901,6 +870,200 @@ angular
       return new AmbassadorService();
     }
   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular.module('tl').factory('tl.auth.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/auth';
+
+    return resource(endpoint, {
+      // nothing here
+    }, {
+
+      register: {
+        method: 'POST',
+        url: endpoint + '/register',
+        isArray: false
+      },
+
+      login: {
+        method: 'POST',
+        url: endpoint + '/login',
+        isArray: false
+      },
+
+      loginFacebook: {
+        method: 'POST',
+        url: endpoint + '/facebook',
+        isArray: false
+      },
+
+      forgotPassword: {
+        method: 'POST',
+        url: endpoint + '/forgot',
+        isArray: false
+      },
+
+      resetPassword: {
+        method: 'POST',
+        url: endpoint + '/reset',
+        isArray: false
+      }
+
+    });
+  }
+]);
+
+angular.module('tl').service('tl.auth.service', [
+  'tl.auth.resource',
+  'tl.keychain',
+  'tl.user.service',
+  'tl.facebook',
+  function(Auth, keychain, user, fb) {
+    'use strict';
+
+    var AuthService = function() {};
+
+    /**
+     * Gets the current users auth token from the keychain
+     */
+    AuthService.prototype.authToken = function() {
+      return keychain.authToken();
+    };
+
+    /**
+     * Stores an auth token in the keychain
+     */
+    AuthService.prototype.setAuthToken = function(token) {
+      return keychain.setAuthToken(token);
+    };
+
+    /**
+     * Registers a new user
+     */
+    AuthService.prototype.register = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.email) throw new Error('options.email is required');
+      if (!options.password) throw new Error('options.password is required');
+      if (!options.firstName) throw new Error('options.firstName is required');
+      if (!options.lastName) throw new Error('options.lastName is required');
+
+      var _this = this;
+
+      return Auth.register({}, options).$promise.then(function success(auth) {
+        _this.setAuthToken(auth.token);
+        user.setCurrentUser(auth.user);
+      });
+    };
+
+    /**
+     * Logs in a user via email and password
+     */
+    AuthService.prototype.login = function(email, password, success, error) {
+      success = success || function() {};
+      var _this = this;
+      return Auth.login({}, {
+          email: email,
+          password: password
+        })
+        .$promise.then(function(auth) {
+          _this.setAuthToken(auth.token);
+          user.setCurrentUser(auth.user);
+          success(auth);
+        }, error);
+    };
+
+    /**
+     * Attempts to login a user via Facebook
+     */
+    AuthService.prototype.loginWithFacebook = function(success, error) {
+      success = success || function() {};
+      var _this = this;
+      fb.login(function(err, token) {
+        return Auth.loginFacebook({}, {
+            facebookToken: token
+          })
+          .$promise.then(function(auth) {
+            _this.setAuthToken(auth.token);
+            user.setCurrentUser(auth.user);
+            success(auth);
+          }, error);
+      });
+    };
+
+    /**
+     * Logs out the current user
+     */
+    AuthService.prototype.logout = function() {
+      this.setAuthToken(null);
+      user.setCurrentUser(null);
+      return true;
+    };
+
+    /**
+     * Sends a reset password to the given email address
+     */
+    AuthService.prototype.forgotPassword = function(email, success, error) {
+      return Auth.forgotPassword({}, {
+        email: email
+      }, success, error);
+    };
+
+    /**
+     * Resets a users password based on token recieved from forgot password email
+     */
+    AuthService.prototype.resetPassword = function(token, password, success, error) {
+      return Auth.resetPassword({}, {
+        resetToken: token,
+        password: password
+      }, success, error);
+    };
+
+    return new AuthService();
+  }
+]);
 
 
 angular
@@ -1122,169 +1285,6 @@ angular
 
 		return new CampaignService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular.module('tl').factory('tl.auth.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/auth';
-
-    return resource(endpoint, {
-      // nothing here
-    }, {
-
-      register: {
-        method: 'POST',
-        url: endpoint + '/register',
-        isArray: false
-      },
-
-      login: {
-        method: 'POST',
-        url: endpoint + '/login',
-        isArray: false
-      },
-
-      loginFacebook: {
-        method: 'POST',
-        url: endpoint + '/facebook',
-        isArray: false
-      },
-
-      forgotPassword: {
-        method: 'POST',
-        url: endpoint + '/forgot',
-        isArray: false
-      },
-
-      resetPassword: {
-        method: 'POST',
-        url: endpoint + '/reset',
-        isArray: false
-      }
-
-    });
-  }
-]);
-
-angular.module('tl').service('tl.auth.service', [
-  'tl.auth.resource',
-  'tl.keychain',
-  'tl.user.service',
-  'tl.facebook',
-  function(Auth, keychain, user, fb) {
-    'use strict';
-
-    var AuthService = function() {};
-
-    /**
-     * Gets the current users auth token from the keychain
-     */
-    AuthService.prototype.authToken = function() {
-      return keychain.authToken();
-    };
-
-    /**
-     * Stores an auth token in the keychain
-     */
-    AuthService.prototype.setAuthToken = function(token) {
-      return keychain.setAuthToken(token);
-    };
-
-    /**
-     * Registers a new user
-     */
-    AuthService.prototype.register = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.email) throw new Error('options.email is required');
-      if (!options.password) throw new Error('options.password is required');
-      if (!options.firstName) throw new Error('options.firstName is required');
-      if (!options.lastName) throw new Error('options.lastName is required');
-
-      var _this = this;
-
-      return Auth.register({}, options).$promise.then(function success(auth) {
-        _this.setAuthToken(auth.token);
-        user.setCurrentUser(auth.user);
-      });
-    };
-
-    /**
-     * Logs in a user via email and password
-     */
-    AuthService.prototype.login = function(email, password, success, error) {
-      success = success || function() {};
-      var _this = this;
-      return Auth.login({}, {
-          email: email,
-          password: password
-        })
-        .$promise.then(function(auth) {
-          _this.setAuthToken(auth.token);
-          user.setCurrentUser(auth.user);
-          success(auth);
-        }, error);
-    };
-
-    /**
-     * Attempts to login a user via Facebook
-     */
-    AuthService.prototype.loginWithFacebook = function(success, error) {
-      success = success || function() {};
-      var _this = this;
-      fb.login(function(err, token) {
-        return Auth.loginFacebook({}, {
-            facebookToken: token
-          })
-          .$promise.then(function(auth) {
-            _this.setAuthToken(auth.token);
-            user.setCurrentUser(auth.user);
-            success(auth);
-          }, error);
-      });
-    };
-
-    /**
-     * Logs out the current user
-     */
-    AuthService.prototype.logout = function() {
-      this.setAuthToken(null);
-      user.setCurrentUser(null);
-      return true;
-    };
-
-    /**
-     * Sends a reset password to the given email address
-     */
-    AuthService.prototype.forgotPassword = function(email, success, error) {
-      return Auth.forgotPassword({}, {
-        email: email
-      }, success, error);
-    };
-
-    /**
-     * Resets a users password based on token recieved from forgot password email
-     */
-    AuthService.prototype.resetPassword = function(token, password, success, error) {
-      return Auth.resetPassword({}, {
-        resetToken: token,
-        password: password
-      }, success, error);
-    };
-
-    return new AuthService();
-  }
-]);
-
 
 angular
 	.module('tl')
@@ -1313,6 +1313,87 @@ angular.module('tl').service('tl.city.service', [
     return new CityService();
   }
 ]);
+
+
+angular
+	.module('tl')
+	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/inquiry/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+	      approve: {
+	        method: 'POST',
+	        url: endpoint + '/approve',
+	        isArray: false
+	      },
+	      decline: {
+	        method: 'POST',
+	        url: endpoint + '/decline',
+	        isArray: false
+	      },
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.inquiry.service', [
+    'tl.service',
+    'tl.inquiry.resource',
+    function(Service, Inquiry) {
+      'use strict';
+
+      /*==============================================================*
+      /* Constants
+      /*==============================================================*/
+      var DEFAULT_LIMIT = 100;
+      var DEFAULT_SORT = '-created';
+
+      /*==============================================================*
+      /* Constructor
+      /*==============================================================*/
+      var InquiryService = Service.extend(Inquiry);
+
+      InquiryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        options.sort = options.sort || DEFAULT_SORT;
+        options.limit = options.limit || DEFAULT_LIMIT;
+
+        return Inquiry.query(options).$promise;
+      };
+
+      InquiryService.prototype.approve = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.inquiryId) throw new Error('options.inquiryId is required');
+
+        options.id = options.inquiryId;
+        delete options.inquiryId;
+
+        return Inquiry.approve(options).$promise;
+      };
+
+      InquiryService.prototype.decline = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.inquiryId) throw new Error('options.inquiryId is required');
+
+        options.id = options.inquiryId;
+        delete options.inquiryId;
+
+        return Inquiry.decline(options).$promise;
+      };
+
+      return new InquiryService();
+    }
+  ]);
 
 
 angular
@@ -1582,87 +1663,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/inquiry/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-	      approve: {
-	        method: 'POST',
-	        url: endpoint + '/approve',
-	        isArray: false
-	      },
-	      decline: {
-	        method: 'POST',
-	        url: endpoint + '/decline',
-	        isArray: false
-	      },
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.inquiry.service', [
-    'tl.service',
-    'tl.inquiry.resource',
-    function(Service, Inquiry) {
-      'use strict';
-
-      /*==============================================================*
-      /* Constants
-      /*==============================================================*/
-      var DEFAULT_LIMIT = 100;
-      var DEFAULT_SORT = '-created';
-
-      /*==============================================================*
-      /* Constructor
-      /*==============================================================*/
-      var InquiryService = Service.extend(Inquiry);
-
-      InquiryService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        options.sort = options.sort || DEFAULT_SORT;
-        options.limit = options.limit || DEFAULT_LIMIT;
-
-        return Inquiry.query(options).$promise;
-      };
-
-      InquiryService.prototype.approve = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.inquiryId) throw new Error('options.inquiryId is required');
-
-        options.id = options.inquiryId;
-        delete options.inquiryId;
-
-        return Inquiry.approve(options).$promise;
-      };
-
-      InquiryService.prototype.decline = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.inquiryId) throw new Error('options.inquiryId is required');
-
-        options.id = options.inquiryId;
-        delete options.inquiryId;
-
-        return Inquiry.decline(options).$promise;
-      };
-
-      return new InquiryService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1689,6 +1689,65 @@ angular
 
 		return new ItemService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.outgoingPayment.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/outgoing-payment/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listTransaction: {
+        method: 'GET',
+        url: endpoint + '/transaction',
+        isArray: true
+      },
+      listAuthorization: {
+        method: 'GET',
+        url: endpoint + '/authorization',
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.outgoingPayment.service', [
+  'tl.outgoingPayment.resource',
+  'tl.service',
+  function(OutgoingPayment, Service) {
+    'use strict';
+
+    /*==============================================================*
+    /* Constructor
+    /*==============================================================*/
+
+    var OutgoingPaymentService = Service.extend(OutgoingPayment);
+
+    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
+      return OutgoingPayment.listTransaction({
+        id: id,
+      }, success, error);
+    };
+
+    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
+      return OutgoingPayment.listAuthorization({
+        id: id,
+      }, success, error);
+    };
+
+    return new OutgoingPaymentService();
+  }
+]);
+
 
 angular
 	.module('tl')
@@ -1792,65 +1851,6 @@ angular
 
     return new NotifyService();
   }]);
-
-
-angular
-	.module('tl')
-	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.outgoingPayment.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/outgoing-payment/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listTransaction: {
-        method: 'GET',
-        url: endpoint + '/transaction',
-        isArray: true
-      },
-      listAuthorization: {
-        method: 'GET',
-        url: endpoint + '/authorization',
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.outgoingPayment.service', [
-  'tl.outgoingPayment.resource',
-  'tl.service',
-  function(OutgoingPayment, Service) {
-    'use strict';
-
-    /*==============================================================*
-    /* Constructor
-    /*==============================================================*/
-
-    var OutgoingPaymentService = Service.extend(OutgoingPayment);
-
-    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
-      return OutgoingPayment.listTransaction({
-        id: id,
-      }, success, error);
-    };
-
-    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
-      return OutgoingPayment.listAuthorization({
-        id: id,
-      }, success, error);
-    };
-
-    return new OutgoingPaymentService();
-  }
-]);
 
 
 angular
@@ -2119,35 +2119,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.review.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/review/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
-
-		var ReviewService = Service.extend(Review);
-
-		return new ReviewService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2173,6 +2144,35 @@ angular
 		var RewardService = Service.extend(Reward);
 
 		return new RewardService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.review.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/review/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
+
+		var ReviewService = Service.extend(Review);
+
+		return new ReviewService();
 	}]);
 
 angular
@@ -2384,6 +2384,11 @@ angular
 			 	method: 'POST',
 			 	url: '/track/funnel',
 			 	isArray: true
+			},
+			listPossibleEvents: {
+				method: 'GET',
+				url: '/track/events',
+				isArray: true
 			}
 		});
 	}]);
@@ -2419,6 +2424,10 @@ angular
       return Track.save({}, track);
     };
 
+    TrackService.prototype.listPossibleEvents = function(success, error) {
+      return Track.listPossibleEvents({}, success, error).$promise;
+    };
+
 		TrackService.prototype.funnel = function(events, options, success, error) {
 			return Track.funnel({}, {
 				events: events,
@@ -2431,51 +2440,6 @@ angular
 
 		return new TrackService();
 	}]);
-
-angular
-  .module('tl')
-  .service('tl.tag', [
-    'tl.tag.resource',
-    'tl.tag.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tag.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tag';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tag.service', [
-    'tl.service',
-    'tl.tag.resource',
-    function(Service, Tag) {
-      'use strict';
-
-      var TagService = Service.extend(Tag);
-
-      TagService.prototype.list = function() {
-        return Tag.list().$promise;
-      };
-
-      return new TagService();
-    }
-  ]);
 
 
 angular
@@ -3170,5 +3134,50 @@ angular
       };
 
       return new VenueService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.tag', [
+    'tl.tag.resource',
+    'tl.tag.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tag.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tag';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tag.service', [
+    'tl.service',
+    'tl.tag.resource',
+    function(Service, Tag) {
+      'use strict';
+
+      var TagService = Service.extend(Tag);
+
+      TagService.prototype.list = function() {
+        return Tag.list().$promise;
+      };
+
+      return new TagService();
     }
   ]);

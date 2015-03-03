@@ -12,6 +12,11 @@ angular
 			 	method: 'POST',
 			 	url: '/track/funnel',
 			 	isArray: true
+			},
+			listPossibleEvents: {
+				method: 'GET',
+				url: '/track/events',
+				isArray: true
 			}
 		});
 	}]);
