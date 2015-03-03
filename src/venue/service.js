@@ -28,7 +28,7 @@ angular
         return Venue.update({
           id: options.id
         }, options).$promise;
-      }; 
+      };
 
       /*==============================================================*
       /* Cities
@@ -80,6 +80,13 @@ angular
 
       VenueService.prototype.listBookings = function(params, success, error) {
         return Venue.listBookings(params, success, error);
+      };
+
+      VenueService.prototype.listEvents = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listEvents(options).$promise;
       };
 
       return new VenueService();
