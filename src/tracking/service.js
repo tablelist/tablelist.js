@@ -31,5 +31,15 @@ angular
 			return Track.save({}, track);
 		};
 
+		TrackService.prototype.funnel = function(events, options, success, error) {
+			return Track.funnel({
+				events: events,
+				start: options.start.getTime(),
+				end: options.end.getTime(),
+				data: options.data,
+				client: options.client
+			}, success, error).$promise;
+		};
+
 		return new TrackService();
 	}]);

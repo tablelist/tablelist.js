@@ -8,6 +8,10 @@ angular
 		return resource(endpoint, {
 			id: '@id'
 		}, {
-			// add additional methods here
+			funnel: {
+			 	method: 'GET',
+			 	url: '/track/funnel',
+			 	isArray: true
+			}
 		});
 	}]);
