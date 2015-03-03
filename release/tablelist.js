@@ -1285,6 +1285,35 @@ angular
 
 		return new CampaignService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.city.resource', [
+  'tl.resource',
+  function(resource) {
+    return resource('/city/:id', {
+      id: '@id'
+    }, {
+      // no extra methods
+    });
+  }
+]);
+
+angular.module('tl').service('tl.city.service', [
+  'tl.service',
+  'tl.city.resource',
+  function(Service, City) {
+
+    var CityService = Service.extend(City);
+
+    return new CityService();
+  }
+]);
+
 angular
   .module('tl')
   .service('tl.image', ['tl.image.resource', 'tl.image.service',
@@ -1347,35 +1376,6 @@ angular
       return new ImageService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.city.resource', [
-  'tl.resource',
-  function(resource) {
-    return resource('/city/:id', {
-      id: '@id'
-    }, {
-      // no extra methods
-    });
-  }
-]);
-
-angular.module('tl').service('tl.city.service', [
-  'tl.service',
-  'tl.city.resource',
-  function(Service, City) {
-
-    var CityService = Service.extend(City);
-
-    return new CityService();
-  }
-]);
 
 
 angular
@@ -1756,6 +1756,43 @@ angular
 
     return new MetricService();
   }]);
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Notify);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
+  }]);
+
 
 angular
 	.module('tl')
@@ -1890,51 +1927,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.promo.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/promo/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			redeem: {
-				method: 'POST',
-				url: '/promo/redeem'
-			},
-		});
-	}]);
-(function() {
-  'use strict';
-
-  angular
-    .module('tl')
-    .service('tl.promo.service', ['tl.storage', 'tl.promo.resource', 'tl.service',
-      function(storage, Promo, Service) {
-
-        var PromoService = Service.extend(Promo);
-
-        PromoService.prototype.redeem = function(promoCode, success, error) {
-          var _this = this;
-          return Promo.redeem({
-            code: promoCode
-          });
-        };
-
-        return new PromoService();
-      }
-    ]);
-}());
-
-
-angular
-	.module('tl')
 	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2030,6 +2022,51 @@ angular
       return new QuestionService();
     }
   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.promo.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/promo/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			redeem: {
+				method: 'POST',
+				url: '/promo/redeem'
+			},
+		});
+	}]);
+(function() {
+  'use strict';
+
+  angular
+    .module('tl')
+    .service('tl.promo.service', ['tl.storage', 'tl.promo.resource', 'tl.service',
+      function(storage, Promo, Service) {
+
+        var PromoService = Service.extend(Promo);
+
+        PromoService.prototype.redeem = function(promoCode, success, error) {
+          var _this = this;
+          return Promo.redeem({
+            code: promoCode
+          });
+        };
+
+        return new PromoService();
+      }
+    ]);
+}());
 
 
 angular
@@ -2294,138 +2331,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.constant('TRACK_EVENTS', {
-		
-		// User
-		UserVerifiedPhoneNumber: "TLUserPhoneVerified",
-		UserUpdatedProfilePicture: "TLUserUpdatedProfilePicture",
-		UserCompletedProfile: "TLUserCompletedProfile",
-
-		// City
-		CityViewed: "TLCityViewed",
-		CityFeaturedViewed: "TLCityFeaturedViewed",
-		CityTonightViewed: "TLCityTonightViewed",
-		CityThisWeekViewed: "TLCityThisWeekViewed",
-		CityApplied: "TLCityApplied",
-		CityShared: "TLCityShared",
-
-		// Venues
-		VenueViewed: "TLVenueViewed",
-		VenueInfoViewed: "TLVenueInfoViewed",
-		VenueContactViewed: "TLVenueContactViewed",
-		VenueMapViewed: "TLVenueMapViewed",
-		VenueAppliedForAccess: "TLVenueAppliedForAccess",
-
-		// Events
-		EventViewed: "TLEventViewed",
-
-		// Booking Flow
-		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
-		BookingInfoViewed: "TLBookingInfoViewed",
-		BookingReviewViewed: "TLBookingReviewViewed",
-		BookingTermsViewed: "TLBookingTermsViewed",
-		BookingComplete: "TLBookingComplete",
-		BookingReservationComplete: "TLBookingReservationComplete",
-		BookingPromoterComplete: "TLBookingPromoterComplete",
-		BookingFailed: "TLBookingFailed",
-		BookingReservationFailed: "TLBookingReservationFailed",
-		BookingAddedToPassbook: "TLBookingAddedToPassbook",
-		BookingInquiryViewed: "TLBookingInquiryViewed",
-		BookingInquirySubmitted: "TLBookingInquirySubmitted",
-
-		// Booking Join Flow
-		BookingJoinPending: "TLBookingJoinPending",
-		BookingJoinAccepted: "TLBookingJoinAccepted",
-		BookingJoinCodeSent: "TLBookingJoinCodeSent",
-
-		// Booking Review
-		BookingReviewSubmitted: "TLBookingReviewSubmitted",
-
-		// Referral
-		ReferralEntered: "TLReferralEntered",
-		ReferralSentFB: "TLReferralSentFB",
-		ReferralSentTW: "TLReferralSentTW",
-		ReferralSentSMS: "TLReferralSentSMS",
-		ReferralSentEmail: "TLReferralSentEmail",
-
-		// Payment
-		PaymentAdded: "TLPaymentAdded",
-		PaymentUpdated: "TLPaymentUpdated",
-
-		// Promo Code
-		CodeRedeemed: "TLPromoCodeRedeemed",
-
-		// Rewards
-		RewardViewed: "TLRewardViewed",
-		RewardRedeemed: "TLRewardRedeemed",
-
-		// About Us
-		AboutBlogViewed: "TLAboutBlogViewed",
-		AboutFacebookViewed: "TLAboutFacebookViewed",
-		AboutTwitterViewed: "TLAboutTwitterViewed",
-		AboutWebsiteViewed: "TLAboutWebsiteViewed",
-
-		// Easter Eggs
-		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture"
-	});
-
-angular
-	.module('tl')
-	.service('tl.track', ['tl.track.resource', 'tl.track.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.track.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/track/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config){
-
-		var TrackService = Service.extend(Track);
-		
-		/**
-		 * Returns a map of valid tracking events
-		 */
-		TrackService.prototype.trackingEvents = function() {
-			return EVENTS;
-		};
-
-		/**
-		 * Send a tracking event to the server
-		 */
-		TrackService.prototype.send = function(eventName, data) {
-			var track = {
-				event: eventName,
-				data: data,
-				client: {
-					os: config.CLIENT,
-					version: config.VERSION,
-					device: window.navigator ? window.navigator.userAgent : null
-				}
-			};
-
-			if(config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
-
-			return Track.save({}, track);
-		};
-
-		return new TrackService();
-	}]);
 
 angular
 	.module('tl')
@@ -2877,6 +2782,138 @@ angular
 
 angular
 	.module('tl')
+	.constant('TRACK_EVENTS', {
+		
+		// User
+		UserVerifiedPhoneNumber: "TLUserPhoneVerified",
+		UserUpdatedProfilePicture: "TLUserUpdatedProfilePicture",
+		UserCompletedProfile: "TLUserCompletedProfile",
+
+		// City
+		CityViewed: "TLCityViewed",
+		CityFeaturedViewed: "TLCityFeaturedViewed",
+		CityTonightViewed: "TLCityTonightViewed",
+		CityThisWeekViewed: "TLCityThisWeekViewed",
+		CityApplied: "TLCityApplied",
+		CityShared: "TLCityShared",
+
+		// Venues
+		VenueViewed: "TLVenueViewed",
+		VenueInfoViewed: "TLVenueInfoViewed",
+		VenueContactViewed: "TLVenueContactViewed",
+		VenueMapViewed: "TLVenueMapViewed",
+		VenueAppliedForAccess: "TLVenueAppliedForAccess",
+
+		// Events
+		EventViewed: "TLEventViewed",
+
+		// Booking Flow
+		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
+		BookingInfoViewed: "TLBookingInfoViewed",
+		BookingReviewViewed: "TLBookingReviewViewed",
+		BookingTermsViewed: "TLBookingTermsViewed",
+		BookingComplete: "TLBookingComplete",
+		BookingReservationComplete: "TLBookingReservationComplete",
+		BookingPromoterComplete: "TLBookingPromoterComplete",
+		BookingFailed: "TLBookingFailed",
+		BookingReservationFailed: "TLBookingReservationFailed",
+		BookingAddedToPassbook: "TLBookingAddedToPassbook",
+		BookingInquiryViewed: "TLBookingInquiryViewed",
+		BookingInquirySubmitted: "TLBookingInquirySubmitted",
+
+		// Booking Join Flow
+		BookingJoinPending: "TLBookingJoinPending",
+		BookingJoinAccepted: "TLBookingJoinAccepted",
+		BookingJoinCodeSent: "TLBookingJoinCodeSent",
+
+		// Booking Review
+		BookingReviewSubmitted: "TLBookingReviewSubmitted",
+
+		// Referral
+		ReferralEntered: "TLReferralEntered",
+		ReferralSentFB: "TLReferralSentFB",
+		ReferralSentTW: "TLReferralSentTW",
+		ReferralSentSMS: "TLReferralSentSMS",
+		ReferralSentEmail: "TLReferralSentEmail",
+
+		// Payment
+		PaymentAdded: "TLPaymentAdded",
+		PaymentUpdated: "TLPaymentUpdated",
+
+		// Promo Code
+		CodeRedeemed: "TLPromoCodeRedeemed",
+
+		// Rewards
+		RewardViewed: "TLRewardViewed",
+		RewardRedeemed: "TLRewardRedeemed",
+
+		// About Us
+		AboutBlogViewed: "TLAboutBlogViewed",
+		AboutFacebookViewed: "TLAboutFacebookViewed",
+		AboutTwitterViewed: "TLAboutTwitterViewed",
+		AboutWebsiteViewed: "TLAboutWebsiteViewed",
+
+		// Easter Eggs
+		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture"
+	});
+
+angular
+	.module('tl')
+	.service('tl.track', ['tl.track.resource', 'tl.track.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.track.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/track/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
+
+    var TrackService = Service.extend(Track);
+
+    /**
+     * Returns a map of valid tracking events
+     */
+    TrackService.prototype.trackingEvents = function() {
+      return EVENTS;
+    };
+
+    /**
+     * Send a tracking event to the server
+     */
+    TrackService.prototype.send = function(eventName, data) {
+      var track = {
+        event: eventName,
+        data: data,
+        client: {
+          os: config.CLIENT,
+          version: config.VERSION,
+          device: window.navigator ? window.navigator.userAgent : null
+        }
+      };
+
+      if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
+
+      return Track.save({}, track);
+    };
+
+    return new TrackService();
+  }]);
+
+
+angular
+	.module('tl')
 	.service('tl.venue', ['tl.venue.resource', 'tl.venue.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3037,6 +3074,13 @@ angular
 
       var VenueService = Service.extend(Venue);
 
+      VenueService.prototype.read = function create(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.get(options).$promise;
+      };
+
       VenueService.prototype.create = function create(options) {
         if (!options) throw new Error('options is required');
 
@@ -3102,6 +3146,13 @@ angular
 
       VenueService.prototype.listBookings = function(params, success, error) {
         return Venue.listBookings(params, success, error);
+      };
+
+      VenueService.prototype.listEvents = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listEvents(options).$promise;
       };
 
       return new VenueService();

@@ -8,6 +8,13 @@ angular
 
       var VenueService = Service.extend(Venue);
 
+      VenueService.prototype.read = function create(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.get(options).$promise;
+      };
+
       VenueService.prototype.create = function create(options) {
         if (!options) throw new Error('options is required');
 
@@ -73,6 +80,13 @@ angular
 
       VenueService.prototype.listBookings = function(params, success, error) {
         return Venue.listBookings(params, success, error);
+      };
+
+      VenueService.prototype.listEvents = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listEvents(options).$promise;
       };
 
       return new VenueService();
