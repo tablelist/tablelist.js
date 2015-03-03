@@ -9,7 +9,7 @@ angular
 			id: '@id'
 		}, {
 			funnel: {
-			 	method: 'GET',
+			 	method: 'POST',
 			 	url: '/track/funnel',
 			 	isArray: true
 			}

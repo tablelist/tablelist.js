@@ -31,7 +31,7 @@ angular
     };
 
 		TrackService.prototype.funnel = function(events, options, success, error) {
-			return Track.funnel({
+			return Track.funnel({}, {
 				events: events,
 				start: options.start.getTime(),
 				end: options.end.getTime(),
