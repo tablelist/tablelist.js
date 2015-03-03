@@ -8,7 +8,7 @@ angular
 
       var VenueService = Service.extend(Venue);
 
-      VenueService.prototype.read = function create(options) {
+      VenueService.prototype.read = function read(options) {
         if (!options) throw new Error('options is required');
         if (!options.id) throw new Error('options.id is required');
 
