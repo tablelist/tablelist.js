@@ -12,9 +12,11 @@ angular
         var formData = new FormData();
         formData.append('image', file);
 
-        var maxFileSize = 4000000; //4mb
+        var maxFileSize = 16000000; //16mb
 
-        if (file.size > maxFileSize) deferred.reject('File cannot be greater than 4mb');
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
 
         tlhttp.upload('/image', options, formData)
           .success(function(data, status, headers, config) {
