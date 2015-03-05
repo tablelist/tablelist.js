@@ -25,7 +25,7 @@ angular.module('tl').service('tl.auth.service', [
     /**
      * Registers a new user
      */
-    AuthService.prototype.register = function(options) {
+    AuthService.prototype.register = function(options, success, error) {
       if (!options) throw new Error('options is required');
       if (!options.email) throw new Error('options.email is required');
       if (!options.password) throw new Error('options.password is required');
@@ -34,10 +34,11 @@ angular.module('tl').service('tl.auth.service', [
 
       var _this = this;
 
-      return Auth.register({}, options).$promise.then(function success(auth) {
+      return Auth.register({}, options).$promise.then(function(auth) {
         _this.setAuthToken(auth.token);
         user.setCurrentUser(auth.user);
-      });
+        success(auth);
+      }, error);
     };
 
     /**
@@ -81,6 +82,7 @@ angular.module('tl').service('tl.auth.service', [
     AuthService.prototype.logout = function() {
       this.setAuthToken(null);
       user.setCurrentUser(null);
+      keychain.setProspectToken(null);
       return true;
     };
 
