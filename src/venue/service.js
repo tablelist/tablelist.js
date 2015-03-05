@@ -89,6 +89,13 @@ angular
         return Venue.listEvents(options).$promise;
       };
 
+      VenueService.prototype.listReviews = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listReviews(options).$promise;
+      };
+
       return new VenueService();
     }
   ]);

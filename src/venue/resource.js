@@ -141,5 +141,11 @@ angular
         url: endpoint + '/booking',
         isArray: true
       },
+
+      listReviews: {
+        method: 'GET',
+        url: endpoint + '/review',
+        isArray: true
+      }
     });
   }]);
