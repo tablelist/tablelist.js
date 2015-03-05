@@ -82,6 +82,7 @@ angular.module('tl').service('tl.auth.service', [
     AuthService.prototype.logout = function() {
       this.setAuthToken(null);
       user.setCurrentUser(null);
+      keychain.setProspectToken(null);
       return true;
     };
 
