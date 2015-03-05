@@ -37,7 +37,8 @@ angular
       API: API[TL_ENV],
       useAuthHeader: false, //send auth token as query string, or header, defaults to query string
 
-      setSubclient: setSubclient
+      setSubclient: setSubclient,
+      setVersion: setVersion
     };
 
     function setEnv(env) {
@@ -56,6 +57,10 @@ angular
       config.SUB_CLIENT = subclient;
     }
 
+    function setVersion(version) {
+      config.VERSION = version;
+    }
+
     function setUseAuthHeader(useAuthHeader) {
       config.useAuthHeader = useAuthHeader || false;
     }
@@ -63,6 +68,7 @@ angular
     return {
       setEnv: setEnv,
       setSubclient: setSubclient,
+      setVersion: setVersion,
       setUseAuthHeader: setUseAuthHeader,
 
       // needed for Provider
