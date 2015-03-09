@@ -27,7 +27,7 @@ angular.module('tl').service('tl.booking.service', [
 
       var opts = {}
       var _this = this;
-      
+
       opts.sort = options.sort || DEFAULT_SORT;
       opts.limit = options.limit || DEFAULT_LIMIT;
       opts.admin = options.admin || false;
@@ -110,6 +110,13 @@ angular.module('tl').service('tl.booking.service', [
       return Booking.readSplitTable({
         code: splitCode
       }, {}, success, error);
+    };
+
+    BookingService.prototype.listTerms = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Booking.listTerms(options).$promise;
     };
 
     return new BookingService();

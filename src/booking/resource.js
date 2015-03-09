@@ -52,6 +52,11 @@ angular.module('tl').factory('tl.booking.resource', [
       readSplitTable: {
         method: 'GET',
         url: 'booking/split/:code'
+      },
+      listTerms: {
+        method: 'GET',
+        url: 'booking/:id/terms',
+        isArray: true
       }
     });
   }
