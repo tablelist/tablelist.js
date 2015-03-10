@@ -57,6 +57,14 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'GET',
         url: 'booking/:id/terms',
         isArray: true
+      },
+      addCondition: {
+        method: 'POST',
+        url: 'booking/:id/condition'
+      },
+      accept: {
+        method: 'POST',
+        url: 'booking/:id/accept'
       }
     });
   }

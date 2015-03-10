@@ -119,6 +119,33 @@ angular.module('tl').service('tl.booking.service', [
       return Booking.listTerms(options).$promise;
     };
 
+    BookingService.prototype.addCondition = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+      if (!options.condition) throw new Error('options.condition is required');
+
+      var id = options.id;
+      delete options.id;
+
+      return Booking.addCondition({
+        id: options.id
+      }, options).$promise;
+    };
+
+    BookingService.prototype.accept = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+      if (!options.userId) throw new Error('options.userId is required');
+      if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+      var id = options.id;
+      delete options.id;
+
+      return Booking.accept({
+        id: options.id
+      }, options).$promise;
+    };
+
     return new BookingService();
   }
 ]);
