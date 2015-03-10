@@ -32,10 +32,6 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: 'booking/join'
       },
-      accept: {
-        method: 'POST',
-        url: endpoint + '/accept'
-      },
       decline : {
         method: 'POST',
         url: endpoint + '/decline'

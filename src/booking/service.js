@@ -79,12 +79,6 @@ angular.module('tl').service('tl.booking.service', [
       }, success, error);
     };
 
-    BookingService.prototype.accept = function(id, success, error) {
-      return Booking.accept({}, {
-        id: id
-      }, success, error);
-    };
-
     BookingService.prototype.decline = function(id, userId, success, error) {
       return Booking.decline({
         id: id
