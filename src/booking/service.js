@@ -122,7 +122,7 @@ angular.module('tl').service('tl.booking.service', [
       delete options.id;
 
       return Booking.addCondition({
-        id: options.id
+        id: id
       }, options).$promise;
     };
 
@@ -136,7 +136,7 @@ angular.module('tl').service('tl.booking.service', [
       delete options.id;
 
       return Booking.accept({
-        id: options.id
+        id: id
       }, options).$promise;
     };
 
