@@ -109,7 +109,7 @@ angular.module('tl').service('tl.booking.service', [
 
       return Booking.createOutgoingPayment({
         id: id,
-      }, options);
+      }, options).$promise;
     };
 
     BookingService.prototype.readSplitTable = function(splitCode, success, error) {
