@@ -100,6 +100,18 @@ angular.module('tl').service('tl.booking.service', [
       }, success, error);
     };
 
+    BookingService.prototype.createOutgoingPayment = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var id = options.id;
+      delete options.id;
+
+      return Booking.createOutgoingPayment({
+        id: id,
+      }, options);
+    };
+
     BookingService.prototype.readSplitTable = function(splitCode, success, error) {
       return Booking.readSplitTable({
         code: splitCode

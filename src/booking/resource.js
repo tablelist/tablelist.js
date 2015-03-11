@@ -61,6 +61,10 @@ angular.module('tl').factory('tl.booking.resource', [
       accept: {
         method: 'POST',
         url: 'booking/:id/accept'
+      },
+      createOutgoingPayment: {
+        method: 'POST',
+        url: endpoint + '/outgoing-payment',
       }
     });
   }
