@@ -1147,6 +1147,10 @@ angular.module('tl').factory('tl.booking.resource', [
       createOutgoingPayment: {
         method: 'POST',
         url: endpoint + '/outgoing-payment',
+      },
+      refundBookingUser: {
+        method: 'POST',
+        url: endpoint + '/user/:userId/refund',
       }
     });
   }
@@ -1306,7 +1310,53 @@ angular.module('tl').service('tl.booking.service', [
       }, options).$promise;
     };
 
+    BookingService.prototype.refundBookingUser = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+      if (!options.userId) throw new Error('options.userId is required');
+      if (!options.type) throw new Error('options.type is required');
+
+      var id = options.id;
+      delete options.id;
+      var userId = options.userId;
+      delete options.userId;
+
+      return Booking.refundBookingUser({
+        id: id,
+        userId: userId
+      }, options).$promise;
+    };
+
     return new BookingService();
+  }
+]);
+
+
+angular
+	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.city.resource', [
+  'tl.resource',
+  function(resource) {
+    return resource('/city/:id', {
+      id: '@id'
+    }, {
+      // no extra methods
+    });
+  }
+]);
+
+angular.module('tl').service('tl.city.service', [
+  'tl.service',
+  'tl.city.resource',
+  function(Service, City) {
+
+    var CityService = Service.extend(City);
+
+    return new CityService();
   }
 ]);
 
@@ -1346,35 +1396,6 @@ angular
 
 		return new CampaignService();
 	}]);
-
-angular
-	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.city.resource', [
-  'tl.resource',
-  function(resource) {
-    return resource('/city/:id', {
-      id: '@id'
-    }, {
-      // no extra methods
-    });
-  }
-]);
-
-angular.module('tl').service('tl.city.service', [
-  'tl.service',
-  'tl.city.resource',
-  function(Service, City) {
-
-    var CityService = Service.extend(City);
-
-    return new CityService();
-  }
-]);
-
 angular
   .module('tl')
   .service('tl.image', ['tl.image.resource', 'tl.image.service',
@@ -1752,43 +1773,6 @@ angular
 
 		return new ItemService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.notify.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/notify/adminapp';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      sendAdminApp: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
-
-    var NotifyService = Service.extend(Notify);
-
-    NotifyService.prototype.sendAdminApp = function() {
-      return Notify.sendAdminApp().$promise;
-    };
-
-    return new NotifyService();
-  }]);
-
 
 angular
 	.module('tl')
@@ -1986,6 +1970,43 @@ angular
       return new PaymentService();
     }
   ]);
+
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Notify);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
+  }]);
 
 
 angular
@@ -2349,51 +2370,6 @@ angular
 
 		return new TableService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.tag', [
-    'tl.tag.resource',
-    'tl.tag.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tag.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tag';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tag.service', [
-    'tl.service',
-    'tl.tag.resource',
-    function(Service, Tag) {
-      'use strict';
-
-      var TagService = Service.extend(Tag);
-
-      TagService.prototype.list = function() {
-        return Tag.list().$promise;
-      };
-
-      return new TagService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
@@ -2548,6 +2524,51 @@ angular
 
 		return new TrackService();
 	}]);
+
+angular
+  .module('tl')
+  .service('tl.tag', [
+    'tl.tag.resource',
+    'tl.tag.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tag.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tag';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tag.service', [
+    'tl.service',
+    'tl.tag.resource',
+    function(Service, Tag) {
+      'use strict';
+
+      var TagService = Service.extend(Tag);
+
+      TagService.prototype.list = function() {
+        return Tag.list().$promise;
+      };
+
+      return new TagService();
+    }
+  ]);
 
 
 angular

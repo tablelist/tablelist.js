@@ -152,6 +152,23 @@ angular.module('tl').service('tl.booking.service', [
       }, options).$promise;
     };
 
+    BookingService.prototype.refundBookingUser = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+      if (!options.userId) throw new Error('options.userId is required');
+      if (!options.type) throw new Error('options.type is required');
+
+      var id = options.id;
+      delete options.id;
+      var userId = options.userId;
+      delete options.userId;
+
+      return Booking.refundBookingUser({
+        id: id,
+        userId: userId
+      }, options).$promise;
+    };
+
     return new BookingService();
   }
 ]);

@@ -65,6 +65,10 @@ angular.module('tl').factory('tl.booking.resource', [
       createOutgoingPayment: {
         method: 'POST',
         url: endpoint + '/outgoing-payment',
+      },
+      refundBookingUser: {
+        method: 'POST',
+        url: endpoint + '/user/:userId/refund',
       }
     });
   }
