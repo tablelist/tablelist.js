@@ -28,7 +28,8 @@ angular
       listCityTonight: {
         method: 'GET',
         url: '/city/:cityId/venue/tonight',
-        isArray: true
+        isArray: true,
+        cache: true
       },
 
       /*==============================================================*
