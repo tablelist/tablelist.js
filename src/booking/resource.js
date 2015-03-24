@@ -69,6 +69,11 @@ angular.module('tl').factory('tl.booking.resource', [
       refundBookingUser: {
         method: 'POST',
         url: endpoint + '/user/:userId/refund',
+      },
+      listBookingTickets: {
+        method: 'GET',
+        url: endpoint + '/ticket',
+        isArray: true
       }
     });
   }
