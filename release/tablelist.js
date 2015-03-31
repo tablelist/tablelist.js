@@ -914,6 +914,180 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular.module('tl').factory('tl.auth.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/auth';
+
+    return resource(endpoint, {
+      // nothing here
+    }, {
+
+      register: {
+        method: 'POST',
+        url: endpoint + '/register',
+        isArray: false
+      },
+
+      login: {
+        method: 'POST',
+        url: endpoint + '/login',
+        isArray: false
+      },
+
+      loginFacebook: {
+        method: 'POST',
+        url: endpoint + '/facebook',
+        isArray: false
+      },
+
+      forgotPassword: {
+        method: 'POST',
+        url: endpoint + '/forgot',
+        isArray: false
+      },
+
+      resetPassword: {
+        method: 'POST',
+        url: endpoint + '/reset',
+        isArray: false
+      }
+
+    });
+  }
+]);
+
+angular.module('tl').service('tl.auth.service', [
+  'tl.auth.resource',
+  'tl.keychain',
+  'tl.user.service',
+  'tl.facebook',
+  function(Auth, keychain, user, fb) {
+    'use strict';
+
+    var AuthService = function() {};
+
+    /**
+     * Gets the current users auth token from the keychain
+     */
+    AuthService.prototype.authToken = function() {
+      return keychain.authToken();
+    };
+
+    /**
+     * Stores an auth token in the keychain
+     */
+    AuthService.prototype.setAuthToken = function(token) {
+      return keychain.setAuthToken(token);
+    };
+
+    /**
+     * Registers a new user
+     */
+    AuthService.prototype.register = function(options, success, error) {
+      success = success || function() {};
+
+      if (!options) throw new Error('options is required');
+      if (!options.email) throw new Error('options.email is required');
+      if (!options.password) throw new Error('options.password is required');
+      if (!options.firstName) throw new Error('options.firstName is required');
+      if (!options.lastName) throw new Error('options.lastName is required');
+
+      var _this = this;
+      _this.logout();
+
+      return Auth.register({}, options).$promise.then(function(auth) {
+        _this.setAuthToken(auth.token);
+        user.setCurrentUser(auth.user);
+        success(auth);
+      }, error);
+    };
+
+    /**
+     * Logs in a user via email and password
+     */
+    AuthService.prototype.login = function(email, password, success, error) {
+      success = success || function() {};
+      
+      var _this = this;
+      _this.logout();
+
+      return Auth.login({}, {
+          email: email,
+          password: password
+        })
+        .$promise.then(function(auth) {
+          _this.setAuthToken(auth.token);
+          user.setCurrentUser(auth.user);
+          success(auth);
+        }, error);
+    };
+
+    /**
+     * Attempts to login a user via Facebook
+     */
+    AuthService.prototype.loginWithFacebook = function(success, error) {
+      success = success || function() {};
+      
+      var _this = this;
+      _this.logout();
+
+      fb.login(function(err, token) {
+        return Auth.loginFacebook({}, {
+            facebookToken: token
+          })
+          .$promise.then(function(auth) {
+            _this.setAuthToken(auth.token);
+            user.setCurrentUser(auth.user);
+            success(auth);
+          }, error);
+      });
+    };
+
+    /**
+     * Logs out the current user
+     */
+    AuthService.prototype.logout = function() {
+      this.setAuthToken(null);
+      user.setCurrentUser(null);
+      keychain.setProspectToken(null);
+      return true;
+    };
+
+    /**
+     * Sends a reset password to the given email address
+     */
+    AuthService.prototype.forgotPassword = function(email, success, error) {
+      return Auth.forgotPassword({}, {
+        email: email
+      }, success, error);
+    };
+
+    /**
+     * Resets a users password based on token recieved from forgot password email
+     */
+    AuthService.prototype.resetPassword = function(token, password, success, error) {
+      return Auth.resetPassword({}, {
+        resetToken: token,
+        password: password
+      }, success, error);
+    };
+
+    return new AuthService();
+  }
+]);
+
 
 angular
 	.module('tl')
@@ -1189,177 +1363,68 @@ angular.module('tl').service('tl.booking.service', [
   }
 ]);
 
-angular
-  .module('tl')
-  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
 
-angular.module('tl').factory('tl.auth.resource', [
+angular
+	.module('tl')
+	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.campaign.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/campaign/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
+		
+		var CampaignService = Service.extend(User);
+
+		/**
+		 * List internal campaigns
+		 */
+		CampaignService.prototype.listInternal = function() {
+			return Campaign.list({ internal : true }).$promise;
+		};
+
+		return new CampaignService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.city.resource', [
   'tl.resource',
   function(resource) {
-    'use strict';
-
-    var endpoint = '/auth';
-
-    return resource(endpoint, {
-      // nothing here
+    return resource('/city/:id', {
+      id: '@id'
     }, {
-
-      register: {
-        method: 'POST',
-        url: endpoint + '/register',
-        isArray: false
-      },
-
-      login: {
-        method: 'POST',
-        url: endpoint + '/login',
-        isArray: false
-      },
-
-      loginFacebook: {
-        method: 'POST',
-        url: endpoint + '/facebook',
-        isArray: false
-      },
-
-      forgotPassword: {
-        method: 'POST',
-        url: endpoint + '/forgot',
-        isArray: false
-      },
-
-      resetPassword: {
-        method: 'POST',
-        url: endpoint + '/reset',
-        isArray: false
-      }
-
+      // no extra methods
     });
   }
 ]);
 
-angular.module('tl').service('tl.auth.service', [
-  'tl.auth.resource',
-  'tl.keychain',
-  'tl.user.service',
-  'tl.facebook',
-  function(Auth, keychain, user, fb) {
-    'use strict';
+angular.module('tl').service('tl.city.service', [
+  'tl.service',
+  'tl.city.resource',
+  function(Service, City) {
 
-    var AuthService = function() {};
+    var CityService = Service.extend(City);
 
-    /**
-     * Gets the current users auth token from the keychain
-     */
-    AuthService.prototype.authToken = function() {
-      return keychain.authToken();
-    };
-
-    /**
-     * Stores an auth token in the keychain
-     */
-    AuthService.prototype.setAuthToken = function(token) {
-      return keychain.setAuthToken(token);
-    };
-
-    /**
-     * Registers a new user
-     */
-    AuthService.prototype.register = function(options, success, error) {
-      success = success || function() {};
-
-      if (!options) throw new Error('options is required');
-      if (!options.email) throw new Error('options.email is required');
-      if (!options.password) throw new Error('options.password is required');
-      if (!options.firstName) throw new Error('options.firstName is required');
-      if (!options.lastName) throw new Error('options.lastName is required');
-
-      var _this = this;
-      _this.logout();
-
-      return Auth.register({}, options).$promise.then(function(auth) {
-        _this.setAuthToken(auth.token);
-        user.setCurrentUser(auth.user);
-        success(auth);
-      }, error);
-    };
-
-    /**
-     * Logs in a user via email and password
-     */
-    AuthService.prototype.login = function(email, password, success, error) {
-      success = success || function() {};
-      
-      var _this = this;
-      _this.logout();
-
-      return Auth.login({}, {
-          email: email,
-          password: password
-        })
-        .$promise.then(function(auth) {
-          _this.setAuthToken(auth.token);
-          user.setCurrentUser(auth.user);
-          success(auth);
-        }, error);
-    };
-
-    /**
-     * Attempts to login a user via Facebook
-     */
-    AuthService.prototype.loginWithFacebook = function(success, error) {
-      success = success || function() {};
-      
-      var _this = this;
-      _this.logout();
-
-      fb.login(function(err, token) {
-        return Auth.loginFacebook({}, {
-            facebookToken: token
-          })
-          .$promise.then(function(auth) {
-            _this.setAuthToken(auth.token);
-            user.setCurrentUser(auth.user);
-            success(auth);
-          }, error);
-      });
-    };
-
-    /**
-     * Logs out the current user
-     */
-    AuthService.prototype.logout = function() {
-      this.setAuthToken(null);
-      user.setCurrentUser(null);
-      keychain.setProspectToken(null);
-      return true;
-    };
-
-    /**
-     * Sends a reset password to the given email address
-     */
-    AuthService.prototype.forgotPassword = function(email, success, error) {
-      return Auth.forgotPassword({}, {
-        email: email
-      }, success, error);
-    };
-
-    /**
-     * Resets a users password based on token recieved from forgot password email
-     */
-    AuthService.prototype.resetPassword = function(token, password, success, error) {
-      return Auth.resetPassword({}, {
-        resetToken: token,
-        password: password
-      }, success, error);
-    };
-
-    return new AuthService();
+    return new CityService();
   }
 ]);
 
@@ -1514,71 +1579,6 @@ angular
       return new ImageService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.campaign.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/campaign/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
-		
-		var CampaignService = Service.extend(User);
-
-		/**
-		 * List internal campaigns
-		 */
-		CampaignService.prototype.listInternal = function() {
-			return Campaign.list({ internal : true }).$promise;
-		};
-
-		return new CampaignService();
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.city.resource', [
-  'tl.resource',
-  function(resource) {
-    return resource('/city/:id', {
-      id: '@id'
-    }, {
-      // no extra methods
-    });
-  }
-]);
-
-angular.module('tl').service('tl.city.service', [
-  'tl.service',
-  'tl.city.resource',
-  function(Service, City) {
-
-    var CityService = Service.extend(City);
-
-    return new CityService();
-  }
-]);
 
 
 angular
@@ -1779,35 +1779,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.item.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/item/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
-
-		var ItemService = Service.extend(Item);
-
-		return new ItemService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.metric', ['tl.metric.resource', 'tl.metric.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1872,6 +1843,35 @@ angular
 
     return new MetricService();
   }]);
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.item.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/item/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
+
+		var ItemService = Service.extend(Item);
+
+		return new ItemService();
+	}]);
 angular
   .module('tl')
   .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
@@ -1967,51 +1967,6 @@ angular.module('tl').service('tl.outgoingPayment.service', [
     return new OutgoingPaymentService();
   }
 ]);
-
-
-angular
-	.module('tl')
-	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.promo.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/promo/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			redeem: {
-				method: 'POST',
-				url: '/promo/redeem'
-			},
-		});
-	}]);
-(function() {
-  'use strict';
-
-  angular
-    .module('tl')
-    .service('tl.promo.service', ['tl.storage', 'tl.promo.resource', 'tl.service',
-      function(storage, Promo, Service) {
-
-        var PromoService = Service.extend(Promo);
-
-        PromoService.prototype.redeem = function(promoCode, success, error) {
-          var _this = this;
-          return Promo.redeem({
-            code: promoCode
-          });
-        };
-
-        return new PromoService();
-      }
-    ]);
-}());
 
 
 angular
@@ -2127,51 +2082,48 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
+	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 
 angular
 	.module('tl')
-	.factory('tl.report.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/report/:id';
+	.factory('tl.promo.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/promo/:id';
 
 		return resource(endpoint, {
 			id: '@id'
 		}, {
-			reports: {
-				method: 'GET',
-				url: '/report/types'
+			redeem: {
+				method: 'POST',
+				url: '/promo/redeem'
 			},
-			download: {
-				method: 'GET',
-				url: endpoint + '/download'
-			}
 		});
 	}]);
+(function() {
+  'use strict';
 
-angular
-	.module('tl')
-	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
+  angular
+    .module('tl')
+    .service('tl.promo.service', ['tl.storage', 'tl.promo.resource', 'tl.service',
+      function(storage, Promo, Service) {
 
-		var ReportService = Service.extend(Report);
+        var PromoService = Service.extend(Promo);
 
-		ReportService.prototype.reports = function(success, error) {
-			return Report.reports({}, success, error);
-		};
+        PromoService.prototype.redeem = function(promoCode, success, error) {
+          var _this = this;
+          return Promo.redeem({
+            code: promoCode
+          });
+        };
 
-		ReportService.prototype.listReports = function(key, success, error) {
-			return Report.query({ report: key }, success, error);
-		};
+        return new PromoService();
+      }
+    ]);
+}());
 
-		ReportService.prototype.download = function(reportId, success, error) {
-			return Report.download({ id: reportId }, success, error);
-		};
-
-		return new ReportService();
-	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -2232,6 +2184,54 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.report.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/report/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			reports: {
+				method: 'GET',
+				url: '/report/types'
+			},
+			download: {
+				method: 'GET',
+				url: endpoint + '/download'
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
+
+		var ReportService = Service.extend(Report);
+
+		ReportService.prototype.reports = function(success, error) {
+			return Report.reports({}, success, error);
+		};
+
+		ReportService.prototype.listReports = function(key, success, error) {
+			return Report.query({ report: key }, success, error);
+		};
+
+		ReportService.prototype.download = function(reportId, success, error) {
+			return Report.download({ id: reportId }, success, error);
+		};
+
+		return new ReportService();
+	}]);
 
 angular
 	.module('tl')
@@ -3246,22 +3246,25 @@ angular
       /* Cities
       /*==============================================================*/
 
-      VenueService.prototype.listForCity = function(cityId, success, error) {
-        return Venue.listForCity({
-          cityId: cityId
-        }, success, error);
+      VenueService.prototype.listForCity = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.cityId) throw new Error('options.cityId is required');
+
+        return Venue.listForCity(options).$promise;
       };
 
-      VenueService.prototype.listCityFeatured = function(cityId, success, error) {
-        return Venue.listCityFeatured({
-          cityId: cityId
-        }, success, error);
+      VenueService.prototype.listCityFeatured = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.cityId) throw new Error('options.cityId is required');
+
+        return Venue.listCityFeatured(options).$promise;
       };
 
-      VenueService.prototype.listCityTonight = function(cityId, success, error) {
-        return Venue.listCityTonight({
-          cityId: cityId
-        }, success, error);
+      VenueService.prototype.listCityTonight = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.cityId) throw new Error('options.cityId is required');
+
+        return Venue.listCityTonight(options).$promise;
       };
 
       /*==============================================================*

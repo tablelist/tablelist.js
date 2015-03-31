@@ -34,22 +34,25 @@ angular
       /* Cities
       /*==============================================================*/
 
-      VenueService.prototype.listForCity = function(cityId, success, error) {
-        return Venue.listForCity({
-          cityId: cityId
-        }, success, error);
+      VenueService.prototype.listForCity = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.cityId) throw new Error('options.cityId is required');
+
+        return Venue.listForCity(options).$promise;
       };
 
-      VenueService.prototype.listCityFeatured = function(cityId, success, error) {
-        return Venue.listCityFeatured({
-          cityId: cityId
-        }, success, error);
+      VenueService.prototype.listCityFeatured = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.cityId) throw new Error('options.cityId is required');
+
+        return Venue.listCityFeatured(options).$promise;
       };
 
-      VenueService.prototype.listCityTonight = function(cityId, success, error) {
-        return Venue.listCityTonight({
-          cityId: cityId
-        }, success, error);
+      VenueService.prototype.listCityTonight = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.cityId) throw new Error('options.cityId is required');
+
+        return Venue.listCityTonight(options).$promise;
       };
 
       /*==============================================================*
