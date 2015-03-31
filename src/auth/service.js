@@ -26,6 +26,8 @@ angular.module('tl').service('tl.auth.service', [
      * Registers a new user
      */
     AuthService.prototype.register = function(options, success, error) {
+      success = success || function() {};
+
       if (!options) throw new Error('options is required');
       if (!options.email) throw new Error('options.email is required');
       if (!options.password) throw new Error('options.password is required');
@@ -33,6 +35,7 @@ angular.module('tl').service('tl.auth.service', [
       if (!options.lastName) throw new Error('options.lastName is required');
 
       var _this = this;
+      _this.logout();
 
       return Auth.register({}, options).$promise.then(function(auth) {
         _this.setAuthToken(auth.token);
@@ -46,7 +49,10 @@ angular.module('tl').service('tl.auth.service', [
      */
     AuthService.prototype.login = function(email, password, success, error) {
       success = success || function() {};
+      
       var _this = this;
+      _this.logout();
+
       return Auth.login({}, {
           email: email,
           password: password
@@ -63,7 +69,10 @@ angular.module('tl').service('tl.auth.service', [
      */
     AuthService.prototype.loginWithFacebook = function(success, error) {
       success = success || function() {};
+      
       var _this = this;
+      _this.logout();
+
       fb.login(function(err, token) {
         return Auth.loginFacebook({}, {
             facebookToken: token

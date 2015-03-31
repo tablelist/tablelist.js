@@ -7,7 +7,7 @@ angular
   .module('tl')
   .factory('tl.cookie', ['tl.config', 'tl.storage', function(config, storage) {
 
-    var LOCAL_STORAGE = window.location.hostname.indexOf('tablelist.com') < 0;
+    var LOCAL_STORAGE = !navigator.cookieEnabled || window.location.hostname.indexOf('tablelist.com') < 0;
     var DOMAIN = '.tablelist.com';
 
     var Cookie = function() {};
