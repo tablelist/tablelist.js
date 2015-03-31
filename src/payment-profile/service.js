@@ -1,7 +1,7 @@
 angular
   .module('tl')
-  .service('tl.payment.service', ['tl.service', 'tl.payment.resource',
-    function(Service, Payment) {
+  .service('tl.payment.service', ['tl.service', 'tl.payment.resource', 'tl.utils',
+    function(Service, Payment, utils) {
       'use strict';
 
       var PaymentService = Service.extend(Payment);
@@ -9,11 +9,11 @@ angular
       PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
         var data = {
           cardholderName: name,
-          cardNumber: digits(number),
-          cardExpMonth: digits(month),
-          cardExpYear: digits(year),
-          cardCvv: digits(cvv),
-          cardZip: digits(zip),
+          cardNumber: utils.digits(number),
+          cardExpMonth: utils.digits(month),
+          cardExpYear: utils.digits(year),
+          cardCvv: utils.digits(cvv),
+          cardZip: utils.digits(zip),
           address: {
             address: address,
             city: city,
@@ -31,11 +31,11 @@ angular
 
         var data = {
           cardholderName: name,
-          cardNumber: digits(number),
-          cardExpMonth: digits(month),
-          cardExpYear: digits(year),
-          cardCvv: digits(cvv),
-          cardZip: digits(zip),
+          cardNumber: utils.digits(number),
+          cardExpMonth: utils.digits(month),
+          cardExpYear: utils.digits(year),
+          cardCvv: utils.digits(cvv),
+          cardZip: utils.digits(zip),
           address: {
             address: address,
             city: city,
@@ -45,12 +45,6 @@ angular
 
         return this.update(profileId, data, success, error);
       };
-
-      function digits(text) {
-        if (!text) return null;
-        text = text + '';
-        return text.replace(/\D/g, '').trim();
-      }
 
       return new PaymentService();
     }

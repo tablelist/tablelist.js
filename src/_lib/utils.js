@@ -13,6 +13,12 @@ angular
 			return string.trim().replace(/\s/gi,'-').replace(/('|\.)/gi,'').toLowerCase();
 		};
 
+		Utils.prototype.digits = function(text) {
+			if (!text) return null;
+			text = text + '';
+			return text.replace(/\D/g, '').trim();
+		};
+
 		// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript
 		Utils.prototype.guid = function() {
 			function s4() {
