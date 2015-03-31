@@ -9,11 +9,11 @@ angular
       PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
         var data = {
           cardholderName: name,
-          cardNumber: number,
-          cardExpMonth: month,
-          cardExpYear: year,
-          cardCvv: cvv,
-          cardZip: zip,
+          cardNumber: digits(number),
+          cardExpMonth: digits(month),
+          cardExpYear: digits(year),
+          cardCvv: digits(cvv),
+          cardZip: digits(zip),
           address: {
             address: address,
             city: city,
@@ -31,11 +31,11 @@ angular
 
         var data = {
           cardholderName: name,
-          cardNumber: number,
-          cardExpMonth: month,
-          cardExpYear: year,
-          cardCvv: cvv,
-          cardZip: zip,
+          cardNumber: digits(number),
+          cardExpMonth: digits(month),
+          cardExpYear: digits(year),
+          cardCvv: digits(cvv),
+          cardZip: digits(zip),
           address: {
             address: address,
             city: city,
@@ -45,6 +45,10 @@ angular
 
         return this.update(profileId, data, success, error);
       };
+
+      function digits(text) {
+        return text ? text.replace(/\D/g, '').trim() : null;
+      }
 
       return new PaymentService();
     }
