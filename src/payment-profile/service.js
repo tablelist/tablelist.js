@@ -47,7 +47,9 @@ angular
       };
 
       function digits(text) {
-        return text ? text.replace(/\D/g, '').trim() : null;
+        if (!text) return null;
+        text = text + '';
+        return text.replace(/\D/g, '').trim();
       }
 
       return new PaymentService();
