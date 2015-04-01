@@ -3,40 +3,67 @@ angular
 	.module('tl')
 	.factory('tl.session', ['tl.config', function(config){
 
-		var Session = function(){};
+		var CACHE = {};
+
+		var Session = function() {};
 
 		Session.prototype.get = function(key) {
-			try {
-				var val = sessionStorage.getItem(key);
-				return JSON.parse(val);
-			} catch(e) {
-				return null;
-			}
+		  var json = null;
+		  try {
+		    var val = sessionStorage.getItem(key);
+		    json = JSON.parse(val);
+		  } catch (e) {
+		    json = CACHE[key];
+		  }
+		  return json;
 		};
 
 		Session.prototype.set = function(key, obj) {
-			if (obj) {
-				try {
-					var val = JSON.stringify(obj);
-					return sessionStorage.setItem(key, val);
-				} catch(e) {
-					return null;
-				}
-			} else {
-				this.remove(key);
-			}
+		  if (obj) {
+		    var success = null;
+		    try {
+		      var val = JSON.stringify(obj);
+		      success = sessionStorage.setItem(key, val);
+		    } catch (e) {
+		      CACHE[key] = obj;
+		      success = true;
+		    }
+		    return success;
+		  } else {
+		    this.remove(key);
+		  }
 		};
 
 		Session.prototype.remove = function(key) {
-			return sessionStorage.removeItem(key);
+		  var removed = null;
+		  try {
+		    removed = sessionStorage.removeItem(key);
+		  } catch(e) {
+		    delete CACHE[key];
+		    removed = true;
+		  }
+		  return removed;
 		};
 
 		Session.prototype.exists = function(key) {
-			return this.get(key) != null;
+		  var exists = null;
+		  try {
+		    exists = this.get(key) != null;
+		  } catch(e) {
+		    exists = CACHE[key] ? true : false;
+		  }
+		  return exists;
 		};
 
 		Session.prototype.clear = function() {
-			return sessionStorage.clear();
+		  var cleared = null;
+		  try {
+		    cleared = sessionStorage.clear();
+		  } catch(e) {
+		    CACHE = {};
+		    cleared = true;
+		  }
+		  return cleared;
 		};
 
 		return new Session();

@@ -3,40 +3,67 @@ angular
   .factory('tl.storage', ['tl.config', function(config) {
     'use strcit';
 
+    var CACHE = {};
+
     var Storage = function() {};
 
     Storage.prototype.get = function(key) {
+      var json = null;
       try {
         var val = localStorage.getItem(key);
-        return JSON.parse(val);
+        json = JSON.parse(val);
       } catch (e) {
-        return null;
+        json = CACHE[key];
       }
+      return json;
     };
 
     Storage.prototype.set = function(key, obj) {
       if (obj) {
+        var success = null;
         try {
           var val = JSON.stringify(obj);
-          return localStorage.setItem(key, val);
+          success = localStorage.setItem(key, val);
         } catch (e) {
-          return null;
+          CACHE[key] = obj;
+          success = true;
         }
+        return success;
       } else {
         this.remove(key);
       }
     };
 
     Storage.prototype.remove = function(key) {
-      return localStorage.removeItem(key);
+      var removed = null;
+      try {
+        removed = localStorage.removeItem(key);
+      } catch(e) {
+        delete CACHE[key];
+        removed = true;
+      }
+      return removed;
     };
 
     Storage.prototype.exists = function(key) {
-      return this.get(key) != null;
+      var exists = null;
+      try {
+        exists = this.get(key) != null;
+      } catch(e) {
+        exists = CACHE[key] ? true : false;
+      }
+      return exists;
     };
 
     Storage.prototype.clear = function() {
-      return localStorage.clear();
+      var cleared = null;
+      try {
+        cleared = localStorage.clear();
+      } catch(e) {
+        CACHE = {};
+        cleared = true;
+      }
+      return cleared;
     };
 
     return new Storage();

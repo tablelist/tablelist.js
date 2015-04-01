@@ -10,18 +10,18 @@ describe('Venue Tests', function(){
 		});
 
 		it('should list venues for a city', function(done){
-			tlVenue.service.listForCity(city.id, function(venues){
+			tlVenue.service.listForCity({ cityId: city.id }.then(function(venues){
 				console.log(venues);
 				venue = venues[0];
 
 				venues.should.not.be.empty;
 
 				done();
-			}, done);
+			}).error(done);
 		});
 
 		it('should list featured venues for a city', function(done){
-			tlVenue.service.listCityFeatured(city.id, function(venues){
+			tlVenue.service.listCityFeatured({ cityId: city.id }, function(venues){
 				console.log(venues);
 
 				venues.should.not.be.empty;
@@ -31,7 +31,7 @@ describe('Venue Tests', function(){
 		});
 
 		it('should list tonight venues for a city', function(done){
-			tlVenue.service.listCityTonight(city.id, function(venues){
+			tlVenue.service.listCityTonight({ cityId: city.id }, function(venues){
 				console.log(venues);
 
 				venues.should.not.be.empty;

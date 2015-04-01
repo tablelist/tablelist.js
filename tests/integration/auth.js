@@ -30,8 +30,14 @@ describe('Auth Tests', function() {
   describe('Register', function() {
 
     it('should register a new user', function(done) {
+      var options = {
+        email: email,
+        password: password,
+        firstName: firstName,
+        lastName: lastName
+      };
       tlAuth.service
-        .register(email, password, firstName, lastName, null, function(auth) {
+        .register(options, function(auth) {
           console.log(auth);
           var user = auth.user;
           user.email.should.equal(email);
