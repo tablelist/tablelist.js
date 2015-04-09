@@ -6,7 +6,6 @@ describe('Venue Service', function() {
 
   var tlVenue;
   var $httpBackend;
-  var $rootScope;
 
   /* =========================================================================
    * Before
@@ -16,9 +15,8 @@ describe('Venue Service', function() {
   beforeEach(module('tl'));
 
   // load injector
-  beforeEach(inject(['$httpBackend', '$rootScope', function(_$httpBackend, _$rootScope) {
+  beforeEach(inject(['$httpBackend', function(_$httpBackend) {
     $httpBackend = _$httpBackend;
-    $rootScope = _$rootScope;
   }]));
 
   // load service
@@ -90,31 +88,4 @@ describe('Venue Service', function() {
     });
   });
 
-    //it('should list tonight venues for a city', function(done){
-    //  tlVenue.service.listCityTonight({ cityId: city.id }, function(venues){
-    //    console.log(venues);
-    //
-    //    venues.should.not.be.empty;
-    //
-    //    done();
-    //  }, done);
-    //});
-
-  //
-  //describe('Read', function(){
-  //  var venueId = '123';
-  //
-  //  it('should get a single venue', function(done) {
-  //    var venue = tlVenue.service.read(venue);
-  //    venueId.error(done);
-  //
-  //    venue.then(function() {
-  //      should.exist(venue);
-  //      venue.id.should.equal(venueId);
-  //
-  //      done();
-  //    });
-  //  });
-  //
-  //});
 });
