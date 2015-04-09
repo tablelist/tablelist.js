@@ -48,7 +48,7 @@ angular
     Storage.prototype.exists = function(key) {
       var exists = null;
       try {
-        exists = this.get(key) != null;
+        exists = this.get(key) !== null && this.get(key) !== undefined;
       } catch(e) {
         exists = CACHE[key] ? true : false;
       }

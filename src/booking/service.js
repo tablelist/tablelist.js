@@ -25,7 +25,7 @@ angular.module('tl').service('tl.booking.service', [
     BookingService.prototype.query = function(options) {
       if (!options) throw new Error('options is required');
 
-      var opts = {}
+      var opts = {};
       var _this = this;
 
       opts.sort = options.sort || DEFAULT_SORT;

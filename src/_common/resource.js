@@ -24,9 +24,9 @@ angular
         }
 
         var keys = Object.keys(_data);
-        for (var i = 0; i < keys.length; i++) {
-          var key = keys[i];
-          var action = _data[key];
+        for (var n = 0; n < keys.length; n++) {
+          var objectKey = keys[n];
+          var action = _data[objectKey];
           if (action.url) {
             action.url = _url(action.url);
           }
@@ -88,6 +88,6 @@ angular
         var actions = _actions(defaultActions);
 
         return _resource(endpoint, url, params, actions);
-      }
+      };
     }
   ]);

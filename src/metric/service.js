@@ -21,7 +21,7 @@ angular
         period: period,
         start: range[0].getTime(),
         end: range[1].getTime()
-      }
+      };
 
       if (options) {
         var keys = Object.keys(options);

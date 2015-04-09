@@ -288,7 +288,7 @@ angular
 
         var userId = options.userId;
         delete options.userId;
-        var favoriteId = options.favoriteId
+        var favoriteId = options.favoriteId;
         delete options.favoriteId;
 
         return User.unfavorite({
