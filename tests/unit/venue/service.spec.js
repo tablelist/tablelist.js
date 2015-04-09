@@ -80,7 +80,7 @@ describe('Venue Service', function() {
       var promise = tlVenue.service.listCityFeatured({cityId: cityId1});
 
       promise.then(function (venues) {
-        expect(venues).to.have.length(2);
+        expect(venues).to.have.length(1);
         done();
       }, function(err) {
         done(err);
