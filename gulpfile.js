@@ -3,7 +3,6 @@
  * ========================================================================= */
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
-//var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var watch = require('gulp-watch');
