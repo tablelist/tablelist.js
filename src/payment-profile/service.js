@@ -50,7 +50,7 @@ angular
             city: city,
             state: state
           }
-        }
+        };
 
         return this.create(data, success, error);
       };
@@ -73,7 +73,7 @@ angular
             city: city,
             state: state
           }
-        }
+        };
 
         return this.update(profileId, data, success, error);
       };

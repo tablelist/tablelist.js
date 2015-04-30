@@ -3,7 +3,6 @@
  * ========================================================================= */
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
-//var ngAnnotate = require('gulp-ng-annotate');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var watch = require('gulp-watch');
@@ -40,7 +39,7 @@ var MINIFIEDSCRIPT = 'tablelist.min.js';
 /* =========================================================================
  * Tasks
  * ========================================================================= */
-gulp.task('default', ['release']);
+gulp.task('default', ['release', 'jshint', 'test']);
 
 /**
  * Clean the build directory
@@ -77,7 +76,7 @@ gulp.task('js-prod', function() {
 });
 
 /**
- * Release - creates the release directory with all the necesarry files for our Bower package
+ * Release - creates the release directory with all the necessary files for our Bower package
  **/
 gulp.task('release', ['prepare-release-dir', 'js', 'copy-bower']);
 

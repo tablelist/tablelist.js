@@ -94,5 +94,5 @@ angular
       this.wsUrl = function(endpoint) {
         return http.apiUrl(endpoint).replace('http', 'ws') + '?auth=' + keychain.authToken();
       };
-    }
+    };
   }]);

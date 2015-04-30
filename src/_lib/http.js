@@ -36,7 +36,7 @@ angular
         data.url = data.url.replace('?&', '?');
         return data;
       }
-    }
+    };
   }])
   .config(['$httpProvider', function($httpProvider) {
     $httpProvider.interceptors.push('tlHTTPInterceptor');
