@@ -1046,7 +1046,10 @@ angular.module('tl').service('tl.auth.service', [
       if (!options.lastName) throw new Error('options.lastName is required');
 
       var _this = this;
-      _this.logout();
+
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
 
       return Auth.register({}, options).$promise.then(function(auth) {
         _this.setAuthToken(auth.token);
@@ -1062,7 +1065,10 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
       
       var _this = this;
-      _this.logout();
+      
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
 
       return Auth.login({}, {
           email: email,
@@ -1082,7 +1088,10 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
       
       var _this = this;
-      _this.logout();
+      
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
 
       fb.login(function(err, token) {
         return Auth.loginFacebook({}, {
@@ -1250,9 +1259,11 @@ angular.module('tl').service('tl.booking.service', [
       opts.sort = options.sort || DEFAULT_SORT;
       opts.limit = options.limit || DEFAULT_LIMIT;
       opts.admin = options.admin || false;
+      opts.select = options.select || opts.select;
       delete options.sort;
       delete options.limit;
       delete options.admin;
+      delete options.select;
       opts.query = options;
       opts.query = _this.buildQueryString(opts.query);
 
@@ -2349,35 +2360,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.reward.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/reward/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
-
-		var RewardService = Service.extend(Reward);
-
-		return new RewardService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2403,6 +2385,35 @@ angular
 		var ScheduleService = Service.extend(Schedule);
 
 		return new ScheduleService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.reward.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/reward/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
+
+		var RewardService = Service.extend(Reward);
+
+		return new RewardService();
 	}]);
 
 angular
