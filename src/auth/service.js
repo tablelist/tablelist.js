@@ -49,7 +49,7 @@ angular.module('tl').service('tl.auth.service', [
      */
     AuthService.prototype.login = function(email, password, success, error) {
       success = success || function() {};
-      
+
       var _this = this;
       _this.logout();
 
@@ -69,19 +69,23 @@ angular.module('tl').service('tl.auth.service', [
      */
     AuthService.prototype.loginWithFacebook = function(success, error) {
       success = success || function() {};
-      
+
       var _this = this;
       _this.logout();
 
       fb.login(function(err, token) {
-        return Auth.loginFacebook({}, {
-            facebookToken: token
-          })
-          .$promise.then(function(auth) {
-            _this.setAuthToken(auth.token);
-            user.setCurrentUser(auth.user);
-            success(auth);
-          }, error);
+        if (err) {
+          return error(err);
+        } else {
+          return Auth.loginFacebook({}, {
+              facebookToken: token
+            })
+            .$promise.then(function(auth) {
+              _this.setAuthToken(auth.token);
+              user.setCurrentUser(auth.user);
+              success(auth);
+            }, error);
+        }
       });
     };
 
