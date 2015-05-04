@@ -31,9 +31,11 @@ angular.module('tl').service('tl.booking.service', [
       opts.sort = options.sort || DEFAULT_SORT;
       opts.limit = options.limit || DEFAULT_LIMIT;
       opts.admin = options.admin || false;
+      opts.select = options.select || opts.select;
       delete options.sort;
       delete options.limit;
       delete options.admin;
+      delete options.select;
       opts.query = options;
       opts.query = _this.buildQueryString(opts.query);
 

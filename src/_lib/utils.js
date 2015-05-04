@@ -29,5 +29,15 @@ angular
 			return s4()+s4()+'-'+s4()+'-'+s4()+'-'+s4()+'-'+s4()+s4()+s4();
 		};
 
+		Utils.prototype.csv = function(lines) {
+			var result = "data:text/csv;charset=utf-8,";
+			result += lines.map(function(line){
+				return line.map(function(text){
+					return text && text.replace ? text.replace(/,/gi, '') : text;
+				}).join(',');
+			}).join('\n');
+			window.open(encodeURI(result));
+		};
+
 		return new Utils();
 	}]);

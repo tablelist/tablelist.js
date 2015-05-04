@@ -35,7 +35,10 @@ angular.module('tl').service('tl.auth.service', [
       if (!options.lastName) throw new Error('options.lastName is required');
 
       var _this = this;
-      _this.logout();
+
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
 
       return Auth.register({}, options).$promise.then(function(auth) {
         _this.setAuthToken(auth.token);
@@ -51,7 +54,10 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
 
       var _this = this;
-      _this.logout();
+      
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
 
       return Auth.login({}, {
           email: email,
@@ -71,7 +77,10 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
 
       var _this = this;
-      _this.logout();
+      
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
 
       fb.login(function(err, token) {
         if (err) {
