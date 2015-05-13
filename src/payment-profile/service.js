@@ -14,7 +14,7 @@ angular
           cardExpYear: utils.digits(options.year),
           cardCvv: utils.digits(options.cvv),
           cardZip: utils.digits(options.zip)
-        }
+        };
         return this.create(data).$promise;
       };
 
@@ -30,7 +30,7 @@ angular
           cardExpYear: utils.digits(options.year),
           cardCvv: utils.digits(options.cvv),
           cardZip: utils.digits(options.zip)
-        }
+        };
         return this.update(profileId, data).$promise;
       };
 

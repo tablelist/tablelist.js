@@ -896,6 +896,47 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliate.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      create: {
+        method: 'POST',
+        url: 'affiliate'
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliate.service', [
+  'tl.affiliate.resource',
+  'tl.service',
+  function(Affilate, Service) {
+    'use strict';
+
+    var AffiliateService = Service.extend(Affilate);
+
+    AffiliateService.prototype.create = function(options) {
+      if (!options) throw new Error('options is required');
+
+      return Affilate.create({}, options).$promise;
+    };
+  }
+]);
+
+
+angular
+	.module('tl')
 	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -931,37 +972,6 @@ angular
       };
 
       return new AmbassadorService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
     }
   ]);
 
@@ -1149,6 +1159,102 @@ angular.module('tl').service('tl.auth.service', [
     };
 
     return new AuthService();
+  }
+]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.campaign.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/campaign/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
+		
+		var CampaignService = Service.extend(User);
+
+		/**
+		 * List internal campaigns
+		 */
+		CampaignService.prototype.listInternal = function() {
+			return Campaign.list({ internal : true }).$promise;
+		};
+
+		return new CampaignService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.city.resource', [
+  'tl.resource',
+  function(resource) {
+    return resource('/city/:id', {
+      id: '@id'
+    }, {
+      // no extra methods
+    });
+  }
+]);
+
+angular.module('tl').service('tl.city.service', [
+  'tl.service',
+  'tl.city.resource',
+  function(Service, City) {
+
+    var CityService = Service.extend(City);
+
+    return new CityService();
   }
 ]);
 
@@ -1438,71 +1544,6 @@ angular.module('tl').service('tl.booking.service', [
     };
 
     return new BookingService();
-  }
-]);
-
-
-angular
-	.module('tl')
-	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.campaign.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/campaign/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
-		
-		var CampaignService = Service.extend(User);
-
-		/**
-		 * List internal campaigns
-		 */
-		CampaignService.prototype.listInternal = function() {
-			return Campaign.list({ internal : true }).$promise;
-		};
-
-		return new CampaignService();
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.city.resource', [
-  'tl.resource',
-  function(resource) {
-    return resource('/city/:id', {
-      id: '@id'
-    }, {
-      // no extra methods
-    });
-  }
-]);
-
-angular.module('tl').service('tl.city.service', [
-  'tl.service',
-  'tl.city.resource',
-  function(Service, City) {
-
-    var CityService = Service.extend(City);
-
-    return new CityService();
   }
 ]);
 
@@ -1990,110 +2031,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.payment.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/paymentProfile/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.payment.service', ['tl.service', 'tl.payment.resource', 'tl.utils',
-    function(Service, Payment, utils) {
-      'use strict';
-
-      var PaymentService = Service.extend(Payment);
-
-      PaymentService.prototype.addPaymentProfile = function(options) {
-        var data = {
-          cardholderName: options.name,
-          cardNumber: utils.digits(options.number),
-          cardExpMonth: utils.digits(options.month),
-          cardExpYear: utils.digits(options.year),
-          cardCvv: utils.digits(options.cvv),
-          cardZip: utils.digits(options.zip)
-        }
-        return this.create(data).$promise;
-      };
-
-      PaymentService.prototype.updatePaymentProfile = function(options) {
-        var profileId = options.id;
-        if (!profileId) {
-          throw "An existing profile is required. Missing options.id";
-        }
-        var data = {
-          cardholderName: options.name,
-          cardNumber: utils.digits(options.number),
-          cardExpMonth: utils.digits(options.month),
-          cardExpYear: utils.digits(options.year),
-          cardCvv: utils.digits(options.cvv),
-          cardZip: utils.digits(options.zip)
-        }
-        return this.update(profileId, data).$promise;
-      };
-
-      // Deprecated
-
-      PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
-        console.log('DEPRECATED - use .addPaymentProfile');
-        var data = {
-          cardholderName: name,
-          cardNumber: utils.digits(number),
-          cardExpMonth: utils.digits(month),
-          cardExpYear: utils.digits(year),
-          cardCvv: utils.digits(cvv),
-          cardZip: utils.digits(zip),
-          address: {
-            address: address,
-            city: city,
-            state: state
-          }
-        };
-
-        return this.create(data, success, error);
-      };
-
-      PaymentService.prototype.updateProfile = function(profileId, name, number, month, year, cvv, address, city, state, zip, success, error) {
-        console.log('DEPRECATED - use .updatePaymentProfile');
-        if (!profileId) {
-          return this.addProfile(name, number, month, year, cvv, address, city, state, zip, success, error);
-        }
-
-        var data = {
-          cardholderName: name,
-          cardNumber: utils.digits(number),
-          cardExpMonth: utils.digits(month),
-          cardExpYear: utils.digits(year),
-          cardCvv: utils.digits(cvv),
-          cardZip: utils.digits(zip),
-          address: {
-            address: address,
-            city: city,
-            state: state
-          }
-        };
-
-        return this.update(profileId, data, success, error);
-      };
-
-      return new PaymentService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2149,6 +2086,110 @@ angular.module('tl').service('tl.outgoingPayment.service', [
     return new OutgoingPaymentService();
   }
 ]);
+
+
+angular
+	.module('tl')
+	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.payment.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/paymentProfile/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.payment.service', ['tl.service', 'tl.payment.resource', 'tl.utils',
+    function(Service, Payment, utils) {
+      'use strict';
+
+      var PaymentService = Service.extend(Payment);
+
+      PaymentService.prototype.addPaymentProfile = function(options) {
+        var data = {
+          cardholderName: options.name,
+          cardNumber: utils.digits(options.number),
+          cardExpMonth: utils.digits(options.month),
+          cardExpYear: utils.digits(options.year),
+          cardCvv: utils.digits(options.cvv),
+          cardZip: utils.digits(options.zip)
+        };
+        return this.create(data).$promise;
+      };
+
+      PaymentService.prototype.updatePaymentProfile = function(options) {
+        var profileId = options.id;
+        if (!profileId) {
+          throw "An existing profile is required. Missing options.id";
+        }
+        var data = {
+          cardholderName: options.name,
+          cardNumber: utils.digits(options.number),
+          cardExpMonth: utils.digits(options.month),
+          cardExpYear: utils.digits(options.year),
+          cardCvv: utils.digits(options.cvv),
+          cardZip: utils.digits(options.zip)
+        };
+        return this.update(profileId, data).$promise;
+      };
+
+      // Deprecated
+
+      PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
+        console.log('DEPRECATED - use .addPaymentProfile');
+        var data = {
+          cardholderName: name,
+          cardNumber: utils.digits(number),
+          cardExpMonth: utils.digits(month),
+          cardExpYear: utils.digits(year),
+          cardCvv: utils.digits(cvv),
+          cardZip: utils.digits(zip),
+          address: {
+            address: address,
+            city: city,
+            state: state
+          }
+        };
+
+        return this.create(data, success, error);
+      };
+
+      PaymentService.prototype.updateProfile = function(profileId, name, number, month, year, cvv, address, city, state, zip, success, error) {
+        console.log('DEPRECATED - use .updatePaymentProfile');
+        if (!profileId) {
+          return this.addProfile(name, number, month, year, cvv, address, city, state, zip, success, error);
+        }
+
+        var data = {
+          cardholderName: name,
+          cardNumber: utils.digits(number),
+          cardExpMonth: utils.digits(month),
+          cardExpYear: utils.digits(year),
+          cardCvv: utils.digits(cvv),
+          cardZip: utils.digits(zip),
+          address: {
+            address: address,
+            city: city,
+            state: state
+          }
+        };
+
+        return this.update(profileId, data, success, error);
+      };
+
+      return new PaymentService();
+    }
+  ]);
 
 
 angular
@@ -2297,35 +2338,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.review.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/review/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
-
-		var ReviewService = Service.extend(Review);
-
-		return new ReviewService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2370,6 +2382,35 @@ angular
 		};
 
 		return new ReportService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.review.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/review/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
+
+		var ReviewService = Service.extend(Review);
+
+		return new ReviewService();
 	}]);
 
 angular
@@ -2483,35 +2524,6 @@ angular
 
 		return new SettingsService();
 	}]);
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -2557,6 +2569,35 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 
 angular
 	.module('tl')
