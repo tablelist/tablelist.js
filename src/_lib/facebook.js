@@ -24,18 +24,18 @@ angular
 
 		Facebook.prototype.logEvent = function() {
 			if (!config.ENV_PROD) {
-				console.log('FB ' + arguments[0] + ' - [ ' + arguments.splice(1).join(', ')) + ' ]';
+				console.log('FB Event - ' + arguments[0]);
 				return false;
 			}
-			return FB.AppEvents.logEvent.apply(this, arguments);
+			return arguments[0] != undefined ? FB.AppEvents.logEvent.apply(this, arguments) : false;
 		};
 
 		Facebook.prototype.logPurchase = function() {
 			if (!config.ENV_PROD) {
-				console.log('FB Purchase - [ ' + arguments.join(', ')) + ' ]';
+				console.log('FB Purchase - $' + arguments[0].toFixed('2'));
 				return false;
 			}
-			return FB.AppEvents.logPurchase.apply(this, arguments);
+			return arguments[0] != undefined ? FB.AppEvents.logPurchase.apply(this, arguments) : false;
 		};
 
 		return new Facebook();
