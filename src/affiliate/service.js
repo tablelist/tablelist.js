@@ -11,5 +11,7 @@ angular.module('tl').service('tl.affiliate.service', [
 
       return Affiliate.create({}, options).$promise;
     };
+
+    return new AffiliateService();
   }
 ]);
