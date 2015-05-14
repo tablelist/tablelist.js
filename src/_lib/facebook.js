@@ -23,6 +23,8 @@ angular
 		};
 
 		Facebook.prototype.logEvent = function() {
+			if (!config.ENV_PROD) return;
+
 			try {
 				FB.AppEvents.logEvent.apply(this, arguments);
 			} catch(err) {
@@ -31,6 +33,8 @@ angular
 		};
 
 		Facebook.prototype.logPurchase = function() {
+			if (!config.ENV_PROD) return;
+			
 			try {
 				FB.AppEvents.logPurchase.apply(this, arguments);
 			} catch(err) {
