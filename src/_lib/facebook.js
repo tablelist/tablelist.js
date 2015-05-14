@@ -18,5 +18,29 @@ angular
 			}, { scope: PERMISSIONS });
 		};
 
+		Facebook.prototype.events = function() {
+			return window.FB ? FB.AppEvents.EventNames : {};
+		};
+
+		Facebook.prototype.logEvent = function() {
+			if (!config.ENV_PROD) return;
+
+			try {
+				FB.AppEvents.logEvent.apply(this, arguments);
+			} catch(err) {
+				// do nothing...
+			}
+		};
+
+		Facebook.prototype.logPurchase = function() {
+			if (!config.ENV_PROD) return;
+			
+			try {
+				FB.AppEvents.logPurchase.apply(this, arguments);
+			} catch(err) {
+				// do nothing...
+			}
+		};
+
 		return new Facebook();
 	}]);
