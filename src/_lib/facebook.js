@@ -23,19 +23,19 @@ angular
 		};
 
 		Facebook.prototype.logEvent = function() {
-			if (!config.ENV_PROD) {
-				console.log('FB Event - ' + arguments[0]);
-				return false;
+			try {
+				FB.AppEvents.logEvent.apply(this, arguments);
+			} catch(err) {
+				// do nothing...
 			}
-			return window.FB && arguments[0] != undefined ? FB.AppEvents.logEvent.apply(this, arguments) : false;
 		};
 
 		Facebook.prototype.logPurchase = function() {
-			if (!config.ENV_PROD) {
-				console.log('FB Purchase - $' + arguments[0].toFixed('2'));
-				return false;
+			try {
+				FB.AppEvents.logPurchase.apply(this, arguments);
+			} catch(err) {
+				// do nothing...
 			}
-			return window.FB && arguments[0] != undefined ? FB.AppEvents.logPurchase.apply(this, arguments) : false;
 		};
 
 		return new Facebook();
