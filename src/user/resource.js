@@ -122,6 +122,11 @@ angular
         method: "GET",
         url: '/user/:id/favorite',
         isArray: true
+      },
+      listAffiliates: {
+        method: "GET", 
+        url: 'user/:id/affiliate',
+        isArray: true
       }
     });
   }]);

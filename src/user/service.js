@@ -307,6 +307,16 @@ angular
         return User.listFavorites(options).$promise;
       };
 
+      UserService.prototype.listAffiliates = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listAffiliates(options).$promise;
+      };
+
       return new UserService();
     }
   ]);
