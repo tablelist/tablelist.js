@@ -27,7 +27,7 @@ angular
 				console.log('FB Event - ' + arguments[0]);
 				return false;
 			}
-			return arguments[0] != undefined ? FB.AppEvents.logEvent.apply(this, arguments) : false;
+			return window.FB && arguments[0] != undefined ? FB.AppEvents.logEvent.apply(this, arguments) : false;
 		};
 
 		Facebook.prototype.logPurchase = function() {
@@ -35,7 +35,7 @@ angular
 				console.log('FB Purchase - $' + arguments[0].toFixed('2'));
 				return false;
 			}
-			return arguments[0] != undefined ? FB.AppEvents.logPurchase.apply(this, arguments) : false;
+			return window.FB && arguments[0] != undefined ? FB.AppEvents.logPurchase.apply(this, arguments) : false;
 		};
 
 		return new Facebook();
