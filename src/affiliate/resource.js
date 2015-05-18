@@ -11,6 +11,16 @@ angular.module('tl').factory('tl.affiliate.resource', [
       create: {
         method: 'POST',
         url: 'affiliate'
+      },
+      listSales: {
+        method: 'GET',
+        url: 'affiliate/:id/sale',
+        isArray: true
+      },
+      getSummary: {
+        method: 'GET',
+        url: 'affiliate/:id/summary',
+        isArray: true
       }
     });
   }
