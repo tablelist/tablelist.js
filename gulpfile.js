@@ -104,7 +104,7 @@ gulp.task('watch', function() {
 /**
  * Run unit tests - this task is run by Wercker when building our app
  */
-// gulp.task('test', ['test-unit'], function() {});
+gulp.task('test', function() {});
 
 // gulp.task('test-unit', ['release'], function(done) {
 //   karma.start({
