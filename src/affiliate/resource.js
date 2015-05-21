@@ -24,8 +24,7 @@ angular.module('tl').factory('tl.affiliate.resource', [
       },
       getSalesTotal: {
         method: 'GET',
-        url: 'affiliate/:id/sale/total',
-        isArray: true
+        url: 'affiliate/:id/sale/total'
       }
     });
   }
