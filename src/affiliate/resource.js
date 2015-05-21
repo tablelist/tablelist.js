@@ -22,9 +22,9 @@ angular.module('tl').factory('tl.affiliate.resource', [
         url: 'affiliate/:id/sale',
         isArray: true
       },
-      getSummary: {
+      getSalesTotal: {
         method: 'GET',
-        url: 'affiliate/:id/summary',
+        url: 'affiliate/:id/sale/total',
         isArray: true
       }
     });
