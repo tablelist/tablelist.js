@@ -8,6 +8,11 @@ angular.module('tl').factory('tl.affiliate.resource', [
     return resource(endpoint, {
       id: '@id'
     }, {
+      getById: {
+        method: 'GET',
+        url: endpoint,
+        isArray: false
+      },
       create: {
         method: 'POST',
         url: 'affiliate'

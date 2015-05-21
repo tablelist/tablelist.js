@@ -6,6 +6,13 @@ angular.module('tl').service('tl.affiliate.service', [
 
     var AffiliateService = Service.extend(Affiliate);
 
+    AffiliateService.prototype.getById = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getById(options).$promise;
+    };
+
     AffiliateService.prototype.create = function(options) {
       if (!options) throw new Error('options is required');
 
