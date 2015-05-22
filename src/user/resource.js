@@ -53,32 +53,32 @@ angular
       },
       listPaymentProfiles: {
         method: 'GET',
-        url: '/user/:id/paymentProfiles',
+        url: endpoint + '/paymentProfiles',
         isArray: true
       },
       listReferrals: {
         method: 'GET',
-        url: '/user/:id/referral',
+        url: endpoint + '/referral',
         isArray: true
       },
       listPromos: {
         method: "GET",
-        url: "/user/:id/promo",
+        url: endpoint + "/promo",
         isArray: true
       },
       listTasks: {
         method: 'GET',
-        url: '/user/:id/task',
+        url: endpoint + '/task',
         isArray: true
       },
       listQuestions: {
         method: 'GET',
-        url: '/user/:id/question',
+        url: endpoint + '/question',
         isArray: true
       },
       listAnswers: {
         method: 'GET',
-        url: '/user/:id/answer',
+        url: endpoint + '/answer',
         isArray: true
       },
       listNotifications: {
@@ -93,7 +93,7 @@ angular
       },
       addCredit: {
         method: "POST",
-        url: '/user/:id/credit'
+        url: endpoint + '/credit'
       },
       findByReferral: {
         method: "GET",
@@ -101,27 +101,32 @@ angular
       },
       getReferralStats: {
         method: "GET",
-        url: '/user/:id/referral/stats'
+        url: endpoint + '/referral/stats'
       },
       listVenues: {
         method: "GET",
-        url: '/user/:id/venue',
+        url: endpoint + '/venue',
         isArray: true
       },
       favorite: {
         method: "POST",
-        url: '/user/:id/favorite',
+        url: endpoint + '/favorite',
         isArray: false
       },
       unfavorite: {
         method: "DELETE",
-        url: '/user/:id/favorite/:favoriteId',
+        url: endpoint + '/favorite/:favoriteId',
         isArray: false
       },
       listFavorites: {
         method: "GET",
-        url: '/user/:id/favorite',
+        url: endpoint + '/favorite',
         isArray: true
-      }
+      },
+      markAffiliate: {
+        method: "POST",
+        url: endpoint + '/affiliate',
+        isArray: false
+      },
     });
   }]);
