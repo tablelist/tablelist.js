@@ -33,6 +33,13 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.getSalesTotal(options).$promise;
     };
 
+    AffiliateService.prototype.getSalesLeaderboard = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getSalesLeaderboard(options).$promise;
+    };
+
     return new AffiliateService();
   }
 ]);

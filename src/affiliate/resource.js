@@ -19,12 +19,17 @@ angular.module('tl').factory('tl.affiliate.resource', [
       },
       listSales: {
         method: 'GET',
-        url: 'affiliate/:id/sale',
+        url: endpoint + '/sale',
         isArray: true
       },
       getSalesTotal: {
         method: 'GET',
-        url: 'affiliate/:id/sale/total'
+        url: endpoint + '/sale/total'
+      },
+      getSalesLeaderboard: {
+        method: 'GET',
+        url: endpoint + '/leaderboard',
+        isArray: true
       }
     });
   }
