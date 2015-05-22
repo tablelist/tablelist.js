@@ -128,5 +128,10 @@ angular
         url: endpoint + '/affiliate',
         isArray: false
       },
+      listAffiliates: {
+        method: "GET", 
+        url: 'user/:id/affiliate',
+        isArray: true
+      }
     });
   }]);
