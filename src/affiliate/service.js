@@ -28,11 +28,11 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.listSales(options).$promise;
     };
 
-    AffiliateService.prototype.getSummary = function(options) {
+    AffiliateService.prototype.getSalesTotal = function(options) {
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      return Affiliate.getSummary(options).$promise
+      return Affiliate.getSalesTotal(options).$promise;
     };
 
     AffiliateService.prototype.listSalesAsCsv = function(options) {
@@ -47,6 +47,13 @@ angular.module('tl').service('tl.affiliate.service', [
         },
         data: options
       });
+    };
+
+    AffiliateService.prototype.getSalesLeaderboard = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getSalesLeaderboard(options).$promise;
     };
 
     return new AffiliateService();

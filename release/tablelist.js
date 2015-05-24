@@ -945,12 +945,16 @@ angular.module('tl').factory('tl.affiliate.resource', [
       },
       listSales: {
         method: 'GET',
-        url: 'affiliate/:id/sale',
+        url: endpoint + '/sale',
         isArray: true
       },
-      getSummary: {
+      getSalesTotal: {
         method: 'GET',
-        url: 'affiliate/:id/summary',
+        url: endpoint + '/sale/total'
+      },
+      getSalesLeaderboard: {
+        method: 'GET',
+        url: endpoint + '/leaderboard',
         isArray: true
       }
     });
@@ -960,7 +964,9 @@ angular.module('tl').factory('tl.affiliate.resource', [
 angular.module('tl').service('tl.affiliate.service', [
   'tl.affiliate.resource',
   'tl.service',
-  function(Affiliate, Service) {
+  '$http',
+  'tl.http',
+  function(Affiliate, Service, $http, http) {
     'use strict';
 
     var AffiliateService = Service.extend(Affiliate);
@@ -985,12 +991,33 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.listSales(options).$promise;
     };
 
-    AffiliateService.prototype.getSummary = function(options) {
+    AffiliateService.prototype.getSalesTotal = function(options) {
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      return Affiliate.getSummary(options).$promise
-    }
+      return Affiliate.getSalesTotal(options).$promise;
+    };
+
+    AffiliateService.prototype.listSalesAsCsv = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return $http({
+        method: 'GET',
+        url: http.apiUrl('/affiliate/' + options.id + '/sale'),
+        headers: {
+          'Content-Type': 'text/csv'
+        },
+        data: options
+      });
+    };
+
+    AffiliateService.prototype.getSalesLeaderboard = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getSalesLeaderboard(options).$promise;
+    };
 
     return new AffiliateService();
   }
@@ -1037,6 +1064,193 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular.module('tl').factory('tl.auth.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/auth';
+
+    return resource(endpoint, {
+      // nothing here
+    }, {
+
+      register: {
+        method: 'POST',
+        url: endpoint + '/register',
+        isArray: false
+      },
+
+      login: {
+        method: 'POST',
+        url: endpoint + '/login',
+        isArray: false
+      },
+
+      loginFacebook: {
+        method: 'POST',
+        url: endpoint + '/facebook',
+        isArray: false
+      },
+
+      forgotPassword: {
+        method: 'POST',
+        url: endpoint + '/forgot',
+        isArray: false
+      },
+
+      resetPassword: {
+        method: 'POST',
+        url: endpoint + '/reset',
+        isArray: false
+      }
+
+    });
+  }
+]);
+
+angular.module('tl').service('tl.auth.service', [
+  'tl.auth.resource',
+  'tl.keychain',
+  'tl.user.service',
+  'tl.facebook',
+  function(Auth, keychain, user, fb) {
+    'use strict';
+
+    var AuthService = function() {};
+
+    /**
+     * Gets the current users auth token from the keychain
+     */
+    AuthService.prototype.authToken = function() {
+      return keychain.authToken();
+    };
+
+    /**
+     * Stores an auth token in the keychain
+     */
+    AuthService.prototype.setAuthToken = function(token) {
+      return keychain.setAuthToken(token);
+    };
+
+    /**
+     * Registers a new user
+     */
+    AuthService.prototype.register = function(options, success, error) {
+      success = success || function() {};
+
+      if (!options) throw new Error('options is required');
+      if (!options.email) throw new Error('options.email is required');
+      if (!options.password) throw new Error('options.password is required');
+      if (!options.firstName) throw new Error('options.firstName is required');
+      if (!options.lastName) throw new Error('options.lastName is required');
+
+      var _this = this;
+
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
+
+      return Auth.register({}, options).$promise.then(function(auth) {
+        _this.setAuthToken(auth.token);
+        user.setCurrentUser(auth.user);
+        success(auth);
+      }, error);
+    };
+
+    /**
+     * Logs in a user via email and password
+     */
+    AuthService.prototype.login = function(email, password, success, error) {
+      success = success || function() {};
+
+      var _this = this;
+      
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
+
+      return Auth.login({}, {
+          email: email,
+          password: password
+        })
+        .$promise.then(function(auth) {
+          _this.setAuthToken(auth.token);
+          user.setCurrentUser(auth.user);
+          success(auth);
+        }, error);
+    };
+
+    /**
+     * Attempts to login a user via Facebook
+     */
+    AuthService.prototype.loginWithFacebook = function(success, error) {
+      success = success || function() {};
+
+      var _this = this;
+      
+      // clear current auth and user
+      _this.setAuthToken(null);
+      user.setCurrentUser(null);
+
+      fb.login(function(err, token) {
+        if (err) {
+          return error(err);
+        } else {
+          return Auth.loginFacebook({}, {
+              facebookToken: token
+            })
+            .$promise.then(function(auth) {
+              _this.setAuthToken(auth.token);
+              user.setCurrentUser(auth.user);
+              success(auth);
+            }, error);
+        }
+      });
+    };
+
+    /**
+     * Logs out the current user
+     */
+    AuthService.prototype.logout = function() {
+      this.setAuthToken(null);
+      user.setCurrentUser(null);
+      keychain.setProspectToken(null);
+      return true;
+    };
+
+    /**
+     * Sends a reset password to the given email address
+     */
+    AuthService.prototype.forgotPassword = function(email, success, error) {
+      return Auth.forgotPassword({}, {
+        email: email
+      }, success, error);
+    };
+
+    /**
+     * Resets a users password based on token recieved from forgot password email
+     */
+    AuthService.prototype.resetPassword = function(token, password, success, error) {
+      return Auth.resetPassword({}, {
+        resetToken: token,
+        password: password
+      }, success, error);
+    };
+
+    return new AuthService();
+  }
+]);
+
 
 angular
 	.module('tl')
@@ -1068,42 +1282,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.campaign.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/campaign/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
-		
-		var CampaignService = Service.extend(User);
-
-		/**
-		 * List internal campaigns
-		 */
-		CampaignService.prototype.listInternal = function() {
-			return Campaign.list({ internal : true }).$promise;
-		};
-
-		return new CampaignService();
-	}]);
 
 angular
 	.module('tl')
@@ -1396,6 +1574,42 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
+	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.campaign.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/campaign/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
+		
+		var CampaignService = Service.extend(User);
+
+		/**
+		 * List internal campaigns
+		 */
+		CampaignService.prototype.listInternal = function() {
+			return Campaign.list({ internal : true }).$promise;
+		};
+
+		return new CampaignService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1421,6 +1635,71 @@ angular.module('tl').service('tl.city.service', [
     return new CityService();
   }
 ]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
 
 
 angular
@@ -1509,123 +1788,6 @@ angular
     return new EventService();
   }]);
 
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.inventory.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        listForVenue: {
-          method: 'GET',
-          url: '/inventory',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory.service', [
-    'tl.service',
-    'tl.inventory.resource',
-    function(Service, Inventory) {
-      'use strict';
-
-      var InventoryService = Service.extend(Inventory);
-
-      InventoryService.prototype.listForVenue = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.venue) throw new Error('options.venue is required');
-
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-
-        return Inventory.listForVenue(options).$promise;
-      };
-
-      return new InventoryService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
@@ -1704,6 +1866,58 @@ angular
       };
 
       return new InquiryService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.inventory.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        listForVenue: {
+          method: 'GET',
+          url: '/inventory',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory.service', [
+    'tl.service',
+    'tl.inventory.resource',
+    function(Service, Inventory) {
+      'use strict';
+
+      var InventoryService = Service.extend(Inventory);
+
+      InventoryService.prototype.listForVenue = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.venue) throw new Error('options.venue is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+
+        return Inventory.listForVenue(options).$promise;
+      };
+
+      return new InventoryService();
     }
   ]);
 
@@ -1799,193 +2013,6 @@ angular
 
 		return new ItemService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular.module('tl').factory('tl.auth.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/auth';
-
-    return resource(endpoint, {
-      // nothing here
-    }, {
-
-      register: {
-        method: 'POST',
-        url: endpoint + '/register',
-        isArray: false
-      },
-
-      login: {
-        method: 'POST',
-        url: endpoint + '/login',
-        isArray: false
-      },
-
-      loginFacebook: {
-        method: 'POST',
-        url: endpoint + '/facebook',
-        isArray: false
-      },
-
-      forgotPassword: {
-        method: 'POST',
-        url: endpoint + '/forgot',
-        isArray: false
-      },
-
-      resetPassword: {
-        method: 'POST',
-        url: endpoint + '/reset',
-        isArray: false
-      }
-
-    });
-  }
-]);
-
-angular.module('tl').service('tl.auth.service', [
-  'tl.auth.resource',
-  'tl.keychain',
-  'tl.user.service',
-  'tl.facebook',
-  function(Auth, keychain, user, fb) {
-    'use strict';
-
-    var AuthService = function() {};
-
-    /**
-     * Gets the current users auth token from the keychain
-     */
-    AuthService.prototype.authToken = function() {
-      return keychain.authToken();
-    };
-
-    /**
-     * Stores an auth token in the keychain
-     */
-    AuthService.prototype.setAuthToken = function(token) {
-      return keychain.setAuthToken(token);
-    };
-
-    /**
-     * Registers a new user
-     */
-    AuthService.prototype.register = function(options, success, error) {
-      success = success || function() {};
-
-      if (!options) throw new Error('options is required');
-      if (!options.email) throw new Error('options.email is required');
-      if (!options.password) throw new Error('options.password is required');
-      if (!options.firstName) throw new Error('options.firstName is required');
-      if (!options.lastName) throw new Error('options.lastName is required');
-
-      var _this = this;
-
-      // clear current auth and user
-      _this.setAuthToken(null);
-      user.setCurrentUser(null);
-
-      return Auth.register({}, options).$promise.then(function(auth) {
-        _this.setAuthToken(auth.token);
-        user.setCurrentUser(auth.user);
-        success(auth);
-      }, error);
-    };
-
-    /**
-     * Logs in a user via email and password
-     */
-    AuthService.prototype.login = function(email, password, success, error) {
-      success = success || function() {};
-
-      var _this = this;
-      
-      // clear current auth and user
-      _this.setAuthToken(null);
-      user.setCurrentUser(null);
-
-      return Auth.login({}, {
-          email: email,
-          password: password
-        })
-        .$promise.then(function(auth) {
-          _this.setAuthToken(auth.token);
-          user.setCurrentUser(auth.user);
-          success(auth);
-        }, error);
-    };
-
-    /**
-     * Attempts to login a user via Facebook
-     */
-    AuthService.prototype.loginWithFacebook = function(success, error) {
-      success = success || function() {};
-
-      var _this = this;
-      
-      // clear current auth and user
-      _this.setAuthToken(null);
-      user.setCurrentUser(null);
-
-      fb.login(function(err, token) {
-        if (err) {
-          return error(err);
-        } else {
-          return Auth.loginFacebook({}, {
-              facebookToken: token
-            })
-            .$promise.then(function(auth) {
-              _this.setAuthToken(auth.token);
-              user.setCurrentUser(auth.user);
-              success(auth);
-            }, error);
-        }
-      });
-    };
-
-    /**
-     * Logs out the current user
-     */
-    AuthService.prototype.logout = function() {
-      this.setAuthToken(null);
-      user.setCurrentUser(null);
-      keychain.setProspectToken(null);
-      return true;
-    };
-
-    /**
-     * Sends a reset password to the given email address
-     */
-    AuthService.prototype.forgotPassword = function(email, success, error) {
-      return Auth.forgotPassword({}, {
-        email: email
-      }, success, error);
-    };
-
-    /**
-     * Resets a users password based on token recieved from forgot password email
-     */
-    AuthService.prototype.resetPassword = function(token, password, success, error) {
-      return Auth.resetPassword({}, {
-        resetToken: token,
-        password: password
-      }, success, error);
-    };
-
-    return new AuthService();
-  }
-]);
-
 
 angular
 	.module('tl')
@@ -2256,45 +2283,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.prospect.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/prospect/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
-
-		var ProspectService = Service.extend(Prospect);
-
-		/**
-		 * Updates the current prospect
-		 */
-		ProspectService.prototype.updateProspect = function(data, success, error) {
-			delete data._id;
-			delete data.id;
-			
-			return Prospect.update({}, data, success, error);
-		};
-
-		return new ProspectService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2337,6 +2325,93 @@ angular
     ]);
 }());
 
+
+angular
+	.module('tl')
+	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.prospect.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/prospect/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
+
+		var ProspectService = Service.extend(Prospect);
+
+		/**
+		 * Updates the current prospect
+		 */
+		ProspectService.prototype.updateProspect = function(data, success, error) {
+			delete data._id;
+			delete data.id;
+			
+			return Prospect.update({}, data, success, error);
+		};
+
+		return new ProspectService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.report.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/report/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			reports: {
+				method: 'GET',
+				url: '/report/types'
+			},
+			download: {
+				method: 'GET',
+				url: endpoint + '/download'
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
+
+		var ReportService = Service.extend(Report);
+
+		ReportService.prototype.reports = function(success, error) {
+			return Report.reports({}, success, error);
+		};
+
+		ReportService.prototype.listReports = function(key, success, error) {
+			return Report.query({ report: key }, success, error);
+		};
+
+		ReportService.prototype.download = function(reportId, success, error) {
+			return Report.download({ id: reportId }, success, error);
+		};
+
+		return new ReportService();
+	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -2400,54 +2475,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.report.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/report/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			reports: {
-				method: 'GET',
-				url: '/report/types'
-			},
-			download: {
-				method: 'GET',
-				url: endpoint + '/download'
-			}
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
-
-		var ReportService = Service.extend(Report);
-
-		ReportService.prototype.reports = function(success, error) {
-			return Report.reports({}, success, error);
-		};
-
-		ReportService.prototype.listReports = function(key, success, error) {
-			return Report.query({ report: key }, success, error);
-		};
-
-		ReportService.prototype.download = function(reportId, success, error) {
-			return Report.download({ id: reportId }, success, error);
-		};
-
-		return new ReportService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2473,6 +2500,35 @@ angular
 		var ReviewService = Service.extend(Review);
 
 		return new ReviewService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.reward.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/reward/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
+
+		var RewardService = Service.extend(Reward);
+
+		return new RewardService();
 	}]);
 
 angular
@@ -2506,16 +2562,16 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 
 angular
 	.module('tl')
-	.factory('tl.reward.resource', ['tl.resource', function(resource){
+	.factory('tl.table.resource', ['tl.resource', function(resource){
 
-		var endpoint = '/reward/:id';
+		var endpoint = '/table/:id';
 
 		return resource(endpoint, {
 			id: '@id'
@@ -2526,11 +2582,11 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
 
-		var RewardService = Service.extend(Reward);
+		var TableService = Service.extend(Table);
 
-		return new RewardService();
+		return new TableService();
 	}]);
 
 angular
@@ -2586,35 +2642,51 @@ angular
 
 		return new SettingsService();
 	}]);
+angular
+  .module('tl')
+  .service('tl.tag', [
+    'tl.tag.resource',
+    'tl.tag.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
 
 angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
+  .module('tl')
+  .factory('tl.tag.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tag';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }]);
 
 angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
+  .module('tl')
+  .service('tl.tag.service', [
+    'tl.service',
+    'tl.tag.resource',
+    function(Service, Tag) {
+      'use strict';
 
-		var endpoint = '/table/:id';
+      var TagService = Service.extend(Tag);
 
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
+      TagService.prototype.list = function() {
+        return Tag.list().$promise;
+      };
 
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+      return new TagService();
+    }
+  ]);
 
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
 
 angular
 	.module('tl')
@@ -2770,51 +2842,6 @@ angular
 		return new TrackService();
 	}]);
 
-angular
-  .module('tl')
-  .service('tl.tag', [
-    'tl.tag.resource',
-    'tl.tag.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tag.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tag';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tag.service', [
-    'tl.service',
-    'tl.tag.resource',
-    function(Service, Tag) {
-      'use strict';
-
-      var TagService = Service.extend(Tag);
-
-      TagService.prototype.list = function() {
-        return Tag.list().$promise;
-      };
-
-      return new TagService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
@@ -2877,32 +2904,32 @@ angular
       },
       listPaymentProfiles: {
         method: 'GET',
-        url: '/user/:id/paymentProfiles',
+        url: endpoint + '/paymentProfiles',
         isArray: true
       },
       listReferrals: {
         method: 'GET',
-        url: '/user/:id/referral',
+        url: endpoint + '/referral',
         isArray: true
       },
       listPromos: {
         method: "GET",
-        url: "/user/:id/promo",
+        url: endpoint + "/promo",
         isArray: true
       },
       listTasks: {
         method: 'GET',
-        url: '/user/:id/task',
+        url: endpoint + '/task',
         isArray: true
       },
       listQuestions: {
         method: 'GET',
-        url: '/user/:id/question',
+        url: endpoint + '/question',
         isArray: true
       },
       listAnswers: {
         method: 'GET',
-        url: '/user/:id/answer',
+        url: endpoint + '/answer',
         isArray: true
       },
       listNotifications: {
@@ -2917,7 +2944,7 @@ angular
       },
       addCredit: {
         method: "POST",
-        url: '/user/:id/credit'
+        url: endpoint + '/credit'
       },
       findByReferral: {
         method: "GET",
@@ -2925,27 +2952,32 @@ angular
       },
       getReferralStats: {
         method: "GET",
-        url: '/user/:id/referral/stats'
+        url: endpoint + '/referral/stats'
       },
       listVenues: {
         method: "GET",
-        url: '/user/:id/venue',
+        url: endpoint + '/venue',
         isArray: true
       },
       favorite: {
         method: "POST",
-        url: '/user/:id/favorite',
+        url: endpoint + '/favorite',
         isArray: false
       },
       unfavorite: {
         method: "DELETE",
-        url: '/user/:id/favorite/:favoriteId',
+        url: endpoint + '/favorite/:favoriteId',
         isArray: false
       },
       listFavorites: {
         method: "GET",
-        url: '/user/:id/favorite',
+        url: endpoint + '/favorite',
         isArray: true
+      },
+      markAffiliate: {
+        method: "POST",
+        url: endpoint + '/affiliate',
+        isArray: false
       },
       listAffiliates: {
         method: "GET", 
@@ -3262,6 +3294,14 @@ angular
         delete options.userId;
 
         return User.listFavorites(options).$promise;
+      };
+
+      UserService.prototype.markAffiliate = function(userId, options) {
+        if (!userId) throw new Error('userId is required');
+        if (!options) throw new Error('options is required');
+        if (!options.name) throw new Error('options.name is required');
+        
+        return User.markAffiliate({ id: userId }, options).$promise;
       };
 
       UserService.prototype.listAffiliates = function(options) {
