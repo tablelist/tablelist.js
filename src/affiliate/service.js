@@ -39,13 +39,15 @@ angular.module('tl').service('tl.affiliate.service', [
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      return $http({
-        method: 'GET',
-        url: http.apiUrl('/affiliate/' + options.id + '/sale'),
+      var affiliateId = options.id;
+      delete options.id;
+
+      return $http.get(http.apiUrl('/affiliate/' + affiliateId + '/sale'), {
+        params: options,
+        data: '', //needed, otherwise the content-type header is not sent (the req must have a body)
         headers: {
           'Content-Type': 'text/csv'
-        },
-        data: options
+        }
       });
     };
 
