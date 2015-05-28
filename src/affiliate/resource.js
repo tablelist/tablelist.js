@@ -30,6 +30,11 @@ angular.module('tl').factory('tl.affiliate.resource', [
         method: 'GET',
         url: endpoint + '/leaderboard',
         isArray: true
+      },
+      getPayoutPeriod: {
+        method: 'GET',
+        url: endpoint + '/payout-period',
+        isArray: true
       }
     });
   }
