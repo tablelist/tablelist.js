@@ -62,7 +62,7 @@ angular.module('tl').service('tl.affiliate.service', [
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      return AffiliateService.getPayoutPeriod(options).$promise;
+      return Affiliate.getPayoutPeriod(options).$promise;
     };
 
     return new AffiliateService();
