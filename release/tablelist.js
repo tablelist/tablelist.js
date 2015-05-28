@@ -1007,13 +1007,15 @@ angular.module('tl').service('tl.affiliate.service', [
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      return $http({
-        method: 'GET',
-        url: http.apiUrl('/affiliate/' + options.id + '/sale'),
+      var affiliateId = options.id;
+      delete options.id;
+
+      return $http.get(http.apiUrl('/affiliate/' + affiliateId + '/sale'), {
+        params: options,
+        data: '', //needed, otherwise the content-type header is not sent (the req must have a body)
         headers: {
           'Content-Type': 'text/csv'
-        },
-        data: options
+        }
       });
     };
 
@@ -1034,6 +1036,37 @@ angular.module('tl').service('tl.affiliate.service', [
     return new AffiliateService();
   }
 ]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
 
 
 angular
@@ -1073,37 +1106,6 @@ angular
       };
 
       return new AmbassadorService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
     }
   ]);
 
@@ -1999,35 +2001,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.item.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/item/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
-
-		var ItemService = Service.extend(Item);
-
-		return new ItemService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.metric', ['tl.metric.resource', 'tl.metric.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2132,6 +2105,94 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.item.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/item/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
+
+		var ItemService = Service.extend(Item);
+
+		return new ItemService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.outgoingPayment.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/outgoing-payment/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listTransaction: {
+        method: 'GET',
+        url: endpoint + '/transaction',
+        isArray: true
+      },
+      listAuthorization: {
+        method: 'GET',
+        url: endpoint + '/authorization',
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.outgoingPayment.service', [
+  'tl.outgoingPayment.resource',
+  'tl.service',
+  function(OutgoingPayment, Service) {
+    'use strict';
+
+    /*==============================================================*
+    /* Constructor
+    /*==============================================================*/
+
+    var OutgoingPaymentService = Service.extend(OutgoingPayment);
+
+    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
+      return OutgoingPayment.listTransaction({
+        id: id,
+      }, success, error);
+    };
+
+    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
+      return OutgoingPayment.listAuthorization({
+        id: id,
+      }, success, error);
+    };
+
+    return new OutgoingPaymentService();
+  }
+]);
+
+
+angular
+	.module('tl')
 	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2232,65 +2293,6 @@ angular
       return new PaymentService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.outgoingPayment.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/outgoing-payment/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listTransaction: {
-        method: 'GET',
-        url: endpoint + '/transaction',
-        isArray: true
-      },
-      listAuthorization: {
-        method: 'GET',
-        url: endpoint + '/authorization',
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.outgoingPayment.service', [
-  'tl.outgoingPayment.resource',
-  'tl.service',
-  function(OutgoingPayment, Service) {
-    'use strict';
-
-    /*==============================================================*
-    /* Constructor
-    /*==============================================================*/
-
-    var OutgoingPaymentService = Service.extend(OutgoingPayment);
-
-    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
-      return OutgoingPayment.listTransaction({
-        id: id,
-      }, success, error);
-    };
-
-    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
-      return OutgoingPayment.listAuthorization({
-        id: id,
-      }, success, error);
-    };
-
-    return new OutgoingPaymentService();
-  }
-]);
 
 
 angular
@@ -2574,35 +2576,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2699,6 +2672,35 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 
 angular
 	.module('tl')
