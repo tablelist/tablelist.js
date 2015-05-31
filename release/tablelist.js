@@ -958,7 +958,18 @@ angular.module('tl').factory('tl.affiliate.resource', [
       },
       create: {
         method: 'POST',
-        url: 'affiliate'
+        url: 'affiliate',
+        isArray: false
+      },
+      update: {
+        method: 'PATCH',
+        url: endpoint,
+        isArray: false
+      },
+      list: {
+        method: 'GET',
+        url: 'affiliate',
+        isArray: true
       },
       listSales: {
         method: 'GET',
@@ -1000,10 +1011,28 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.getById(options).$promise;
     };
 
+    AffiliateService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      return Affiliate.list(options).$promise;
+    };
+
     AffiliateService.prototype.create = function(options) {
       if (!options) throw new Error('options is required');
 
       return Affiliate.create({}, options).$promise;
+    };
+
+    AffiliateService.prototype.update = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var affiliateId = options.id;
+      delete options.id;
+
+      return Affiliate.update({
+        id: affiliateId
+      }, options).$promise;
     };
 
     AffiliateService.prototype.listSales = function(options) {
@@ -2506,35 +2535,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.review.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/review/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
-
-		var ReviewService = Service.extend(Review);
-
-		return new ReviewService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2560,6 +2560,35 @@ angular
 		var RewardService = Service.extend(Reward);
 
 		return new RewardService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.review.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/review/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
+
+		var ReviewService = Service.extend(Review);
+
+		return new ReviewService();
 	}]);
 
 angular
@@ -2644,6 +2673,35 @@ angular
 
 		return new SettingsService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -2689,35 +2747,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
 
 angular
 	.module('tl')

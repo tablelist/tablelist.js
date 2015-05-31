@@ -15,10 +15,28 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.getById(options).$promise;
     };
 
+    AffiliateService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      return Affiliate.list(options).$promise;
+    };
+
     AffiliateService.prototype.create = function(options) {
       if (!options) throw new Error('options is required');
 
       return Affiliate.create({}, options).$promise;
+    };
+
+    AffiliateService.prototype.update = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var affiliateId = options.id;
+      delete options.id;
+
+      return Affiliate.update({
+        id: affiliateId
+      }, options).$promise;
     };
 
     AffiliateService.prototype.listSales = function(options) {
