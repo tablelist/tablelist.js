@@ -15,7 +15,7 @@ angular.module('tl').factory('tl.affiliate.resource', [
       },
       getPayoutStructuresById: {
         method: 'GET',
-        url: endpoint + '/payoutstructures',
+        url: endpoint + '/payoutstructure',
         isArray: true
       },
       create: {
