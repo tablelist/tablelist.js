@@ -15,6 +15,13 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.getById(options).$promise;
     };
 
+    AffiliateService.prototype.getPayoutStructuresById = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getPayoutStructuresById(options).$promise;
+    };
+
     AffiliateService.prototype.list = function(options) {
       if (!options) throw new Error('options is required');
 

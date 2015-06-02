@@ -13,6 +13,11 @@ angular.module('tl').factory('tl.affiliate.resource', [
         url: endpoint,
         isArray: false
       },
+      getPayoutStructuresById: {
+        method: 'GET',
+        url: endpoint + '/payoutstructures',
+        isArray: true
+      },
       create: {
         method: 'POST',
         url: 'affiliate',
