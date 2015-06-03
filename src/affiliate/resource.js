@@ -13,9 +13,25 @@ angular.module('tl').factory('tl.affiliate.resource', [
         url: endpoint,
         isArray: false
       },
+      getPayoutStructuresById: {
+        method: 'GET',
+        url: endpoint + '/payoutstructure',
+        isArray: true
+      },
       create: {
         method: 'POST',
-        url: 'affiliate'
+        url: 'affiliate',
+        isArray: false
+      },
+      update: {
+        method: 'PATCH',
+        url: endpoint,
+        isArray: false
+      },
+      list: {
+        method: 'GET',
+        url: 'affiliate',
+        isArray: true
       },
       listSales: {
         method: 'GET',
