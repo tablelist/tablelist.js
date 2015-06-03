@@ -336,167 +336,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliate.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      getById: {
-        method: 'GET',
-        url: endpoint,
-        isArray: false
-      },
-      getPayoutStructuresById: {
-        method: 'GET',
-        url: endpoint + '/payoutstructure',
-        isArray: true
-      },
-      create: {
-        method: 'POST',
-        url: 'affiliate',
-        isArray: false
-      },
-      update: {
-        method: 'PATCH',
-        url: endpoint,
-        isArray: false
-      },
-      list: {
-        method: 'GET',
-        url: 'affiliate',
-        isArray: true
-      },
-      listSales: {
-        method: 'GET',
-        url: endpoint + '/sale',
-        isArray: true
-      },
-      getSalesTotal: {
-        method: 'GET',
-        url: endpoint + '/sale/total'
-      },
-      getSalesLeaderboard: {
-        method: 'GET',
-        url: endpoint + '/leaderboard',
-        isArray: true
-      },
-      getPayoutPeriod: {
-        method: 'GET',
-        url: endpoint + '/payout-period',
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliate.service', [
-  'tl.affiliate.resource',
-  'tl.service',
-  '$http',
-  'tl.http',
-  function(Affiliate, Service, $http, http) {
-    'use strict';
-
-    var AffiliateService = Service.extend(Affiliate);
-
-    AffiliateService.prototype.getById = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getById(options).$promise;
-    };
-
-    AffiliateService.prototype.getPayoutStructuresById = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getPayoutStructuresById(options).$promise;
-    };
-
-    AffiliateService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      return Affiliate.list(options).$promise;
-    };
-
-    AffiliateService.prototype.create = function(options) {
-      if (!options) throw new Error('options is required');
-
-      return Affiliate.create({}, options).$promise;
-    };
-
-    AffiliateService.prototype.update = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      var affiliateId = options.id;
-      delete options.id;
-
-      return Affiliate.update({
-        id: affiliateId
-      }, options).$promise;
-    };
-
-    AffiliateService.prototype.listSales = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.listSales(options).$promise;
-    };
-
-    AffiliateService.prototype.getSalesTotal = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getSalesTotal(options).$promise;
-    };
-
-    AffiliateService.prototype.listSalesAsCsv = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      var affiliateId = options.id;
-      delete options.id;
-
-      return $http.get(http.apiUrl('/affiliate/' + affiliateId + '/sale'), {
-        params: options,
-        data: '', //needed, otherwise the content-type header is not sent (the req must have a body)
-        headers: {
-          'Content-Type': 'text/csv'
-        }
-      });
-    };
-
-    AffiliateService.prototype.getSalesLeaderboard = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getSalesLeaderboard(options).$promise;
-    };
-
-    AffiliateService.prototype.getPayoutPeriod = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getPayoutPeriod(options).$promise;
-    };
-
-    return new AffiliateService();
-  }
-]);
-
 /**
  * Angular module for setting, reading and removing cookies
  *
@@ -1098,6 +937,167 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliate.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      getById: {
+        method: 'GET',
+        url: endpoint,
+        isArray: false
+      },
+      getPayoutStructuresById: {
+        method: 'GET',
+        url: endpoint + '/payoutstructure',
+        isArray: true
+      },
+      create: {
+        method: 'POST',
+        url: 'affiliate',
+        isArray: false
+      },
+      update: {
+        method: 'PATCH',
+        url: endpoint,
+        isArray: false
+      },
+      list: {
+        method: 'GET',
+        url: 'affiliate',
+        isArray: true
+      },
+      listSales: {
+        method: 'GET',
+        url: endpoint + '/sale',
+        isArray: true
+      },
+      getSalesTotal: {
+        method: 'GET',
+        url: endpoint + '/sale/total'
+      },
+      getSalesLeaderboard: {
+        method: 'GET',
+        url: endpoint + '/leaderboard',
+        isArray: true
+      },
+      getPayoutPeriod: {
+        method: 'GET',
+        url: endpoint + '/payout-period',
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliate.service', [
+  'tl.affiliate.resource',
+  'tl.service',
+  '$http',
+  'tl.http',
+  function(Affiliate, Service, $http, http) {
+    'use strict';
+
+    var AffiliateService = Service.extend(Affiliate);
+
+    AffiliateService.prototype.getById = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getById(options).$promise;
+    };
+
+    AffiliateService.prototype.getPayoutStructuresById = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getPayoutStructuresById(options).$promise;
+    };
+
+    AffiliateService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      return Affiliate.list(options).$promise;
+    };
+
+    AffiliateService.prototype.create = function(options) {
+      if (!options) throw new Error('options is required');
+
+      return Affiliate.create({}, options).$promise;
+    };
+
+    AffiliateService.prototype.update = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var affiliateId = options.id;
+      delete options.id;
+
+      return Affiliate.update({
+        id: affiliateId
+      }, options).$promise;
+    };
+
+    AffiliateService.prototype.listSales = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.listSales(options).$promise;
+    };
+
+    AffiliateService.prototype.getSalesTotal = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getSalesTotal(options).$promise;
+    };
+
+    AffiliateService.prototype.listSalesAsCsv = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var affiliateId = options.id;
+      delete options.id;
+
+      return $http.get(http.apiUrl('/affiliate/' + affiliateId + '/sale'), {
+        params: options,
+        data: '', //needed, otherwise the content-type header is not sent (the req must have a body)
+        headers: {
+          'Content-Type': 'text/csv'
+        }
+      });
+    };
+
+    AffiliateService.prototype.getSalesLeaderboard = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getSalesLeaderboard(options).$promise;
+    };
+
+    AffiliateService.prototype.getPayoutPeriod = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getPayoutPeriod(options).$promise;
+    };
+
+    return new AffiliateService();
+  }
+]);
+
+
+angular
+	.module('tl')
 	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1133,6 +1133,37 @@ angular
       };
 
       return new AmbassadorService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
     }
   ]);
 
@@ -1615,37 +1646,6 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1707,71 +1707,6 @@ angular.module('tl').service('tl.city.service', [
     return new CityService();
   }
 ]);
-
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
-    }
-  ]);
 
 
 angular
@@ -1860,6 +1795,71 @@ angular
     return new EventService();
   }]);
 
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -1944,6 +1944,35 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.item.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/item/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
+
+		var ItemService = Service.extend(Item);
+
+		return new ItemService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1993,35 +2022,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.item.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/item/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item){
-
-		var ItemService = Service.extend(Item);
-
-		return new ItemService();
-	}]);
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -2084,102 +2084,6 @@ angular
       return new InvoiceService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.outgoingPayment.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/outgoing-payment/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listTransaction: {
-        method: 'GET',
-        url: endpoint + '/transaction',
-        isArray: true
-      },
-      listAuthorization: {
-        method: 'GET',
-        url: endpoint + '/authorization',
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.outgoingPayment.service', [
-  'tl.outgoingPayment.resource',
-  'tl.service',
-  function(OutgoingPayment, Service) {
-    'use strict';
-
-    /*==============================================================*
-    /* Constructor
-    /*==============================================================*/
-
-    var OutgoingPaymentService = Service.extend(OutgoingPayment);
-
-    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
-      return OutgoingPayment.listTransaction({
-        id: id,
-      }, success, error);
-    };
-
-    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
-      return OutgoingPayment.listAuthorization({
-        id: id,
-      }, success, error);
-    };
-
-    return new OutgoingPaymentService();
-  }
-]);
-
-angular
-  .module('tl')
-  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.notify.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/notify/adminapp';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      sendAdminApp: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
-
-    var NotifyService = Service.extend(Notify);
-
-    NotifyService.prototype.sendAdminApp = function() {
-      return Notify.sendAdminApp().$promise;
-    };
-
-    return new NotifyService();
-  }]);
 
 
 angular
@@ -2248,6 +2152,206 @@ angular
 
     return new MetricService();
   }]);
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Notify);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
+  }]);
+
+
+angular
+	.module('tl')
+	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.outgoingPayment.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/outgoing-payment/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listTransaction: {
+        method: 'GET',
+        url: endpoint + '/transaction',
+        isArray: true
+      },
+      listAuthorization: {
+        method: 'GET',
+        url: endpoint + '/authorization',
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.outgoingPayment.service', [
+  'tl.outgoingPayment.resource',
+  'tl.service',
+  function(OutgoingPayment, Service) {
+    'use strict';
+
+    /*==============================================================*
+    /* Constructor
+    /*==============================================================*/
+
+    var OutgoingPaymentService = Service.extend(OutgoingPayment);
+
+    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
+      return OutgoingPayment.listTransaction({
+        id: id,
+      }, success, error);
+    };
+
+    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
+      return OutgoingPayment.listAuthorization({
+        id: id,
+      }, success, error);
+    };
+
+    return new OutgoingPaymentService();
+  }
+]);
+
+
+angular
+	.module('tl')
+	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.payment.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/paymentProfile/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.payment.service', ['tl.service', 'tl.payment.resource', 'tl.utils',
+    function(Service, Payment, utils) {
+      'use strict';
+
+      var PaymentService = Service.extend(Payment);
+
+      PaymentService.prototype.addPaymentProfile = function(options) {
+        var data = {
+          cardholderName: options.name,
+          cardNumber: utils.digits(options.number),
+          cardExpMonth: utils.digits(options.month),
+          cardExpYear: utils.digits(options.year),
+          cardCvv: utils.digits(options.cvv),
+          cardZip: utils.digits(options.zip)
+        };
+        return this.create(data).$promise;
+      };
+
+      PaymentService.prototype.updatePaymentProfile = function(options) {
+        var profileId = options.id;
+        if (!profileId) {
+          throw "An existing profile is required. Missing options.id";
+        }
+        var data = {
+          cardholderName: options.name,
+          cardNumber: utils.digits(options.number),
+          cardExpMonth: utils.digits(options.month),
+          cardExpYear: utils.digits(options.year),
+          cardCvv: utils.digits(options.cvv),
+          cardZip: utils.digits(options.zip)
+        };
+        return this.update(profileId, data).$promise;
+      };
+
+      // Deprecated
+
+      PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
+        console.log('DEPRECATED - use .addPaymentProfile');
+        var data = {
+          cardholderName: name,
+          cardNumber: utils.digits(number),
+          cardExpMonth: utils.digits(month),
+          cardExpYear: utils.digits(year),
+          cardCvv: utils.digits(cvv),
+          cardZip: utils.digits(zip),
+          address: {
+            address: address,
+            city: city,
+            state: state
+          }
+        };
+
+        return this.create(data, success, error);
+      };
+
+      PaymentService.prototype.updateProfile = function(profileId, name, number, month, year, cvv, address, city, state, zip, success, error) {
+        console.log('DEPRECATED - use .updatePaymentProfile');
+        if (!profileId) {
+          return this.addProfile(name, number, month, year, cvv, address, city, state, zip, success, error);
+        }
+
+        var data = {
+          cardholderName: name,
+          cardNumber: utils.digits(number),
+          cardExpMonth: utils.digits(month),
+          cardExpYear: utils.digits(year),
+          cardCvv: utils.digits(cvv),
+          cardZip: utils.digits(zip),
+          address: {
+            address: address,
+            city: city,
+            state: state
+          }
+        };
+
+        return this.update(profileId, data, success, error);
+      };
+
+      return new PaymentService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -2472,110 +2576,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.payment.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/paymentProfile/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.payment.service', ['tl.service', 'tl.payment.resource', 'tl.utils',
-    function(Service, Payment, utils) {
-      'use strict';
-
-      var PaymentService = Service.extend(Payment);
-
-      PaymentService.prototype.addPaymentProfile = function(options) {
-        var data = {
-          cardholderName: options.name,
-          cardNumber: utils.digits(options.number),
-          cardExpMonth: utils.digits(options.month),
-          cardExpYear: utils.digits(options.year),
-          cardCvv: utils.digits(options.cvv),
-          cardZip: utils.digits(options.zip)
-        };
-        return this.create(data).$promise;
-      };
-
-      PaymentService.prototype.updatePaymentProfile = function(options) {
-        var profileId = options.id;
-        if (!profileId) {
-          throw "An existing profile is required. Missing options.id";
-        }
-        var data = {
-          cardholderName: options.name,
-          cardNumber: utils.digits(options.number),
-          cardExpMonth: utils.digits(options.month),
-          cardExpYear: utils.digits(options.year),
-          cardCvv: utils.digits(options.cvv),
-          cardZip: utils.digits(options.zip)
-        };
-        return this.update(profileId, data).$promise;
-      };
-
-      // Deprecated
-
-      PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
-        console.log('DEPRECATED - use .addPaymentProfile');
-        var data = {
-          cardholderName: name,
-          cardNumber: utils.digits(number),
-          cardExpMonth: utils.digits(month),
-          cardExpYear: utils.digits(year),
-          cardCvv: utils.digits(cvv),
-          cardZip: utils.digits(zip),
-          address: {
-            address: address,
-            city: city,
-            state: state
-          }
-        };
-
-        return this.create(data, success, error);
-      };
-
-      PaymentService.prototype.updateProfile = function(profileId, name, number, month, year, cvv, address, city, state, zip, success, error) {
-        console.log('DEPRECATED - use .updatePaymentProfile');
-        if (!profileId) {
-          return this.addProfile(name, number, month, year, cvv, address, city, state, zip, success, error);
-        }
-
-        var data = {
-          cardholderName: name,
-          cardNumber: utils.digits(number),
-          cardExpMonth: utils.digits(month),
-          cardExpYear: utils.digits(year),
-          cardCvv: utils.digits(cvv),
-          cardZip: utils.digits(zip),
-          address: {
-            address: address,
-            city: city,
-            state: state
-          }
-        };
-
-        return this.update(profileId, data, success, error);
-      };
-
-      return new PaymentService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2630,6 +2630,35 @@ angular
 		var ScheduleService = Service.extend(Schedule);
 
 		return new ScheduleService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
 	}]);
 
 angular
@@ -2729,6 +2758,171 @@ angular
       return new TagService();
     }
   ]);
+
+
+angular
+	.module('tl')
+	.constant('TRACK_EVENTS', {
+		
+		// User
+		UserVerifiedPhoneNumber: "TLUserPhoneVerified",
+		UserUpdatedProfilePicture: "TLUserUpdatedProfilePicture",
+		UserCompletedProfile: "TLUserCompletedProfile",
+
+		// City
+		CityViewed: "TLCityViewed",
+		CityFeaturedViewed: "TLCityFeaturedViewed",
+		CityTonightViewed: "TLCityTonightViewed",
+		CityThisWeekViewed: "TLCityThisWeekViewed",
+		CityApplied: "TLCityApplied",
+		CityShared: "TLCityShared",
+
+		// Venues
+		VenueViewed: "TLVenueViewed",
+		VenueInfoViewed: "TLVenueInfoViewed",
+		VenueContactViewed: "TLVenueContactViewed",
+		VenueMapViewed: "TLVenueMapViewed",
+		VenueAppliedForAccess: "TLVenueAppliedForAccess",
+
+		// Events
+		EventViewed: "TLEventViewed",
+
+		// Booking Flow
+		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
+		BookingInfoViewed: "TLBookingInfoViewed",
+		BookingReviewViewed: "TLBookingReviewViewed",
+		BookingTermsViewed: "TLBookingTermsViewed",
+		BookingComplete: "TLBookingComplete",
+		BookingReservationComplete: "TLBookingReservationComplete",
+		BookingPromoterComplete: "TLBookingPromoterComplete",
+		BookingFailed: "TLBookingFailed",
+		BookingReservationFailed: "TLBookingReservationFailed",
+		BookingAddedToPassbook: "TLBookingAddedToPassbook",
+		BookingInquiryViewed: "TLBookingInquiryViewed",
+		BookingInquirySubmitted: "TLBookingInquirySubmitted",
+
+		// Booking Join Flow
+		BookingJoinPending: "TLBookingJoinPending",
+		BookingJoinAccepted: "TLBookingJoinAccepted",
+		BookingJoinCodeSent: "TLBookingJoinCodeSent",
+
+		// Booking Review
+		BookingReviewSubmitted: "TLBookingReviewSubmitted",
+
+		// Referral
+		ReferralEntered: "TLReferralEntered",
+		ReferralSentFB: "TLReferralSentFB",
+		ReferralSentTW: "TLReferralSentTW",
+		ReferralSentSMS: "TLReferralSentSMS",
+		ReferralSentEmail: "TLReferralSentEmail",
+
+		// Payment
+		PaymentAdded: "TLPaymentAdded",
+		PaymentUpdated: "TLPaymentUpdated",
+
+		// Promo Code
+		CodeRedeemed: "TLPromoCodeRedeemed",
+
+		// Rewards
+		RewardViewed: "TLRewardViewed",
+		RewardRedeemed: "TLRewardRedeemed",
+
+		// About Us
+		AboutBlogViewed: "TLAboutBlogViewed",
+		AboutFacebookViewed: "TLAboutFacebookViewed",
+		AboutTwitterViewed: "TLAboutTwitterViewed",
+		AboutWebsiteViewed: "TLAboutWebsiteViewed",
+
+		// Easter Eggs
+		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture"
+	});
+
+angular
+	.module('tl')
+	.service('tl.track', ['tl.track.resource', 'tl.track.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.track.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/track/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			funnel: {
+			 	method: 'POST',
+			 	url: '/track/funnel',
+			 	isArray: true
+			},
+			listPossibleEvents: {
+				method: 'GET',
+				url: '/track/events',
+				isArray: true
+			}
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
+
+    var AFFILIATE = null;
+
+    var TrackService = Service.extend(Track);
+
+    /**
+     * Returns a map of valid tracking events
+     */
+    TrackService.prototype.trackingEvents = function() {
+      return EVENTS;
+    };
+
+    /**
+     * Send a tracking event to the server
+     */
+    TrackService.prototype.send = function(eventName, data) {
+      var track = {
+        event: eventName,
+        data: data,
+        client: {
+          os: config.CLIENT,
+          version: config.VERSION,
+          device: window.navigator ? window.navigator.userAgent : null
+        }
+      };
+
+      if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
+      if (AFFILIATE) {
+        track.data = track.data || {};
+        track.data.affiliate = AFFILIATE;
+      }
+
+      return Track.save({}, track);
+    };
+
+    TrackService.prototype.setAffiliate = function(affiliateId) {
+      AFFILIATE = affiliateId || null;
+    };
+
+    TrackService.prototype.listPossibleEvents = function(success, error) {
+      return Track.listPossibleEvents({}, success, error).$promise;
+    };
+
+		TrackService.prototype.funnel = function(events, options, success, error) {
+			return Track.funnel({}, {
+				events: events,
+				start: options.start.getTime(),
+				end: options.end.getTime(),
+				data: options.data,
+				client: options.client
+			}, success, error).$promise;
+		};
+
+		return new TrackService();
+	}]);
 
 
 angular
@@ -3217,190 +3411,6 @@ angular
       return new UserService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
-
-angular
-	.module('tl')
-	.constant('TRACK_EVENTS', {
-		
-		// User
-		UserVerifiedPhoneNumber: "TLUserPhoneVerified",
-		UserUpdatedProfilePicture: "TLUserUpdatedProfilePicture",
-		UserCompletedProfile: "TLUserCompletedProfile",
-
-		// City
-		CityViewed: "TLCityViewed",
-		CityFeaturedViewed: "TLCityFeaturedViewed",
-		CityTonightViewed: "TLCityTonightViewed",
-		CityThisWeekViewed: "TLCityThisWeekViewed",
-		CityApplied: "TLCityApplied",
-		CityShared: "TLCityShared",
-
-		// Venues
-		VenueViewed: "TLVenueViewed",
-		VenueInfoViewed: "TLVenueInfoViewed",
-		VenueContactViewed: "TLVenueContactViewed",
-		VenueMapViewed: "TLVenueMapViewed",
-		VenueAppliedForAccess: "TLVenueAppliedForAccess",
-
-		// Events
-		EventViewed: "TLEventViewed",
-
-		// Booking Flow
-		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
-		BookingInfoViewed: "TLBookingInfoViewed",
-		BookingReviewViewed: "TLBookingReviewViewed",
-		BookingTermsViewed: "TLBookingTermsViewed",
-		BookingComplete: "TLBookingComplete",
-		BookingReservationComplete: "TLBookingReservationComplete",
-		BookingPromoterComplete: "TLBookingPromoterComplete",
-		BookingFailed: "TLBookingFailed",
-		BookingReservationFailed: "TLBookingReservationFailed",
-		BookingAddedToPassbook: "TLBookingAddedToPassbook",
-		BookingInquiryViewed: "TLBookingInquiryViewed",
-		BookingInquirySubmitted: "TLBookingInquirySubmitted",
-
-		// Booking Join Flow
-		BookingJoinPending: "TLBookingJoinPending",
-		BookingJoinAccepted: "TLBookingJoinAccepted",
-		BookingJoinCodeSent: "TLBookingJoinCodeSent",
-
-		// Booking Review
-		BookingReviewSubmitted: "TLBookingReviewSubmitted",
-
-		// Referral
-		ReferralEntered: "TLReferralEntered",
-		ReferralSentFB: "TLReferralSentFB",
-		ReferralSentTW: "TLReferralSentTW",
-		ReferralSentSMS: "TLReferralSentSMS",
-		ReferralSentEmail: "TLReferralSentEmail",
-
-		// Payment
-		PaymentAdded: "TLPaymentAdded",
-		PaymentUpdated: "TLPaymentUpdated",
-
-		// Promo Code
-		CodeRedeemed: "TLPromoCodeRedeemed",
-
-		// Rewards
-		RewardViewed: "TLRewardViewed",
-		RewardRedeemed: "TLRewardRedeemed",
-
-		// About Us
-		AboutBlogViewed: "TLAboutBlogViewed",
-		AboutFacebookViewed: "TLAboutFacebookViewed",
-		AboutTwitterViewed: "TLAboutTwitterViewed",
-		AboutWebsiteViewed: "TLAboutWebsiteViewed",
-
-		// Easter Eggs
-		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture"
-	});
-
-angular
-	.module('tl')
-	.service('tl.track', ['tl.track.resource', 'tl.track.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.track.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/track/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			funnel: {
-			 	method: 'POST',
-			 	url: '/track/funnel',
-			 	isArray: true
-			},
-			listPossibleEvents: {
-				method: 'GET',
-				url: '/track/events',
-				isArray: true
-			}
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
-
-    var TrackService = Service.extend(Track);
-
-    /**
-     * Returns a map of valid tracking events
-     */
-    TrackService.prototype.trackingEvents = function() {
-      return EVENTS;
-    };
-
-    /**
-     * Send a tracking event to the server
-     */
-    TrackService.prototype.send = function(eventName, data) {
-      var track = {
-        event: eventName,
-        data: data,
-        client: {
-          os: config.CLIENT,
-          version: config.VERSION,
-          device: window.navigator ? window.navigator.userAgent : null
-        }
-      };
-
-      if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
-
-      return Track.save({}, track);
-    };
-
-    TrackService.prototype.listPossibleEvents = function(success, error) {
-      return Track.listPossibleEvents({}, success, error).$promise;
-    };
-
-		TrackService.prototype.funnel = function(events, options, success, error) {
-			return Track.funnel({}, {
-				events: events,
-				start: options.start.getTime(),
-				end: options.end.getTime(),
-				data: options.data,
-				client: options.client
-			}, success, error).$promise;
-		};
-
-		return new TrackService();
-	}]);
 
 
 angular
