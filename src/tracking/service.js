@@ -2,6 +2,8 @@ angular
   .module('tl')
   .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
 
+    var AFFILIATE = null;
+
     var TrackService = Service.extend(Track);
 
     /**
@@ -26,8 +28,16 @@ angular
       };
 
       if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
+      if (AFFILIATE) {
+        track.data = track.data || {};
+        track.data.affiliate = AFFILIATE;
+      }
 
       return Track.save({}, track);
+    };
+
+    TrackService.prototype.setAffiliate = function(affiliateId) {
+      AFFILIATE = affiliateId || null;
     };
 
     TrackService.prototype.listPossibleEvents = function(success, error) {
