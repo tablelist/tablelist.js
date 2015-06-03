@@ -257,6 +257,16 @@ angular
       };
 
       /**
+       * Get a user's referral stats
+       */
+      UserService.prototype.search = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.query) throw new Error('options.query is required');
+
+        return User.search(options).$promise;
+      };
+
+      /**
        * Lists a user's venues
        */
       UserService.prototype.listVenues = function(options) {
@@ -311,8 +321,10 @@ angular
         if (!userId) throw new Error('userId is required');
         if (!options) throw new Error('options is required');
         if (!options.name) throw new Error('options.name is required');
-        
-        return User.markAffiliate({ id: userId }, options).$promise;
+
+        return User.markAffiliate({
+          id: userId
+        }, options).$promise;
       };
 
       UserService.prototype.listAffiliates = function(options) {
