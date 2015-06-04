@@ -4,6 +4,12 @@ angular
 
     var EventService = Service.extend(Event);
 
+    EventService.prototype.create = function create(options) {
+      if (!options) throw new Error('options is required');
+
+      return Event.save({}, options).$promise;
+    };
+
     EventService.prototype.update = function update(options) {
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
