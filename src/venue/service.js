@@ -8,6 +8,14 @@ angular
 
       var VenueService = Service.extend(Venue);
 
+      VenueService.prototype.list = function list(options) {
+        if (!options) throw new Error('options is required');
+
+        options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+        return Venue.list(options).$promise;
+      };
+
       VenueService.prototype.read = function read(options) {
         if (!options) throw new Error('options is required');
         if (!options.id) throw new Error('options.id is required');
