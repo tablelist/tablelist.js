@@ -7,13 +7,9 @@ angular
     EventService.prototype.list = function list(options) {
       if (!options) throw new Error('options is required');
 
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
       return Event.list(options).$promise;
-    };
-
-    EventService.prototype.query = function query(options) {
-      if (!options) throw new Error('options is required');
-
-      return Event.query(options).$promise;
     };
 
     EventService.prototype.create = function create(options) {
