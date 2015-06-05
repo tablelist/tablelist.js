@@ -8,6 +8,16 @@ angular
       id: '@id',
       imageId: '@imageId'
     }, {
+      list: {
+        method: 'GET',
+        url: '/event',
+        isArray: true
+      },
+      query: {
+        method: 'GET',
+        url: '/event/query',
+        isArray: true
+      },
       listForCity: {
         method: 'GET',
         url: '/city/:cityId/event',
