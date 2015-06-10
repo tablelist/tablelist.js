@@ -14,6 +14,6 @@ angular.module('tl').service('tl.affiliatesale.service', [
       return AffiliateSale.list(options).$promise;
     };
 
-    return new AffiliateService();
+    return new AffiliateSaleService();
   }
 ]);
