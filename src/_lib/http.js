@@ -4,7 +4,8 @@ angular
     'tl.config',
     'tl.keychain',
     '$rootScope',
-    function(config, keychain, $rootScope) {
+    '$q',
+    function(config, keychain, $rootScope, $q) {
       'use strict';
 
       return {
@@ -40,12 +41,13 @@ angular
           data.url = data.url.replace('?&', '?');
           return data;
         },
-        response: function(response) {
+        responseError: function(response) {
+
           if (response.status === 401) {
             $rootScope.$emit('unauthorized');
           }
 
-          return response;
+          return $q.reject(response);
         }
       };
     }
