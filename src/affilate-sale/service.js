@@ -8,7 +8,7 @@ angular.module('tl').service('tl.affiliatesale.service', [
 
     var AffiliateSaleService = Service.extend(AffiliateSale);
 
-    AffiliateService.prototype.list = function(options) {
+    AffiliateSaleService.prototype.list = function(options) {
       if (!options) throw new Error('options is required');
 
       return AffiliateSale.list(options).$promise;
