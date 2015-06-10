@@ -44,6 +44,8 @@ angular
           if (response.status === 401) {
             $rootScope.$emit('unauthorized');
           }
+
+          return response;
         }
       };
     }
