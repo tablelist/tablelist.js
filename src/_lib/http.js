@@ -1,43 +1,53 @@
 angular
   .module('tl')
-  .factory('tlHTTPInterceptor', ['tl.config', 'tl.keychain', function(config, keychain) {
-    'use strict';
+  .factory('tlHTTPInterceptor', [
+    'tl.config',
+    'tl.keychain',
+    '$rootScope',
+    function(config, keychain, $rootScope) {
+      'use strict';
 
-    return {
-      request: function(data) {
-        data.headers = data.headers || {};
+      return {
+        request: function(data) {
+          data.headers = data.headers || {};
 
-        var token = keychain.authToken();
-        var isApi = data.url.indexOf(config.API) >= 0;
-        var hasParams = data.url.indexOf('?') >= 0;
-        if (isApi && !hasParams) {
-          data.url = data.url += '?';
-        }
-        if (isApi && token) {
-          if (config.useAuthHeader) data.headers['x-access-token'] = token;
-          else data.url = data.url + '&auth=' + token;
-        }
-        if (isApi && !token) {
-          var ptoken = keychain.prospectToken();
-          data.url = data.url + '&prospect=' + ptoken;
-        }
-        if (isApi && config.CLIENT) {
-          var client = config.CLIENT;
-          var subClient = config.SUB_CLIENT;
-          if (subClient) {
-            client = client + '-' + subClient;
+          var token = keychain.authToken();
+          var isApi = data.url.indexOf(config.API) >= 0;
+          var hasParams = data.url.indexOf('?') >= 0;
+          if (isApi && !hasParams) {
+            data.url = data.url += '?';
           }
-          data.url = data.url + '&client=' + client;
+          if (isApi && token) {
+            if (config.useAuthHeader) data.headers['x-access-token'] = token;
+            else data.url = data.url + '&auth=' + token;
+          }
+          if (isApi && !token) {
+            var ptoken = keychain.prospectToken();
+            data.url = data.url + '&prospect=' + ptoken;
+          }
+          if (isApi && config.CLIENT) {
+            var client = config.CLIENT;
+            var subClient = config.SUB_CLIENT;
+            if (subClient) {
+              client = client + '-' + subClient;
+            }
+            data.url = data.url + '&client=' + client;
+          }
+          if (isApi && config.VERSION) {
+            var version = config.VERSION;
+            data.url = data.url + '&version=' + version;
+          }
+          data.url = data.url.replace('?&', '?');
+          return data;
+        },
+        response: function(response) {
+          if (response.status === 401) {
+            $rootScope.$emit('unauthorized');
+          }
         }
-        if (isApi && config.VERSION) {
-          var version = config.VERSION;
-          data.url = data.url + '&version=' + version;
-        }
-        data.url = data.url.replace('?&', '?');
-        return data;
-      }
-    };
-  }])
+      };
+    }
+  ])
   .config(['$httpProvider', function($httpProvider) {
     $httpProvider.interceptors.push('tlHTTPInterceptor');
   }])
