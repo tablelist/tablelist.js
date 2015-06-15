@@ -8,6 +8,11 @@ angular
     return resource(endpoint, {
       id: '@id'
     }, {
+      list: {
+        method: 'GET',
+        url: '/venue',
+        isArray: true
+      },
       me: {
         method: 'GET',
         url: '/me'
@@ -129,7 +134,7 @@ angular
         isArray: false
       },
       listAffiliates: {
-        method: "GET", 
+        method: "GET",
         url: 'user/:id/affiliate',
         isArray: true
       }
