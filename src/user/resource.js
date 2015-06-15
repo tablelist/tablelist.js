@@ -10,7 +10,7 @@ angular
     }, {
       list: {
         method: 'GET',
-        url: '/venue',
+        url: '/user',
         isArray: true
       },
       me: {
