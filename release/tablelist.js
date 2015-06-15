@@ -996,6 +996,51 @@ angular.module('tl').service('tl.affiliatesale.service', [
   }
 ]);
 
+angular
+	.module('tl')
+	.service('tl.affiliatepayout', ['tl.affiliatepayout.resource', 'tl.affiliatepayout.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatepayout.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-payout';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }
+]);
+angular.module('tl').service('tl.affiliatepayout.service', [
+  'tl.affiliatepayout.resource',
+  'tl.service',
+  '$http',
+  'tl.http',
+  function(AffiliatePayout, Service, $http, http) {
+    'use strict';
+
+    var AffiliatePayoutService = Service.extend(AffiliatePayout);
+
+    AffiliatePayoutService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+      
+      return AffiliatePayout.list(options).$promise;
+    };
+
+    return new AffiliatePayoutService();
+  }
+]);
 
 angular
 	.module('tl')
@@ -1056,6 +1101,10 @@ angular.module('tl').factory('tl.affiliate.resource', [
         method: 'GET',
         url: endpoint + '/payout-period',
         isArray: true
+      },
+      getPromoCode: {
+        method: 'GET', 
+        url: endpoint + '/promo'
       }
     });
   }
@@ -1153,55 +1202,17 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.getPayoutPeriod(options).$promise;
     };
 
+    AffiliateService.prototype.getPromoCode = function(options) {
+      if(!options) throw new Error('options is required');
+      if(!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getPromoCode(options).$promise;
+    };
+
     return new AffiliateService();
   }
 ]);
 
-angular
-	.module('tl')
-	.service('tl.affiliatepayout', ['tl.affiliatepayout.resource', 'tl.affiliatepayout.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatepayout.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-payout';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }
-]);
-angular.module('tl').service('tl.affiliatepayout.service', [
-  'tl.affiliatepayout.resource',
-  'tl.service',
-  '$http',
-  'tl.http',
-  function(AffiliatePayout, Service, $http, http) {
-    'use strict';
-
-    var AffiliatePayoutService = Service.extend(AffiliatePayout);
-
-    AffiliatePayoutService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-      
-      return AffiliatePayout.list(options).$promise;
-    };
-
-    return new AffiliatePayoutService();
-  }
-]);
 
 angular
 	.module('tl')

@@ -51,6 +51,10 @@ angular.module('tl').factory('tl.affiliate.resource', [
         method: 'GET',
         url: endpoint + '/payout-period',
         isArray: true
+      },
+      getPromoCode: {
+        method: 'GET', 
+        url: endpoint + '/promo'
       }
     });
   }
