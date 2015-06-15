@@ -11,6 +11,14 @@ angular
 
       var UserService = Service.extend(User);
 
+      UserService.prototype.list = function list(options) {
+        if (!options) throw new Error('options is required');
+
+        options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+        return User.list(options).$promise;
+      };
+
       /**
        * Returns a local copy of the current user
        */
