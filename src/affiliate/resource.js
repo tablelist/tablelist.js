@@ -54,7 +54,8 @@ angular.module('tl').factory('tl.affiliate.resource', [
       },
       getPromoCode: {
         method: 'GET', 
-        url: endpoint + '/promo'
+        url: endpoint + '/promo',
+        isArray: true
       }
     });
   }
