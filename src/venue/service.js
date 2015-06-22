@@ -107,6 +107,46 @@ angular
         return Venue.listReviews(options).$promise;
       };
 
+      /*==============================================================*
+      /* Permissions
+      /*==============================================================*/
+
+      VenueService.prototype.addStaffPermission = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.staffId) throw new Error('options.staffId is required');
+        if (!options.permission) throw new Error('options.permission is required');
+
+        var venueId = options.id;
+        delete options.id;
+
+        var staffId = options.staffId;
+        delete options.staffId;
+
+        return Venue.addStaffPermission({
+          id: venueId,
+          staffId: staffId
+        }, options).$promise;
+      };
+
+      VenueService.prototype.removeStaffPermission = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.staffId) throw new Error('options.staffId is required');
+        if (!options.permission) throw new Error('options.permission is required');
+
+
+        return Venue.removeStaffPermission(options).$promise;
+      };
+
+      VenueService.prototype.listStaffPermissions = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.staffId) throw new Error('options.staffId is required');
+
+        return Venue.listStaffPermissions(options).$promise;
+      };
+
       return new VenueService();
     }
   ]);

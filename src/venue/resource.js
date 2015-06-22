@@ -151,6 +151,28 @@ angular
         method: 'GET',
         url: endpoint + '/review',
         isArray: true
-      }
+      },
+
+      /*==============================================================*
+      /* Permissions
+      /*==============================================================*/
+
+      addStaffPermission: {
+        method: 'POST',
+        url: endpoint + '/staff/:staffId/permission',
+        isArray: true
+      },
+
+      removeStaffPermission: {
+        method: 'DELETE',
+        url: endpoint + '/staff/:staffId/permission/:permission',
+        isArray: false
+      },
+
+      listStaffPermissions: {
+        method: 'GET',
+        url: endpoint + '/staff/:staffId/permission',
+        isArray: true
+      },
     });
   }]);
