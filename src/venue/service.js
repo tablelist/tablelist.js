@@ -82,12 +82,62 @@ angular
       /* Items
       /*==============================================================*/
 
-      VenueService.prototype.listItems = function(id, success, error) {
+      VenueService.prototype.addItem = function createItem(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
 
-        return Venue.listItems({
-          id: id
-        }, success, error);
+        var venueId = options.id;
+        delete options.id;
+
+        return Venue.addItem({
+          id: venueId
+        }, options).$promise;
       };
+
+      VenueService.prototype.listItems = function listItems(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listItems(options).$promise;
+      };
+
+      VenueService.prototype.updateItem = function updateItem(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.itemId) throw new Error('options.itemId is required');
+
+        var venueId = options.id;
+        delete options.id;
+
+        var itemId = options.itemId;
+        delete options.itemId;
+
+        return Venue.updateItem({
+          id: venueId,
+          itemId: itemId
+        }, options).$promise;
+      };
+
+      VenueService.prototype.deleteItem = function createItem(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.itemId) throw new Error('options.itemId is required');
+
+        var venueId = options.id;
+        delete options.id;
+
+        var itemId = options.itemId;
+        delete options.itemId;
+
+        return Venue.deleteItem({
+          id: venueId,
+          itemId: itemId
+        }, options).$promise;
+      };
+
+      /*==============================================================*
+      /* 
+      /*==============================================================*/
 
       VenueService.prototype.listBookings = function(params, success, error) {
         return Venue.listBookings(params, success, error);
