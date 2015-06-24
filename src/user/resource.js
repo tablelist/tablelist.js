@@ -137,6 +137,11 @@ angular
         method: "GET",
         url: 'user/:id/affiliate',
         isArray: true
+      },
+      access: {
+        method: 'GET',
+        url: 'user/:id/access',
+        isArray: true
       }
     });
   }]);

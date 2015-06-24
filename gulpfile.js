@@ -86,7 +86,8 @@ gulp.task('release', ['prepare-release-dir', 'js', 'copy-bower']);
 gulp.task('jshint', function() {
   return gulp.src(['src/**/*.js'])
     .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'));
 });
 
 /**
