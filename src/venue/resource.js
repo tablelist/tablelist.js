@@ -122,23 +122,23 @@ angular
 
       listStaff: {
         method: 'GET',
-        url: endpoint + '/user',
+        url: endpoint + '/staff',
         isArray: true
       },
-      addStaff: {
+      createStaff: {
         method: 'POST',
-        url: endpoint + '/user',
-        isArray: true
+        url: endpoint + '/staff',
+        isArray: false
       },
       updateStaff: {
         method: 'PUT',
-        url: endpoint + '/user/:userId',
-        isArray: true
+        url: endpoint + '/staff/:staffId',
+        isArray: false
       },
-      removeStaff: {
+      deleteStaff: {
         method: 'DELETE',
-        url: endpoint + '/user/:userId',
-        isArray: true
+        url: endpoint + '/staff/:staffId',
+        isArray: false
       },
 
       listBookings: {

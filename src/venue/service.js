@@ -158,6 +158,64 @@ angular
       };
 
       /*==============================================================*
+      /* Staff
+      /*==============================================================*/
+
+      VenueService.prototype.listStaff = function listStaff(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listStaff(options).$promise;
+      };
+
+      VenueService.prototype.createStaff = function createStaff(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        var venueId = options.id;
+        delete options.id;
+
+        return Venue.createStaff({
+          id: venueId
+        }, options).$promise;
+      };
+
+      VenueService.prototype.updateStaff = function updateStaff(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.staffId) throw new Error('options.staffId is required');
+        if (!options.updates) throw new Error('options.updates is required');
+
+        var venueId = options.id;
+        delete options.id;
+
+        var staffId = options.staffId;
+        delete options.staffId;
+
+        return Venue.updateStaff({
+          id: venueId,
+          staffId: staffId
+        }, options.updates).$promise;
+      };
+
+      VenueService.prototype.deleteStaff = function deleteStaff(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.staffId) throw new Error('options.staffId is required');
+
+        var venueId = options.id;
+        delete options.id;
+
+        var staffId = options.staffId;
+        delete options.staffId;
+
+        return Venue.deleteStaff({
+          id: venueId,
+          staffId: staffId
+        }, options).$promise;
+      };
+
+      /*==============================================================*
       /* Permissions
       /*==============================================================*/
 
