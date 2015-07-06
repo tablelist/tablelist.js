@@ -951,6 +951,54 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatesale.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-sale';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliatesale.service', [
+  'tl.affiliatesale.resource',
+  'tl.service',
+  '$http',
+  'tl.http',
+  function(AffiliateSale, Service, $http, http) {
+    'use strict';
+
+    var AffiliateSaleService = Service.extend(AffiliateSale);
+
+    AffiliateSaleService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+      
+      return AffiliateSale.list(options).$promise;
+    };
+
+    return new AffiliateSaleService();
+  }
+]);
+
+
+angular
+	.module('tl')
 	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1120,47 +1168,6 @@ angular.module('tl').service('tl.affiliate.service', [
   }
 ]);
 
-
-angular
-	.module('tl')
-	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.ambassador.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/ambassador';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        getAll: {
-          method: 'GET',
-          url: 'ambassador',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
-    function(Service, Ambassador) {
-
-      var AmbassadorService = Service.extend(Ambassador);
-
-      AmbassadorService.prototype.getAll = function(){
-        return Ambassador.getAll();
-      };
-
-      return new AmbassadorService();
-    }
-  ]);
-
 angular
 	.module('tl')
 	.service('tl.affiliatepayout', ['tl.affiliatepayout.resource', 'tl.affiliatepayout.service', function(resource, service){
@@ -1209,6 +1216,47 @@ angular.module('tl').service('tl.affiliatepayout.service', [
 
 angular
 	.module('tl')
+	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.ambassador.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/ambassador';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        getAll: {
+          method: 'GET',
+          url: 'ambassador',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
+    function(Service, Ambassador) {
+
+      var AmbassadorService = Service.extend(Ambassador);
+
+      AmbassadorService.prototype.getAll = function(){
+        return Ambassador.getAll();
+      };
+
+      return new AmbassadorService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
 	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1236,54 +1284,6 @@ angular
       return new AnswerService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatesale.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-sale';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliatesale.service', [
-  'tl.affiliatesale.resource',
-  'tl.service',
-  '$http',
-  'tl.http',
-  function(AffiliateSale, Service, $http, http) {
-    'use strict';
-
-    var AffiliateSaleService = Service.extend(AffiliateSale);
-
-    AffiliateSaleService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-      
-      return AffiliateSale.list(options).$promise;
-    };
-
-    return new AffiliateSaleService();
-  }
-]);
 
 angular
   .module('tl')
@@ -1472,169 +1472,6 @@ angular.module('tl').service('tl.auth.service', [
   }
 ]);
 
-
-angular
-	.module('tl')
-	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.event.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/event/:id';
-
-    return resource(endpoint, {
-      id: '@id',
-      imageId: '@imageId'
-    }, {
-      update: {
-        method: 'PATCH',
-        url: endpoint,
-        isArray: false
-      },
-      list: {
-        method: 'GET',
-        url: '/event',
-        isArray: true
-      },
-      listForCity: {
-        method: 'GET',
-        url: '/city/:cityId/event',
-        isArray: true
-      },
-      addStaff: {
-        method: 'POST',
-        url: endpoint + '/staff',
-        isArray: false
-      },
-      updateStaff: {
-        method: 'PUT',
-        url: endpoint + '/staff/:staffId',
-        isArray: false
-      },
-      deleteStaff: {
-        method: 'DELETE',
-        url: endpoint + '/staff/:staffId',
-        isArray: false
-      },
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.event.service', ['tl.service', 'tl.event.resource', function(Service, Event) {
-
-    var EventService = Service.extend(Event);
-
-    EventService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Event.list(options).$promise;
-    };
-
-    EventService.prototype.read = function read(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Event.get(options).$promise;
-    };
-
-    EventService.prototype.create = function create(options) {
-      if (!options) throw new Error('options is required');
-
-      return Event.save({}, options).$promise;
-    };
-
-    EventService.prototype.update = function update(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Event.update({
-        id: options.id
-      }, options).$promise;
-    };
-
-    /*==============================================================*
-    /* Cities
-    /*==============================================================*/
-
-    EventService.prototype.listForCity = function(cityId, success, error) {
-      return Event.listForCity({
-        cityId: cityId
-      }, success, error);
-    };
-
-    EventService.prototype.listCityTonight = function(cityId, success, error) {
-      return Event.listCityTonight({
-        cityId: cityId
-      }, success, error);
-    };
-
-    EventService.prototype.addStaff = function(eventId, userId, success, error) {
-      return Event.addStaff({
-        id: eventId
-      }, {
-        userId: userId
-      }, success, error);
-    };
-
-    EventService.prototype.updateStaff = function(eventId, staffId, updates, success, error) {
-      return Event.updateStaff({
-        id: eventId,
-        staffId: staffId
-      }, updates, success, error);
-    };
-
-    EventService.prototype.deleteStaff = function(eventId, staffId, success, error) {
-      return Event.deleteStaff({
-        id: eventId,
-        staffId: staffId
-      }, success, error);
-    };
-
-    return new EventService();
-  }]);
-
-
-angular
-	.module('tl')
-	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.campaign.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/campaign/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
-		
-		var CampaignService = Service.extend(User);
-
-		/**
-		 * List internal campaigns
-		 */
-		CampaignService.prototype.listInternal = function() {
-			return Campaign.list({ internal : true }).$promise;
-		};
-
-		return new CampaignService();
-	}]);
 
 angular
 	.module('tl')
@@ -1927,6 +1764,42 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
+	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.campaign.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/campaign/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
+		
+		var CampaignService = Service.extend(User);
+
+		/**
+		 * List internal campaigns
+		 */
+		CampaignService.prototype.listInternal = function() {
+			return Campaign.list({ internal : true }).$promise;
+		};
+
+		return new CampaignService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1952,6 +1825,133 @@ angular.module('tl').service('tl.city.service', [
     return new CityService();
   }
 ]);
+
+
+angular
+	.module('tl')
+	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.event.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/event/:id';
+
+    return resource(endpoint, {
+      id: '@id',
+      imageId: '@imageId'
+    }, {
+      update: {
+        method: 'PATCH',
+        url: endpoint,
+        isArray: false
+      },
+      list: {
+        method: 'GET',
+        url: '/event',
+        isArray: true
+      },
+      listForCity: {
+        method: 'GET',
+        url: '/city/:cityId/event',
+        isArray: true
+      },
+      addStaff: {
+        method: 'POST',
+        url: endpoint + '/staff',
+        isArray: false
+      },
+      updateStaff: {
+        method: 'PUT',
+        url: endpoint + '/staff/:staffId',
+        isArray: false
+      },
+      deleteStaff: {
+        method: 'DELETE',
+        url: endpoint + '/staff/:staffId',
+        isArray: false
+      },
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.event.service', ['tl.service', 'tl.event.resource', function(Service, Event) {
+
+    var EventService = Service.extend(Event);
+
+    EventService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Event.list(options).$promise;
+    };
+
+    EventService.prototype.read = function read(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Event.get(options).$promise;
+    };
+
+    EventService.prototype.create = function create(options) {
+      if (!options) throw new Error('options is required');
+
+      return Event.save({}, options).$promise;
+    };
+
+    EventService.prototype.update = function update(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Event.update({
+        id: options.id
+      }, options).$promise;
+    };
+
+    /*==============================================================*
+    /* Cities
+    /*==============================================================*/
+
+    EventService.prototype.listForCity = function(cityId, success, error) {
+      return Event.listForCity({
+        cityId: cityId
+      }, success, error);
+    };
+
+    EventService.prototype.listCityTonight = function(cityId, success, error) {
+      return Event.listCityTonight({
+        cityId: cityId
+      }, success, error);
+    };
+
+    EventService.prototype.addStaff = function(eventId, userId, success, error) {
+      return Event.addStaff({
+        id: eventId
+      }, {
+        userId: userId
+      }, success, error);
+    };
+
+    EventService.prototype.updateStaff = function(eventId, staffId, updates, success, error) {
+      return Event.updateStaff({
+        id: eventId,
+        staffId: staffId
+      }, updates, success, error);
+    };
+
+    EventService.prototype.deleteStaff = function(eventId, staffId, success, error) {
+      return Event.deleteStaff({
+        id: eventId,
+        staffId: staffId
+      }, success, error);
+    };
+
+    return new EventService();
+  }]);
 
 angular
   .module('tl')
@@ -2015,58 +2015,6 @@ angular
       };
 
       return new ImageService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.inventory.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        listForVenue: {
-          method: 'GET',
-          url: '/inventory',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory.service', [
-    'tl.service',
-    'tl.inventory.resource',
-    function(Service, Inventory) {
-      'use strict';
-
-      var InventoryService = Service.extend(Inventory);
-
-      InventoryService.prototype.listForVenue = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.venue) throw new Error('options.venue is required');
-
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-
-        return Inventory.listForVenue(options).$promise;
-      };
-
-      return new InventoryService();
     }
   ]);
 
@@ -2151,6 +2099,58 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.inventory.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        listForVenue: {
+          method: 'GET',
+          url: '/inventory',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory.service', [
+    'tl.service',
+    'tl.inventory.resource',
+    function(Service, Inventory) {
+      'use strict';
+
+      var InventoryService = Service.extend(Inventory);
+
+      InventoryService.prototype.listForVenue = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.venue) throw new Error('options.venue is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+
+        return Inventory.listForVenue(options).$promise;
+      };
+
+      return new InventoryService();
+    }
+  ]);
+
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -2213,6 +2213,47 @@ angular
       return new InvoiceService();
     }
   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.item.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/item/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: '/item',
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
+
+    var ItemService = Service.extend(Item);
+
+    ItemService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Item.list(options).$promise;
+    };
+
+    return new ItemService();
+  }]);
 
 
 angular
@@ -2281,6 +2322,43 @@ angular
 
     return new MetricService();
   }]);
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Notify);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
+  }]);
+
 
 angular
 	.module('tl')
@@ -2339,124 +2417,6 @@ angular.module('tl').service('tl.outgoingPayment.service', [
     return new OutgoingPaymentService();
   }
 ]);
-
-
-angular
-	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.item.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/item/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: '/item',
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
-
-    var ItemService = Service.extend(Item);
-
-    ItemService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Item.list(options).$promise;
-    };
-
-    return new ItemService();
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.notify.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/notify/adminapp';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      sendAdminApp: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
-
-    var NotifyService = Service.extend(Notify);
-
-    NotifyService.prototype.sendAdminApp = function() {
-      return Notify.sendAdminApp().$promise;
-    };
-
-    return new NotifyService();
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.permission.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/permission/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listVenuePermissions: {
-        method: 'GET',
-        url: '/permission/venue'
-      },
-    });
-  }]);
-
- angular
-   .module('tl')
-   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
-     function(Permission, Service) {
-
-       var PermissionService = Service.extend(Permission);
-
-       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
-         var _this = this;
-
-         return Permission.listVenuePermissions().$promise;
-       };
-
-       return new PermissionService();
-     }
-   ]);
 
 
 angular
@@ -2602,6 +2562,46 @@ angular
       return new PromoService();
     }
   ]);
+
+angular
+  .module('tl')
+  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.permission.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/permission/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listVenuePermissions: {
+        method: 'GET',
+        url: '/permission/venue'
+      },
+    });
+  }]);
+
+ angular
+   .module('tl')
+   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
+     function(Permission, Service) {
+
+       var PermissionService = Service.extend(Permission);
+
+       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
+         var _this = this;
+
+         return Permission.listVenuePermissions().$promise;
+       };
+
+       return new PermissionService();
+     }
+   ]);
 
 
 angular
@@ -2811,6 +2811,35 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/schedule/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+
+		var ScheduleService = Service.extend(Schedule);
+
+		return new ScheduleService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2862,6 +2891,35 @@ angular
 
 		return new SettingsService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -2910,32 +2968,168 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
+	.constant('TRACK_EVENTS', {
+		
+		// User
+		UserVerifiedPhoneNumber: "TLUserPhoneVerified",
+		UserUpdatedProfilePicture: "TLUserUpdatedProfilePicture",
+		UserCompletedProfile: "TLUserCompletedProfile",
+
+		// City
+		CityViewed: "TLCityViewed",
+		CityFeaturedViewed: "TLCityFeaturedViewed",
+		CityTonightViewed: "TLCityTonightViewed",
+		CityThisWeekViewed: "TLCityThisWeekViewed",
+		CityApplied: "TLCityApplied",
+		CityShared: "TLCityShared",
+
+		// Venues
+		VenueViewed: "TLVenueViewed",
+		VenueInfoViewed: "TLVenueInfoViewed",
+		VenueContactViewed: "TLVenueContactViewed",
+		VenueMapViewed: "TLVenueMapViewed",
+		VenueAppliedForAccess: "TLVenueAppliedForAccess",
+
+		// Events
+		EventViewed: "TLEventViewed",
+
+		// Booking Flow
+		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
+		BookingInfoViewed: "TLBookingInfoViewed",
+		BookingReviewViewed: "TLBookingReviewViewed",
+		BookingTermsViewed: "TLBookingTermsViewed",
+		BookingComplete: "TLBookingComplete",
+		BookingReservationComplete: "TLBookingReservationComplete",
+		BookingPromoterComplete: "TLBookingPromoterComplete",
+		BookingFailed: "TLBookingFailed",
+		BookingReservationFailed: "TLBookingReservationFailed",
+		BookingAddedToPassbook: "TLBookingAddedToPassbook",
+		BookingInquiryViewed: "TLBookingInquiryViewed",
+		BookingInquirySubmitted: "TLBookingInquirySubmitted",
+
+		// Booking Join Flow
+		BookingJoinPending: "TLBookingJoinPending",
+		BookingJoinAccepted: "TLBookingJoinAccepted",
+		BookingJoinCodeSent: "TLBookingJoinCodeSent",
+
+		// Booking Review
+		BookingReviewSubmitted: "TLBookingReviewSubmitted",
+
+		// Referral
+		ReferralEntered: "TLReferralEntered",
+		ReferralSentFB: "TLReferralSentFB",
+		ReferralSentTW: "TLReferralSentTW",
+		ReferralSentSMS: "TLReferralSentSMS",
+		ReferralSentEmail: "TLReferralSentEmail",
+
+		// Payment
+		PaymentAdded: "TLPaymentAdded",
+		PaymentUpdated: "TLPaymentUpdated",
+
+		// Promo Code
+		CodeRedeemed: "TLPromoCodeRedeemed",
+
+		// Rewards
+		RewardViewed: "TLRewardViewed",
+		RewardRedeemed: "TLRewardRedeemed",
+
+		// About Us
+		AboutBlogViewed: "TLAboutBlogViewed",
+		AboutFacebookViewed: "TLAboutFacebookViewed",
+		AboutTwitterViewed: "TLAboutTwitterViewed",
+		AboutWebsiteViewed: "TLAboutWebsiteViewed",
+
+		// Easter Eggs
+		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture"
+	});
+
+angular
+	.module('tl')
+	.service('tl.track', ['tl.track.resource', 'tl.track.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 
 angular
 	.module('tl')
-	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+	.factory('tl.track.resource', ['tl.resource', function(resource){
 
-		var endpoint = '/schedule/:id';
+		var endpoint = '/track/:id';
 
 		return resource(endpoint, {
 			id: '@id'
 		}, {
-			// add additional methods here
+			funnel: {
+			 	method: 'POST',
+			 	url: '/track/funnel',
+			 	isArray: true
+			},
+			listPossibleEvents: {
+				method: 'GET',
+				url: '/track/events',
+				isArray: true
+			}
 		});
 	}]);
-
 angular
-	.module('tl')
-	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+  .module('tl')
+  .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
 
-		var ScheduleService = Service.extend(Schedule);
+    var AFFILIATE = null;
 
-		return new ScheduleService();
+    var TrackService = Service.extend(Track);
+
+    /**
+     * Returns a map of valid tracking events
+     */
+    TrackService.prototype.trackingEvents = function() {
+      return EVENTS;
+    };
+
+    /**
+     * Send a tracking event to the server
+     */
+    TrackService.prototype.send = function(eventName, data) {
+      var track = {
+        event: eventName,
+        data: data,
+        client: {
+          os: config.CLIENT,
+          version: config.VERSION,
+          device: window.navigator ? window.navigator.userAgent : null
+        }
+      };
+
+      if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
+      if (AFFILIATE) {
+        track.data = track.data || {};
+        track.data.affiliate = AFFILIATE;
+      }
+
+      return Track.save({}, track);
+    };
+
+    TrackService.prototype.setAffiliate = function(affiliateId) {
+      AFFILIATE = affiliateId || null;
+    };
+
+    TrackService.prototype.listPossibleEvents = function(success, error) {
+      return Track.listPossibleEvents({}, success, error).$promise;
+    };
+
+		TrackService.prototype.funnel = function(events, options, success, error) {
+			return Track.funnel({}, {
+				events: events,
+				start: options.start.getTime(),
+				end: options.end.getTime(),
+				data: options.data,
+				client: options.client
+			}, success, error).$promise;
+		};
+
+		return new TrackService();
 	}]);
+
 
 angular
 	.module('tl')
@@ -3451,200 +3645,6 @@ angular
       return new UserService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
-
-angular
-	.module('tl')
-	.constant('TRACK_EVENTS', {
-		
-		// User
-		UserVerifiedPhoneNumber: "TLUserPhoneVerified",
-		UserUpdatedProfilePicture: "TLUserUpdatedProfilePicture",
-		UserCompletedProfile: "TLUserCompletedProfile",
-
-		// City
-		CityViewed: "TLCityViewed",
-		CityFeaturedViewed: "TLCityFeaturedViewed",
-		CityTonightViewed: "TLCityTonightViewed",
-		CityThisWeekViewed: "TLCityThisWeekViewed",
-		CityApplied: "TLCityApplied",
-		CityShared: "TLCityShared",
-
-		// Venues
-		VenueViewed: "TLVenueViewed",
-		VenueInfoViewed: "TLVenueInfoViewed",
-		VenueContactViewed: "TLVenueContactViewed",
-		VenueMapViewed: "TLVenueMapViewed",
-		VenueAppliedForAccess: "TLVenueAppliedForAccess",
-
-		// Events
-		EventViewed: "TLEventViewed",
-
-		// Booking Flow
-		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
-		BookingInfoViewed: "TLBookingInfoViewed",
-		BookingReviewViewed: "TLBookingReviewViewed",
-		BookingTermsViewed: "TLBookingTermsViewed",
-		BookingComplete: "TLBookingComplete",
-		BookingReservationComplete: "TLBookingReservationComplete",
-		BookingPromoterComplete: "TLBookingPromoterComplete",
-		BookingFailed: "TLBookingFailed",
-		BookingReservationFailed: "TLBookingReservationFailed",
-		BookingAddedToPassbook: "TLBookingAddedToPassbook",
-		BookingInquiryViewed: "TLBookingInquiryViewed",
-		BookingInquirySubmitted: "TLBookingInquirySubmitted",
-
-		// Booking Join Flow
-		BookingJoinPending: "TLBookingJoinPending",
-		BookingJoinAccepted: "TLBookingJoinAccepted",
-		BookingJoinCodeSent: "TLBookingJoinCodeSent",
-
-		// Booking Review
-		BookingReviewSubmitted: "TLBookingReviewSubmitted",
-
-		// Referral
-		ReferralEntered: "TLReferralEntered",
-		ReferralSentFB: "TLReferralSentFB",
-		ReferralSentTW: "TLReferralSentTW",
-		ReferralSentSMS: "TLReferralSentSMS",
-		ReferralSentEmail: "TLReferralSentEmail",
-
-		// Payment
-		PaymentAdded: "TLPaymentAdded",
-		PaymentUpdated: "TLPaymentUpdated",
-
-		// Promo Code
-		CodeRedeemed: "TLPromoCodeRedeemed",
-
-		// Rewards
-		RewardViewed: "TLRewardViewed",
-		RewardRedeemed: "TLRewardRedeemed",
-
-		// About Us
-		AboutBlogViewed: "TLAboutBlogViewed",
-		AboutFacebookViewed: "TLAboutFacebookViewed",
-		AboutTwitterViewed: "TLAboutTwitterViewed",
-		AboutWebsiteViewed: "TLAboutWebsiteViewed",
-
-		// Easter Eggs
-		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture"
-	});
-
-angular
-	.module('tl')
-	.service('tl.track', ['tl.track.resource', 'tl.track.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.track.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/track/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			funnel: {
-			 	method: 'POST',
-			 	url: '/track/funnel',
-			 	isArray: true
-			},
-			listPossibleEvents: {
-				method: 'GET',
-				url: '/track/events',
-				isArray: true
-			}
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
-
-    var AFFILIATE = null;
-
-    var TrackService = Service.extend(Track);
-
-    /**
-     * Returns a map of valid tracking events
-     */
-    TrackService.prototype.trackingEvents = function() {
-      return EVENTS;
-    };
-
-    /**
-     * Send a tracking event to the server
-     */
-    TrackService.prototype.send = function(eventName, data) {
-      var track = {
-        event: eventName,
-        data: data,
-        client: {
-          os: config.CLIENT,
-          version: config.VERSION,
-          device: window.navigator ? window.navigator.userAgent : null
-        }
-      };
-
-      if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
-      if (AFFILIATE) {
-        track.data = track.data || {};
-        track.data.affiliate = AFFILIATE;
-      }
-
-      return Track.save({}, track);
-    };
-
-    TrackService.prototype.setAffiliate = function(affiliateId) {
-      AFFILIATE = affiliateId || null;
-    };
-
-    TrackService.prototype.listPossibleEvents = function(success, error) {
-      return Track.listPossibleEvents({}, success, error).$promise;
-    };
-
-		TrackService.prototype.funnel = function(events, options, success, error) {
-			return Track.funnel({}, {
-				events: events,
-				start: options.start.getTime(),
-				end: options.end.getTime(),
-				data: options.data,
-				client: options.client
-			}, success, error).$promise;
-		};
-
-		return new TrackService();
-	}]);
 
 
 angular
