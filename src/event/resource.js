@@ -8,6 +8,11 @@ angular
       id: '@id',
       imageId: '@imageId'
     }, {
+      update: {
+        method: 'PATCH',
+        url: endpoint,
+        isArray: false
+      },
       list: {
         method: 'GET',
         url: '/event',

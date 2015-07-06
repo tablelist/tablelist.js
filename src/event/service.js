@@ -12,6 +12,13 @@ angular
       return Event.list(options).$promise;
     };
 
+    EventService.prototype.read = function read(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Event.get(options).$promise;
+    };
+
     EventService.prototype.create = function create(options) {
       if (!options) throw new Error('options is required');
 

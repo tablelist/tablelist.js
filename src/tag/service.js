@@ -8,8 +8,8 @@ angular
 
       var TagService = Service.extend(Tag);
 
-      TagService.prototype.list = function() {
-        return Tag.list().$promise;
+      TagService.prototype.list = function(options) {
+        return Tag.list(options).$promise;
       };
 
       return new TagService();
