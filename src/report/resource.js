@@ -10,7 +10,7 @@ angular
 		}, {
 			reports: {
 				method: 'GET',
-				url: '/report/types'
+				url: '/report-type'
 			},
 			download: {
 				method: 'GET',
