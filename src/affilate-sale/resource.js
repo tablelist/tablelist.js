@@ -3,7 +3,7 @@ angular.module('tl').factory('tl.affiliatesale.resource', [
   function(resource) {
     'use strict';
 
-    var endpoint = '/affiliate-sale';
+    var endpoint = '/affiliate-sale/:id';
 
     return resource(endpoint, {
       id: '@id'

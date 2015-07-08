@@ -960,7 +960,7 @@ angular.module('tl').factory('tl.affiliatesale.resource', [
   function(resource) {
     'use strict';
 
-    var endpoint = '/affiliate-sale';
+    var endpoint = '/affiliate-sale/:id';
 
     return resource(endpoint, {
       id: '@id'
@@ -1179,7 +1179,7 @@ angular.module('tl').factory('tl.affiliatepayout.resource', [
   function(resource) {
     'use strict';
 
-    var endpoint = '/affiliate-payout';
+    var endpoint = '/affiliate-payout/:id';
 
     return resource(endpoint, {
       id: '@id'
@@ -1251,37 +1251,6 @@ angular
       };
 
       return new AmbassadorService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
     }
   ]);
 
@@ -1764,6 +1733,37 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
 	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2151,6 +2151,47 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.item.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/item/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: '/item',
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
+
+    var ItemService = Service.extend(Item);
+
+    ItemService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Item.list(options).$promise;
+    };
+
+    return new ItemService();
+  }]);
+
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -2213,47 +2254,6 @@ angular
       return new InvoiceService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.item.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/item/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: '/item',
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
-
-    var ItemService = Service.extend(Item);
-
-    ItemService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Item.list(options).$promise;
-    };
-
-    return new ItemService();
-  }]);
 
 
 angular
@@ -2524,6 +2524,46 @@ angular
 
 angular
   .module('tl')
+  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.permission.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/permission/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listVenuePermissions: {
+        method: 'GET',
+        url: '/permission/venue'
+      },
+    });
+  }]);
+
+ angular
+   .module('tl')
+   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
+     function(Permission, Service) {
+
+       var PermissionService = Service.extend(Permission);
+
+       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
+         var _this = this;
+
+         return Permission.listVenuePermissions().$promise;
+       };
+
+       return new PermissionService();
+     }
+   ]);
+
+angular
+  .module('tl')
   .service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service) {
     this.resource = resource;
     this.service = service;
@@ -2562,46 +2602,6 @@ angular
       return new PromoService();
     }
   ]);
-
-angular
-  .module('tl')
-  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.permission.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/permission/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listVenuePermissions: {
-        method: 'GET',
-        url: '/permission/venue'
-      },
-    });
-  }]);
-
- angular
-   .module('tl')
-   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
-     function(Permission, Service) {
-
-       var PermissionService = Service.extend(Permission);
-
-       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
-         var _this = this;
-
-         return Permission.listVenuePermissions().$promise;
-       };
-
-       return new PermissionService();
-     }
-   ]);
 
 
 angular
