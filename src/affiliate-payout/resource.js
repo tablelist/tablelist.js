@@ -3,7 +3,7 @@ angular.module('tl').factory('tl.affiliatepayout.resource', [
   function(resource) {
     'use strict';
 
-    var endpoint = '/affiliate-payout';
+    var endpoint = '/affiliate-payout/:id';
 
     return resource(endpoint, {
       id: '@id'
