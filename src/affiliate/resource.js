@@ -56,6 +56,11 @@ angular.module('tl').factory('tl.affiliate.resource', [
         method: 'GET', 
         url: endpoint + '/promo',
         isArray: true
+      },
+      getTrackers: {
+        method: 'GET', 
+        url: endpoint + '/tracker',
+        isArray: true
       }
     });
   }

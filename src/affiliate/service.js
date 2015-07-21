@@ -97,6 +97,13 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.getPromoCode(options).$promise;
     };
 
+    AffiliateService.prototype.getTrackers = function(options) {
+      if(!options) throw new Error('options is required');
+      if(!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getTrackers(options).$promise;
+    };
+
     return new AffiliateService();
   }
 ]);
