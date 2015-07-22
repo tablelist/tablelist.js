@@ -60,10 +60,11 @@ angular.module('tl').service('tl.booking.service', [
       }, options).$promise;
     };
 
-    BookingService.prototype.void = function(id, notify, success, error) {
+    BookingService.prototype.void = function(id, options, success, error) {
       return Booking.void({}, {
         id: id,
-        notify: notify ? true : false
+        notifyVenue: options.notifyVenue,
+        notifyUser: options.notifyUser
       }, success, error);
     };
 
