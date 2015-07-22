@@ -61,11 +61,9 @@ angular.module('tl').service('tl.booking.service', [
     };
 
     BookingService.prototype.void = function(id, options, success, error) {
-      return Booking.void({}, {
-        id: id,
-        notifyVenue: options.notifyVenue,
-        notifyUser: options.notifyUser
-      }, success, error);
+      return Booking.void({
+        id: id
+      }, options, success, error);
     };
 
     BookingService.prototype.refund = function(id, amount, reason, success, error) {
