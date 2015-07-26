@@ -168,6 +168,14 @@ angular
         return Venue.listStaff(options).$promise;
       };
 
+      VenueService.prototype.readStaff = function readStaff(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.staffId) throw new Error('options.staffId is required');
+
+        return Venue.readStaff(options).$promise;
+      };
+
       VenueService.prototype.createStaff = function createStaff(options) {
         if (!options) throw new Error('options.required');
         if (!options.id) throw new Error('options.id is required');

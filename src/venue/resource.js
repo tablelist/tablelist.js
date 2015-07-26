@@ -125,6 +125,11 @@ angular
         url: endpoint + '/staff',
         isArray: true
       },
+      readStaff: {
+        method: 'GET',
+        url: endpoint + '/staff/:staffId',
+        isArray: false
+      },
       createStaff: {
         method: 'POST',
         url: endpoint + '/staff',
@@ -140,6 +145,11 @@ angular
         url: endpoint + '/staff/:staffId',
         isArray: false
       },
+
+      /*==============================================================*
+      /* 
+      /*==============================================================*/
+
 
       listBookings: {
         method: 'GET',

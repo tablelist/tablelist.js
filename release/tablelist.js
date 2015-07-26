@@ -2163,6 +2163,47 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.item.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/item/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: '/item',
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
+
+    var ItemService = Service.extend(Item);
+
+    ItemService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Item.list(options).$promise;
+    };
+
+    return new ItemService();
+  }]);
+
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -2225,47 +2266,6 @@ angular
       return new InvoiceService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.item.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/item/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: '/item',
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
-
-    var ItemService = Service.extend(Item);
-
-    ItemService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Item.list(options).$promise;
-    };
-
-    return new ItemService();
-  }]);
 
 
 angular
@@ -2536,46 +2536,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.permission.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/permission/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listVenuePermissions: {
-        method: 'GET',
-        url: '/permission/venue'
-      },
-    });
-  }]);
-
- angular
-   .module('tl')
-   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
-     function(Permission, Service) {
-
-       var PermissionService = Service.extend(Permission);
-
-       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
-         var _this = this;
-
-         return Permission.listVenuePermissions().$promise;
-       };
-
-       return new PermissionService();
-     }
-   ]);
-
-angular
-  .module('tl')
   .service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service) {
     this.resource = resource;
     this.service = service;
@@ -2615,45 +2575,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.prospect.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/prospect/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
-
-		var ProspectService = Service.extend(Prospect);
-
-		/**
-		 * Updates the current prospect
-		 */
-		ProspectService.prototype.updateProspect = function(data, success, error) {
-			delete data._id;
-			delete data.id;
-			
-			return Prospect.update({}, data, success, error);
-		};
-
-		return new ProspectService();
-	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -2714,6 +2635,85 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.permission.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/permission/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listVenuePermissions: {
+        method: 'GET',
+        url: '/permission/venue'
+      },
+    });
+  }]);
+
+ angular
+   .module('tl')
+   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
+     function(Permission, Service) {
+
+       var PermissionService = Service.extend(Permission);
+
+       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
+         var _this = this;
+
+         return Permission.listVenuePermissions().$promise;
+       };
+
+       return new PermissionService();
+     }
+   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.prospect.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/prospect/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
+
+		var ProspectService = Service.extend(Prospect);
+
+		/**
+		 * Updates the current prospect
+		 */
+		ProspectService.prototype.updateProspect = function(data, success, error) {
+			delete data._id;
+			delete data.id;
+			
+			return Prospect.update({}, data, success, error);
+		};
+
+		return new ProspectService();
+	}]);
 
 angular
 	.module('tl')
@@ -3837,6 +3837,11 @@ angular
         url: endpoint + '/staff',
         isArray: true
       },
+      readStaff: {
+        method: 'GET',
+        url: endpoint + '/staff/:staffId',
+        isArray: false
+      },
       createStaff: {
         method: 'POST',
         url: endpoint + '/staff',
@@ -3852,6 +3857,11 @@ angular
         url: endpoint + '/staff/:staffId',
         isArray: false
       },
+
+      /*==============================================================*
+      /* 
+      /*==============================================================*/
+
 
       listBookings: {
         method: 'GET',
@@ -4057,6 +4067,14 @@ angular
         if (!options.id) throw new Error('options.id is required');
 
         return Venue.listStaff(options).$promise;
+      };
+
+      VenueService.prototype.readStaff = function readStaff(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.staffId) throw new Error('options.staffId is required');
+
+        return Venue.readStaff(options).$promise;
       };
 
       VenueService.prototype.createStaff = function createStaff(options) {
