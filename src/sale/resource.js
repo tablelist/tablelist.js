@@ -12,6 +12,11 @@ angular
         url: endpoint + '/:id',
         isArray: false
       },
+      update: {
+        method: 'PUT',
+        url: endpoint + '/:id',
+        isArray: false
+      },
       list: {
         method: 'GET',
         url: endpoint,

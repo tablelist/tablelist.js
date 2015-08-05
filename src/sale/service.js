@@ -11,6 +11,18 @@ angular
       return Sale.read(options).$promise;
     };
 
+    SaleService.prototype.update = function update(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var id = options.id;
+      delete options.id;
+
+      return Sale.update({
+        id: id
+      }, options).$promise;
+    };
+
     SaleService.prototype.list = function(options) {
       if (!options) throw new Error('options is required');
 
