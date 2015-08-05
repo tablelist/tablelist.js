@@ -4,6 +4,13 @@ angular
 
     var SaleService = Service.extend(Sale);
 
+    SaleService.prototype.read = function read(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Sale.get(options).$promise;
+    };
+
     SaleService.prototype.list = function(options) {
       if (!options) throw new Error('options is required');
 
