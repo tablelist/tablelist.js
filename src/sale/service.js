@@ -8,7 +8,7 @@ angular
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      return Sale.get(options).$promise;
+      return Sale.read(options).$promise;
     };
 
     SaleService.prototype.list = function(options) {

@@ -7,6 +7,11 @@ angular
     return resource(endpoint, {
       id: '@id'
     }, {
+      read: {
+        method: 'GET',
+        url: endpoint + '/:id',
+        isArray: false
+      },
       list: {
         method: 'GET',
         url: endpoint,
