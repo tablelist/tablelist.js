@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.session', ['tl.config', function(config){
+	.factory('tl.session', [function(){
 
 		var CACHE = {};
 

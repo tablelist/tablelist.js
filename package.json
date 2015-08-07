@@ -1,6 +1,6 @@
 {
   "name": "tablelist.js",
-  "version": "0.7.75",
+  "version": "1.0.0",
   "description": "Tablelist Javascript SDK",
   "url": "https://www.tablelist.com",
   "author": "Tablelist, Inc.",
@@ -10,7 +10,7 @@
   "dependencies": {
     "bower": "1.4.1",
     "chai": "2.2.0",
-    "gulp": "3.8.11",
+    "gulp": "3.9.0",
     "gulp-clean": "0.3.1",
     "gulp-concat": "2.5.2",
     "gulp-jshint": "1.10.0",

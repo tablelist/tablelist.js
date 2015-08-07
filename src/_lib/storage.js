@@ -1,6 +1,6 @@
 angular
   .module('tl')
-  .factory('tl.storage', ['tl.config', function(config) {
+  .factory('tl.storage', [function() {
     'use strcit';
 
     var CACHE = {};

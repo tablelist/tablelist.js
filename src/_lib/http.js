@@ -88,7 +88,7 @@ angular
       params = params || {};
 
       // use leading slash
-      if (endpoint.slice(0, 1) != '/') {
+      if (endpoint.slice(0, 1) !== '/') {
         endpoint = '/' + endpoint;
       }
 

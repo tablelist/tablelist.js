@@ -6,17 +6,20 @@
  *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular-resource.min.js
  */
 angular
-  .module('tl', ['ngResource'])
+  .module('tl', [
+    'ngResource',
+    'ngWebsocket'
+  ])
   .provider('TablelistSdk', function() {
 
     var TL_ENV = window.TL_ENV || 'production';
     var TL_CLIENT = window.TL_CLIENT || 'web';
 
     // Environments
-    var ENV_DEV = TL_ENV == 'development';
-    var ENV_PROD = TL_ENV == 'production';
-    var ENV_LOCAL = TL_ENV == 'local';
-    var ENV_TEST = TL_ENV == 'test';
+    var ENV_DEV = TL_ENV === 'development';
+    var ENV_PROD = TL_ENV === 'production';
+    var ENV_LOCAL = TL_ENV === 'local';
+    var ENV_TEST = TL_ENV === 'test';
 
     // API
     var API = {
@@ -46,10 +49,10 @@ angular
       if (!api) throw new Error('Enviroment : ' + env + ' is not valid');
 
       config.ENV = env;
-      config.ENV_DEV = (env == 'development');
-      config.ENV_PROD = (env == 'production');
-      config.ENV_LOCAL = (env == 'local');
-      config.ENV_TEST = (env == 'test');
+      config.ENV_DEV = (env === 'development');
+      config.ENV_PROD = (env === 'production');
+      config.ENV_LOCAL = (env === 'local');
+      config.ENV_TEST = (env === 'test');
       config.API = api;
     }
 
@@ -84,8 +87,3 @@ angular
       return tablelist;
     }
   ]);
-
-function tablelist(env, client) {
-  window.TL_ENV = env;
-  window.TL_CLIENT = client;
-}

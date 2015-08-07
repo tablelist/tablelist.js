@@ -97,7 +97,7 @@ gulp.task('watch', function() {
   watch(SRCDIR + '/**/**/*.*', {
     emit: 'one',
     emitOnGlob: false
-  }, function(files) {
+  }, function() {
     sh.exec('gulp release');
   });
 });
@@ -105,37 +105,7 @@ gulp.task('watch', function() {
 /**
  * Run unit tests - this task is run by Wercker when building our app
  */
-gulp.task('test', function() {});
-
-// gulp.task('test-unit', ['release'], function(done) {
-//   karma.start({
-//     configFile: __dirname + '/tests/karma.conf.js',
-//     singleRun: true,
-//     files: [
-//       '../bower_components/angular/angular.js',
-//       '../bower_components/angular-mocks/angular-mocks.js',
-//       '../bower_components/angular-resource/angular-resource.js',
-//       '../bower_components/sinon/lib/sinon.js',
-//       '../release/tablelist.js',
-//       'unit/**/*.spec.js'
-//     ]
-//   }, done);
-// });
-
-// gulp.task('test-int', function(done) {
-//   karma.start({
-//     configFile: __dirname + '/tests/karma.conf.js',
-//     singleRun: true,
-//     files: [
-//       '../bower_components/angular/angular.js',
-//       '../bower_components/angular-mocks/angular-mocks.js',
-//       '../bower_components/angular-resource/angular-resource.js',
-//       '../bower_components/sinon/lib/sinon.js',
-//       '../build/tablelist.js',
-//       'integration/**/*.js'
-//     ]
-//   }, done);
-// });
+gulp.task('test', ['jshint']);
 
 /* =========================================================================
  * Helper Functions

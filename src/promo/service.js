@@ -5,8 +5,7 @@ angular
 
       var PromoService = Service.extend(Promo);
 
-      PromoService.prototype.redeem = function(promoCode, success, error) {
-        var _this = this;
+      PromoService.prototype.redeem = function(promoCode) {
         return Promo.redeem({
           code: promoCode
         });

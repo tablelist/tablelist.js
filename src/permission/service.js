@@ -6,9 +6,7 @@
        var PermissionService = Service.extend(Permission);
 
        PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
-         var _this = this;
-
-         return Permission.listVenuePermissions().$promise;
+         return Permission.listVenuePermissions(options).$promise;
        };
 
        return new PermissionService();
