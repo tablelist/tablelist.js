@@ -2,7 +2,7 @@ angular
   .module('test', ['tl'])
   .controller('TestController', [ // Lib
     'tl.cookie', 'tl.facebook', 'tl.http', 'tl.utils', 'tl.ee',
-    'tl.keychain', 'tl.query', 'tl.storage', 'tl.session', 'tl.ws',
+    'tl.keychain', 'tl.query', 'tl.storage', 'tl.session', 'tl.socket',
 
     // Modules
     'tl.auth', 'tl.user', 'tl.booking', 'tl.venue',
@@ -22,39 +22,39 @@ angular
       inquiry, inventory, schedule, payment, affiliate) {
 
       // Lib
-      tlCookie = cookie;
-      tlFacebook = facebook;
-      tlHTTP = http;
-      tlKeychain = keychain;
-      tlQuery = query;
-      tlStorage = storage;
-      tlSession = session;
-      tlWS = ws;
-      tlUtils = utils;
-      tlEventEmitter = ee;
+      window.tlCookie = cookie;
+      window.tlFacebook = facebook;
+      window.tlHTTP = http;
+      window.tlKeychain = keychain;
+      window.tlQuery = query;
+      window.tlStorage = storage;
+      window.tlSession = session;
+      window.tlWS = ws;
+      window.tlUtils = utils;
+      window.tlEventEmitter = ee;
 
       // Modules
-      tlAuth = auth;
-      tlUser = user;
-      tlBooking = booking;
-      tlVenue = venue;
-      tlCity = city;
-      tlSettings = settings;
-      tlReview = review;
-      tlReward = reward;
-      tlTable = table;
-      tlEvent = event;
-      tlItem = item;
-      tlTrack = track;
-      tlInquiry = inquiry;
-      tlInventory = inventory;
-      tlSchedule = schedule;
-      tlProspect = prospect;
-      tlPayment = payment;
-      tlAffiliate = affiliate;
+      window.tlAuth = auth;
+      window.tlUser = user;
+      window.tlBooking = booking;
+      window.tlVenue = venue;
+      window.tlCity = city;
+      window.tlSettings = settings;
+      window.tlReview = review;
+      window.tlReward = reward;
+      window.tlTable = table;
+      window.tlEvent = event;
+      window.tlItem = item;
+      window.tlTrack = track;
+      window.tlInquiry = inquiry;
+      window.tlInventory = inventory;
+      window.tlSchedule = schedule;
+      window.tlProspect = prospect;
+      window.tlPayment = payment;
+      window.tlAffiliate = affiliate;
 
       // clear previous tests
-      tlAuth.service.logout();
+      window.tlAuth.service.logout();
 
       // Run Tests
       mocha.checkLeaks();

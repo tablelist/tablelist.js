@@ -1,11 +1,13 @@
 {
   "name": "Tablelist JS SDK",
-  "version": "0.7.75",
+  "version": "1.0.0",
   "homepage": "https://github.com/tablelist/tablelist.js",
   "authors": [
     "Andrew Barba <andrew@tablelist.com>",
     "Matt Etre <matt@tablelist.com>",
-    "Tim Officer <tim@tablelist.com>"
+    "Tim Officer <tim@tablelist.com>",
+    "Alex Johnson <alex@tablelist.com>",
+    "Matt Peoples <matt@tablelist.com>"
   ],
   "description": "Tablelist JS SDK",
   "main": "src/index.js",

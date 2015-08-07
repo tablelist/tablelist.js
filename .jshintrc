@@ -17,6 +17,7 @@
     "inject",
     "it",
     "localStorage",
+    "mocha",
     "moment",
     "sessionStorage",
     "spyOn",
