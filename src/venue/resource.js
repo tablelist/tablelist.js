@@ -78,6 +78,11 @@ angular
         url: endpoint + '/inventory/:tableId',
         isArray: false
       },
+      listInventoryTierConfigs: {
+        method: 'GET',
+        url: endpoint + '/inventory-tier-config',
+        isArray: true
+      },
 
       /*==============================================================*
       /* Events
@@ -147,7 +152,7 @@ angular
       },
 
       /*==============================================================*
-      /* 
+      /*
       /*==============================================================*/
 
 

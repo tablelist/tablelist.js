@@ -78,6 +78,16 @@ angular
         return Venue.listInventory(options).$promise;
       };
 
+      VenueService.prototype.listInventoryTierConfigs = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        options.start = options.start || moment().startOf('month').toDate().getTime();
+        options.end = options.end || moment().endOf('month').toDate().getTime();
+
+        return Venue.listInventoryTierConfigs(options).$promise;
+      };
+
       /*==============================================================*
       /* Items
       /*==============================================================*/
@@ -136,7 +146,7 @@ angular
       };
 
       /*==============================================================*
-      /* 
+      /*
       /*==============================================================*/
 
       VenueService.prototype.listBookings = function(params, success, error) {
