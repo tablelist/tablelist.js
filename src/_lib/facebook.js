@@ -8,37 +8,45 @@ angular
 		var Facebook = function(){};
 
 		Facebook.prototype.login = function(next) {
-			FB.login(function(response){
-				if (response && response.authResponse) {
-					var accessToken = response.authResponse.accessToken;
-	                next(null, accessToken);
-				} else {
-					next(response);
-				}
-			}, { scope: PERMISSIONS });
+			try {
+				return FB.login(function(response){
+					if (response && response.authResponse) {
+						var accessToken = response.authResponse.accessToken;
+		                next(null, accessToken);
+					} else {
+						next(response);
+					}
+				}, { scope: PERMISSIONS });
+			} catch(err) {
+				return false;
+			}
 		};
 
 		Facebook.prototype.events = function() {
-			return window.FB ? FB.AppEvents.EventNames : {};
+			try {
+				return FB.AppEvents.EventNames;
+			} catch(err) {
+				return {};
+			}
 		};
 
 		Facebook.prototype.logEvent = function() {
 			if (!config.ENV_PROD) return;
 
 			try {
-				FB.AppEvents.logEvent.apply(this, arguments);
+				return FB.AppEvents.logEvent.apply(this, arguments);
 			} catch(err) {
-				// do nothing...
+				return false;
 			}
 		};
 
 		Facebook.prototype.logPurchase = function() {
 			if (!config.ENV_PROD) return;
-			
+
 			try {
-				FB.AppEvents.logPurchase.apply(this, arguments);
+				return FB.AppEvents.logPurchase.apply(this, arguments);
 			} catch(err) {
-				// do nothing...
+				return false;
 			}
 		};
 

@@ -6,17 +6,20 @@
  *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular-resource.min.js
  */
 angular
-  .module('tl', ['ngResource'])
+  .module('tl', [
+    'ngResource',
+    'ngWebsocket'
+  ])
   .provider('TablelistSdk', function() {
 
     var TL_ENV = window.TL_ENV || 'production';
     var TL_CLIENT = window.TL_CLIENT || 'web';
 
     // Environments
-    var ENV_DEV = TL_ENV == 'development';
-    var ENV_PROD = TL_ENV == 'production';
-    var ENV_LOCAL = TL_ENV == 'local';
-    var ENV_TEST = TL_ENV == 'test';
+    var ENV_DEV = TL_ENV === 'development';
+    var ENV_PROD = TL_ENV === 'production';
+    var ENV_LOCAL = TL_ENV === 'local';
+    var ENV_TEST = TL_ENV === 'test';
 
     // API
     var API = {
@@ -46,10 +49,10 @@ angular
       if (!api) throw new Error('Enviroment : ' + env + ' is not valid');
 
       config.ENV = env;
-      config.ENV_DEV = (env == 'development');
-      config.ENV_PROD = (env == 'production');
-      config.ENV_LOCAL = (env == 'local');
-      config.ENV_TEST = (env == 'test');
+      config.ENV_DEV = (env === 'development');
+      config.ENV_PROD = (env === 'production');
+      config.ENV_LOCAL = (env === 'local');
+      config.ENV_TEST = (env === 'test');
       config.API = api;
     }
 
@@ -84,11 +87,6 @@ angular
       return tablelist;
     }
   ]);
-
-function tablelist(env, client) {
-  window.TL_ENV = env;
-  window.TL_CLIENT = client;
-}
 
 angular
   .module('tl')
@@ -205,7 +203,7 @@ angular
         var keys = Object.keys(proto);
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
-          if (key != 'constructor') {
+          if (key !== 'constructor') {
             ExtendedService.prototype[key] = proto[key];
           }
         }
@@ -279,7 +277,7 @@ angular
         }, success, error);
       };
 
-      Service.prototype.buildQueryString = function(query, next) {
+      Service.prototype.buildQueryString = function(query) {
         try {
           return JSON.stringify(query);
         } catch (err) {
@@ -316,7 +314,7 @@ angular
         }, success, error);
       };
 
-      Service.prototype.exportUrl = function(query, sort, format) {
+      Service.prototype.exportUrl = function(query, sort) {
         var endpoint = this.resource.ENDPOINT;
         var index = this.resource.ENDPOINT.indexOf(":");
         if (index > -1) endpoint = endpoint.substring(0, index);
@@ -335,6 +333,52 @@ angular
       };
     }
   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatesale.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-sale';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliatesale.service', [
+  'tl.affiliatesale.resource',
+  'tl.service',
+  function(AffiliateSale, Service) {
+    'use strict';
+
+    var AffiliateSaleService = Service.extend(AffiliateSale);
+
+    AffiliateSaleService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return AffiliateSale.list(options).$promise;
+    };
+
+    return new AffiliateSaleService();
+  }
+]);
 
 /**
  * Angular module for setting, reading and removing cookies
@@ -433,42 +477,51 @@ angular
 		var Facebook = function(){};
 
 		Facebook.prototype.login = function(next) {
-			FB.login(function(response){
-				if (response && response.authResponse) {
-					var accessToken = response.authResponse.accessToken;
-	                next(null, accessToken);
-				} else {
-					next(response);
-				}
-			}, { scope: PERMISSIONS });
+			try {
+				return FB.login(function(response){
+					if (response && response.authResponse) {
+						var accessToken = response.authResponse.accessToken;
+		                next(null, accessToken);
+					} else {
+						next(response);
+					}
+				}, { scope: PERMISSIONS });
+			} catch(err) {
+				return false;
+			}
 		};
 
 		Facebook.prototype.events = function() {
-			return window.FB ? FB.AppEvents.EventNames : {};
+			try {
+				return FB.AppEvents.EventNames;
+			} catch(err) {
+				return {};
+			}
 		};
 
 		Facebook.prototype.logEvent = function() {
 			if (!config.ENV_PROD) return;
 
 			try {
-				FB.AppEvents.logEvent.apply(this, arguments);
+				return FB.AppEvents.logEvent.apply(this, arguments);
 			} catch(err) {
-				// do nothing...
+				return false;
 			}
 		};
 
 		Facebook.prototype.logPurchase = function() {
 			if (!config.ENV_PROD) return;
-			
+
 			try {
-				FB.AppEvents.logPurchase.apply(this, arguments);
+				return FB.AppEvents.logPurchase.apply(this, arguments);
 			} catch(err) {
-				// do nothing...
+				return false;
 			}
 		};
 
 		return new Facebook();
 	}]);
+
 angular
   .module('tl')
   .factory('tlHTTPInterceptor', [
@@ -559,7 +612,7 @@ angular
       params = params || {};
 
       // use leading slash
-      if (endpoint.slice(0, 1) != '/') {
+      if (endpoint.slice(0, 1) !== '/') {
         endpoint = '/' + endpoint;
       }
 
@@ -668,7 +721,7 @@ angular
 
 angular
 	.module('tl')
-	.factory('tl.session', ['tl.config', function(config){
+	.factory('tl.session', [function(){
 
 		var CACHE = {};
 
@@ -735,9 +788,83 @@ angular
 
 		return new Session();
 	}]);
+
+
+angular
+	.module('tl')
+	.factory('tl.socket', ['$websocket', 'tl.http', 'tl.keychain', function($websocket, http, keychain){
+
+    var PING_INTERVAL = 5 * 1000; // ping every 5 seconds
+    var MAX_EVENTS = 200; // hold on to 200 events max
+
+    return function(endpoint, onMessage, onError) {
+      onMessage = onMessage || function() {};
+      onError = onError || function() {};
+
+      // instance vars
+      var _events = [];
+      var PING = 'ping';
+      var PONG = 'pong';
+      var ws = null;
+      var interval = null;
+
+      this.connect = function() {
+
+        this.ws = ws = $websocket.$new({
+          url: this.socketUrl(endpoint),
+          reconnect: true,
+          reconnectInterval: 250 // it will reconnect after 0.25 seconds
+        });
+
+        ws.$on('$open', function() {
+          interval = window.setInterval(function() {
+            ws.$$ws.send(PING);
+          }, PING_INTERVAL);
+        });
+
+        ws.$on('$message', function(data) {
+          if (data === PONG) return;
+          _events.unshift(data);
+          onMessage(data);
+          if (_events.length >= MAX_EVENTS) {
+            _events.pop();
+          }
+        });
+
+        ws.$on('$close', function() {
+          window.clearInterval(interval);
+        });
+      };
+
+      this.events = function() {
+        return _events;
+      };
+
+      this.isConnected = function() {
+        return ws.$status() === ws.$OPEN;
+      };
+
+      this.close = function() {
+        return ws.$close();
+      };
+
+      this.socketUrl = function(endpoint) {
+        var auth = keychain.authToken();
+        var prospect = keychain.prospectToken();
+
+        var params = {};
+        if (prospect) params.prospect = prospect;
+        if (auth) params.auth = auth;
+
+        var url = http.apiUrl(endpoint, params);
+        return url.replace('http', 'ws');
+      };
+    };
+	}]);
+
 angular
   .module('tl')
-  .factory('tl.storage', ['tl.config', function(config) {
+  .factory('tl.storage', [function() {
     'use strcit';
 
     var CACHE = {};
@@ -849,153 +976,6 @@ angular
 
 		return new Utils();
 	}]);
-angular
-  .module('tl')
-  .factory('tl.ws', ['tl.config', 'tl.http', 'tl.keychain', function(config, http, keychain) {
-
-    var MAX_EVENTS = 50; // hold on to 50 events max
-
-    return function(endpoint, onMessage, onError) {
-
-      /*==================================================*
-		    /* Instance Vars
-		    /*==================================================*/
-
-      var _this = this;
-      var _events = [];
-      var ws = null;
-      var PING = 'ping';
-      var PONG = 'pong';
-      this.endpoint = endpoint;
-
-      /*==================================================*
-		    /* Getters
-		    /*==================================================*/
-
-      this.events = function() {
-        return _events;
-      };
-
-      this.isConnected = function() {
-        return ws && ws.readyState == 1;
-      };
-
-      this.socket = function() {
-        return ws;
-      };
-
-      /*==================================================*
-		    /* Methods
-		    /*==================================================*/
-
-      this.connect = function() {
-
-        if (ws) {
-          this.disconnect();
-          ws = null;
-        }
-
-        ws = new WebSocket(this.wsUrl(endpoint));
-
-        var interval = 0;
-
-        ws.onopen = function() {
-          interval = setInterval(function() {
-            ws.send(PING);
-          }, 5000);
-        };
-
-        ws.onmessage = function(event) {
-          if (event.data === PONG) {
-            return;
-          }
-
-          try {
-            var data = JSON.parse(event.data);
-            _events.unshift(data);
-            if (_events.length > MAX_EVENTS) {
-              _events.pop();
-              console.log('removed event: ' + _events.length);
-            }
-            if (onMessage) onMessage(data, _events);
-          } catch (err) {
-            console.log('Failed to parse data from socket:');
-            console.log(err);
-          }
-        };
-
-        ws.onclose = function(err) {
-          clearInterval(interval);
-          setTimeout(function() {
-            _this.connect();
-          }, 1000);
-        };
-
-        ws.onerror = function(err) {
-          if (onError) onError(err);
-        };
-      };
-
-      this.disconnect = function() {
-        if (this.isConnected()) {
-          ws.close();
-        }
-      };
-
-      this.wsUrl = function(endpoint) {
-        return http.apiUrl(endpoint).replace('http', 'ws') + '?auth=' + keychain.authToken();
-      };
-    };
-  }]);
-
-
-angular
-	.module('tl')
-	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatesale.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-sale';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliatesale.service', [
-  'tl.affiliatesale.resource',
-  'tl.service',
-  '$http',
-  'tl.http',
-  function(AffiliateSale, Service, $http, http) {
-    'use strict';
-
-    var AffiliateSaleService = Service.extend(AffiliateSale);
-
-    AffiliateSaleService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-      
-      return AffiliateSale.list(options).$promise;
-    };
-
-    return new AffiliateSaleService();
-  }
-]);
-
 
 angular
 	.module('tl')
@@ -1208,9 +1188,7 @@ angular.module('tl').factory('tl.affiliatepayout.resource', [
 angular.module('tl').service('tl.affiliatepayout.service', [
   'tl.affiliatepayout.resource',
   'tl.service',
-  '$http',
-  'tl.http',
-  function(AffiliatePayout, Service, $http, http) {
+  function(AffiliatePayout, Service) {
     'use strict';
 
     var AffiliatePayoutService = Service.extend(AffiliatePayout);
@@ -1219,13 +1197,45 @@ angular.module('tl').service('tl.affiliatepayout.service', [
       if (!options) throw new Error('options is required');
 
       options.query = options.query ? JSON.stringify(options.query) : options.query;
-      
+
       return AffiliatePayout.list(options).$promise;
     };
 
     return new AffiliatePayoutService();
   }
 ]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -1264,37 +1274,6 @@ angular
       };
 
       return new AmbassadorService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
     }
   ]);
 
@@ -1797,8 +1776,8 @@ angular
 angular
 	.module('tl')
 	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
-		
-		var CampaignService = Service.extend(User);
+
+		var CampaignService = Service.extend(Campaign);
 
 		/**
 		 * List internal campaigns
@@ -1809,6 +1788,101 @@ angular
 
 		return new CampaignService();
 	}]);
+
+
+angular
+	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.city.resource', [
+  'tl.resource',
+  function(resource) {
+    return resource('/city/:id', {
+      id: '@id'
+    }, {
+      // no extra methods
+    });
+  }
+]);
+
+angular.module('tl').service('tl.city.service', [
+  'tl.service',
+  'tl.city.resource',
+  function(Service, City) {
+
+    var CityService = Service.extend(City);
+
+    return new CityService();
+  }
+]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -1935,100 +2009,6 @@ angular
 
     return new EventService();
   }]);
-
-
-angular
-	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.city.resource', [
-  'tl.resource',
-  function(resource) {
-    return resource('/city/:id', {
-      id: '@id'
-    }, {
-      // no extra methods
-    });
-  }
-]);
-
-angular.module('tl').service('tl.city.service', [
-  'tl.service',
-  'tl.city.resource',
-  function(Service, City) {
-
-    var CityService = Service.extend(City);
-
-    return new CityService();
-  }
-]);
-
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
-    }
-  ]);
 
 
 angular
@@ -2433,6 +2413,65 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.outgoingPayment.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/outgoing-payment/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listTransaction: {
+        method: 'GET',
+        url: endpoint + '/transaction',
+        isArray: true
+      },
+      listAuthorization: {
+        method: 'GET',
+        url: endpoint + '/authorization',
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.outgoingPayment.service', [
+  'tl.outgoingPayment.resource',
+  'tl.service',
+  function(OutgoingPayment, Service) {
+    'use strict';
+
+    /*==============================================================*
+    /* Constructor
+    /*==============================================================*/
+
+    var OutgoingPaymentService = Service.extend(OutgoingPayment);
+
+    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
+      return OutgoingPayment.listTransaction({
+        id: id,
+      }, success, error);
+    };
+
+    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
+      return OutgoingPayment.listAuthorization({
+        id: id,
+      }, success, error);
+    };
+
+    return new OutgoingPaymentService();
+  }
+]);
+
+
+angular
+	.module('tl')
 	.service('tl.payment', ['tl.payment.resource', 'tl.payment.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2534,65 +2573,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.outgoingPayment', ['tl.outgoingPayment.resource', 'tl.outgoingPayment.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.outgoingPayment.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/outgoing-payment/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listTransaction: {
-        method: 'GET',
-        url: endpoint + '/transaction',
-        isArray: true
-      },
-      listAuthorization: {
-        method: 'GET',
-        url: endpoint + '/authorization',
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.outgoingPayment.service', [
-  'tl.outgoingPayment.resource',
-  'tl.service',
-  function(OutgoingPayment, Service) {
-    'use strict';
-
-    /*==============================================================*
-    /* Constructor
-    /*==============================================================*/
-
-    var OutgoingPaymentService = Service.extend(OutgoingPayment);
-
-    OutgoingPaymentService.prototype.listTransaction = function(id, success, error) {
-      return OutgoingPayment.listTransaction({
-        id: id,
-      }, success, error);
-    };
-
-    OutgoingPaymentService.prototype.listAuthorization = function(id, success, error) {
-      return OutgoingPayment.listAuthorization({
-        id: id,
-      }, success, error);
-    };
-
-    return new OutgoingPaymentService();
-  }
-]);
-
 angular
   .module('tl')
   .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
@@ -2624,9 +2604,7 @@ angular
        var PermissionService = Service.extend(Permission);
 
        PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
-         var _this = this;
-
-         return Permission.listVenuePermissions().$promise;
+         return Permission.listVenuePermissions(options).$promise;
        };
 
        return new PermissionService();
@@ -2663,8 +2641,7 @@ angular
 
       var PromoService = Service.extend(Promo);
 
-      PromoService.prototype.redeem = function(promoCode, success, error) {
-        var _this = this;
+      PromoService.prototype.redeem = function(promoCode) {
         return Promo.redeem({
           code: promoCode
         });
@@ -2982,35 +2959,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3061,6 +3009,35 @@ angular
 		};
 
 		return new SettingsService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
 	}]);
 angular
   .module('tl')
@@ -3712,7 +3689,6 @@ angular
       };
 
       UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
-        var _this = this;
         return User.addCredit({
           id: userId
         }, {

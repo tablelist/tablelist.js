@@ -19,7 +19,7 @@ angular
         var keys = Object.keys(proto);
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
-          if (key != 'constructor') {
+          if (key !== 'constructor') {
             ExtendedService.prototype[key] = proto[key];
           }
         }
@@ -93,7 +93,7 @@ angular
         }, success, error);
       };
 
-      Service.prototype.buildQueryString = function(query, next) {
+      Service.prototype.buildQueryString = function(query) {
         try {
           return JSON.stringify(query);
         } catch (err) {
@@ -130,7 +130,7 @@ angular
         }, success, error);
       };
 
-      Service.prototype.exportUrl = function(query, sort, format) {
+      Service.prototype.exportUrl = function(query, sort) {
         var endpoint = this.resource.ENDPOINT;
         var index = this.resource.ENDPOINT.indexOf(":");
         if (index > -1) endpoint = endpoint.substring(0, index);

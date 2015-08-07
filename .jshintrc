@@ -1,0 +1,28 @@
+// docs for jshint : http://www.jshint.com/docs/
+// options for jshint : http://www.jshint.com/docs/options/
+
+{
+  "undef": true,
+  "unused": true,
+  "predef": [
+    "afterEach",
+    "angular",
+    "beforeEach",
+    "console",
+    "describe",
+    "document",
+    "expect",
+    "FB",
+    "FormData",
+    "inject",
+    "it",
+    "localStorage",
+    "moment",
+    "sessionStorage",
+    "spyOn",
+    "window"
+  ],
+  "camelcase": true,
+  "bitwise": true,
+  "eqeqeq": true
+}
