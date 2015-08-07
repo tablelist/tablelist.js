@@ -78,7 +78,7 @@ gulp.task('js-prod', function() {
 /**
  * Release - creates the release directory with all the necessary files for our Bower package
  **/
-gulp.task('release', ['prepare-release-dir', 'js', 'copy-bower']);
+gulp.task('release', ['jshint', 'prepare-release-dir', 'js', 'copy-bower']);
 
 /**
  * Js Hint

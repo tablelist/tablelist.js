@@ -766,7 +766,8 @@ angular
 
         this.ws = ws = $websocket.$new({
           url: this.socketUrl(endpoint),
-          reconnect: true,
+          lazy: true,
+					reconnect: true,
           reconnectInterval: 250 // it will reconnect after 0.25 seconds
         });
 
@@ -788,6 +789,10 @@ angular
         ws.$on('$close', function() {
           window.clearInterval(interval);
         });
+
+				ws.$open();
+
+				return this;
       };
 
       this.events = function() {
@@ -1755,35 +1760,6 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.city.resource', [
-  'tl.resource',
-  function(resource) {
-    return resource('/city/:id', {
-      id: '@id'
-    }, {
-      // no extra methods
-    });
-  }
-]);
-
-angular.module('tl').service('tl.city.service', [
-  'tl.service',
-  'tl.city.resource',
-  function(Service, City) {
-
-    var CityService = Service.extend(City);
-
-    return new CityService();
-  }
-]);
-
-
-angular
-	.module('tl')
 	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1817,6 +1793,100 @@ angular
 
 		return new CampaignService();
 	}]);
+
+
+angular
+	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.city.resource', [
+  'tl.resource',
+  function(resource) {
+    return resource('/city/:id', {
+      id: '@id'
+    }, {
+      // no extra methods
+    });
+  }
+]);
+
+angular.module('tl').service('tl.city.service', [
+  'tl.service',
+  'tl.city.resource',
+  function(Service, City) {
+
+    var CityService = Service.extend(City);
+
+    return new CityService();
+  }
+]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
 
 
 angular
@@ -1944,71 +2014,6 @@ angular
 
     return new EventService();
   }]);
-
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
-    }
-  ]);
 
 
 angular
@@ -2145,65 +2150,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.inventory-tier-config', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.inventory-tier-config.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory-tier-config/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        list: {
-          method: 'GET',
-          url: '/inventory-tier-config',
-          isArray: true
-        },
-        create: {
-          method: 'POST',
-          url: '/inventory-tier-config',
-          isArray: false
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory-tier-config.service', [
-    'tl.service',
-    'tl.inventory-tier-config.resource',
-    function(Service, InventoryTierConfig) {
-      'use strict';
-
-      var InventoryTierConfigService = Service.extend(InventoryTierConfig);
-
-      InventoryTierConfigService.prototype.create = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return InventoryTierConfig.save({}, options).$promise;
-      };
-
-      InventoryTierConfigService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return InventoryTierConfig.list(options).$promise;
-      };
-
-      return new InventoryTierConfigService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
     function(resource, service) {
       this.resource = resource;
@@ -2262,6 +2208,65 @@ angular
       };
 
       return new InvoiceService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-tier-config', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.inventory-tier-config.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory-tier-config/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        list: {
+          method: 'GET',
+          url: '/inventory-tier-config',
+          isArray: true
+        },
+        create: {
+          method: 'POST',
+          url: '/inventory-tier-config',
+          isArray: false
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-tier-config.service', [
+    'tl.service',
+    'tl.inventory-tier-config.resource',
+    function(Service, InventoryTierConfig) {
+      'use strict';
+
+      var InventoryTierConfigService = Service.extend(InventoryTierConfig);
+
+      InventoryTierConfigService.prototype.create = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return InventoryTierConfig.save({}, options).$promise;
+      };
+
+      InventoryTierConfigService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return InventoryTierConfig.list(options).$promise;
+      };
+
+      return new InventoryTierConfigService();
     }
   ]);
 
@@ -2469,6 +2474,44 @@ angular.module('tl').service('tl.outgoingPayment.service', [
   }
 ]);
 
+angular
+  .module('tl')
+  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.permission.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/permission/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listVenuePermissions: {
+        method: 'GET',
+        url: '/permission/venue'
+      },
+    });
+  }]);
+
+ angular
+   .module('tl')
+   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
+     function(Permission, Service) {
+
+       var PermissionService = Service.extend(Permission);
+
+       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
+         return Permission.listVenuePermissions(options).$promise;
+       };
+
+       return new PermissionService();
+     }
+   ]);
+
 
 angular
 	.module('tl')
@@ -2612,44 +2655,6 @@ angular
       return new PromoService();
     }
   ]);
-
-angular
-  .module('tl')
-  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.permission.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/permission/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listVenuePermissions: {
-        method: 'GET',
-        url: '/permission/venue'
-      },
-    });
-  }]);
-
- angular
-   .module('tl')
-   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
-     function(Permission, Service) {
-
-       var PermissionService = Service.extend(Permission);
-
-       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
-         return Permission.listVenuePermissions(options).$promise;
-       };
-
-       return new PermissionService();
-     }
-   ]);
 
 
 angular
@@ -2801,35 +2806,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.reward.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/reward/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
-
-		var RewardService = Service.extend(Reward);
-
-		return new RewardService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2855,6 +2831,35 @@ angular
 		var ReviewService = Service.extend(Review);
 
 		return new ReviewService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.reward.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/reward/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
+
+		var RewardService = Service.extend(Reward);
+
+		return new RewardService();
 	}]);
 
 angular

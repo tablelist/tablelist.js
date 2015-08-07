@@ -21,7 +21,8 @@ angular
 
         this.ws = ws = $websocket.$new({
           url: this.socketUrl(endpoint),
-          reconnect: true,
+          lazy: true,
+					reconnect: true,
           reconnectInterval: 250 // it will reconnect after 0.25 seconds
         });
 
@@ -43,6 +44,10 @@ angular
         ws.$on('$close', function() {
           window.clearInterval(interval);
         });
+
+				ws.$open();
+
+				return this;
       };
 
       this.events = function() {
