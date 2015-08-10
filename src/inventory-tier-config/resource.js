@@ -19,6 +19,11 @@ angular
           method: 'POST',
           url: '/inventory-tier-config',
           isArray: false
+        },
+        update: {
+          method: 'PATCH',
+          url: endpoint,
+          isArray: false
         }
       });
     }
