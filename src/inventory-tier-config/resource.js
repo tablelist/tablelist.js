@@ -15,6 +15,11 @@ angular
           url: '/inventory-tier-config',
           isArray: true
         },
+        listInventory: {
+          method: 'GET',
+          url: '/inventory-tier-config/:id/inventory',
+          isArray: true
+        },
         create: {
           method: 'POST',
           url: '/inventory-tier-config',

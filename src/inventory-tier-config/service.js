@@ -20,6 +20,12 @@ angular
         return InventoryTierConfig.list(options).$promise;
       };
 
+      InventoryTierConfigService.prototype.listInventory = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return InventoryTierConfig.listInventory(options).$promise;
+      };
+
       InventoryTierConfigService.prototype.update = function update(options) {
         if (!options) throw new Error('options is required');
         if (!options.id) throw new Error('options.id is required');
