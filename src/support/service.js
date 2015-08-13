@@ -23,6 +23,12 @@ angular
         }).$promise;
       };
 
+      SupportService.prototype.markMessagesRead = function(messageIds) {
+        return Message.resource.markMessagesRead({}, {
+          messageIds: messageIds
+        }).$promise;
+      };
+
       SupportService.prototype.listenForClientMessages = function(onMessage) {
         return new Socket('/support/message/client', onMessage);
       };

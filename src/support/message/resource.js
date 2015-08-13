@@ -10,6 +10,11 @@ angular
         url: endpoint,
         isArray: true
       },
+      markMessagesRead: {
+        method: 'POST',
+        url: endpoint + '/read',
+        isArray: true
+      },
       sendInboundMessage: {
         method: 'POST',
         url: endpoint + '/inbound',
