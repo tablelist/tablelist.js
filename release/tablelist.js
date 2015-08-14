@@ -1760,35 +1760,6 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
-	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.city.resource', [
-  'tl.resource',
-  function(resource) {
-    return resource('/city/:id', {
-      id: '@id'
-    }, {
-      // no extra methods
-    });
-  }
-]);
-
-angular.module('tl').service('tl.city.service', [
-  'tl.service',
-  'tl.city.resource',
-  function(Service, City) {
-
-    var CityService = Service.extend(City);
-
-    return new CityService();
-  }
-]);
-
-
-angular
-	.module('tl')
 	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1822,71 +1793,6 @@ angular
 
 		return new CampaignService();
 	}]);
-
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
-    }
-  ]);
 
 
 angular
@@ -2014,6 +1920,100 @@ angular
 
     return new EventService();
   }]);
+
+
+angular
+	.module('tl')
+	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.city.resource', [
+  'tl.resource',
+  function(resource) {
+    return resource('/city/:id', {
+      id: '@id'
+    }, {
+      // no extra methods
+    });
+  }
+]);
+
+angular.module('tl').service('tl.city.service', [
+  'tl.service',
+  'tl.city.resource',
+  function(Service, City) {
+
+    var CityService = Service.extend(City);
+
+    return new CityService();
+  }
+]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
 
 
 angular
@@ -2150,7 +2150,55 @@ angular
 
 angular
   .module('tl')
-  .service('tl.inventory-tier-config', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service) {
+  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.inventory-summary.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory-summary';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        list: {
+          method: 'GET',
+          url: endpoint,
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-summary.service', [
+    'tl.service',
+    'tl.inventory-summary.resource',
+    function(Service, InventorySummary) {
+      'use strict';
+
+      var InventorySummaryService = Service.extend(InventorySummary);
+
+      InventorySummaryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return InventorySummary.list(options).$promise;
+      };
+
+      return new InventorySummaryService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-tier-config', ['tl.inventory-tier-config.resource', 'tl.inventory-tier-config.service', function(resource, service) {
     this.resource = resource;
     this.service = service;
   }]);
@@ -2889,6 +2937,35 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/schedule/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+
+		var ScheduleService = Service.extend(Schedule);
+
+		return new ScheduleService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.sale', ['tl.sale.resource', 'tl.sale.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2957,35 +3034,58 @@ angular
     return new SaleService();
   }]);
 
+angular
+  .module('tl')
+  .service('tl.support', [
+    'tl.support.service',
+    'tl.support.message',
+    'tl.support.task',
+    function(service, message, task) {
+      this.service = service;
+      this.message = message;
+      this.task = task;
+    }
+  ]);
 
 angular
-	.module('tl')
-	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
+  .module('tl')
+  .service('tl.support.service', [
+    'tl.socket',
+    'tl.support.message',
+    function(Socket, Message) {
+      'use strict';
 
-angular
-	.module('tl')
-	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+      var SupportService = function() {};
 
-		var endpoint = '/schedule/:id';
+      SupportService.prototype.listClientMessages = function(options) {
+        options = options || {};
+        return Message.resource.list(options).$promise;
+      };
 
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
+      SupportService.prototype.sendInboundMessage = function(text, options) {
+        options = options || {};
 
-angular
-	.module('tl')
-	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+        return Message.resource.sendInboundMessage({}, {
+          text: text,
+          data: options.data,
+          city: options.city
+        }).$promise;
+      };
 
-		var ScheduleService = Service.extend(Schedule);
+      SupportService.prototype.markMessagesRead = function(messageIds) {
+        return Message.resource.markMessagesRead({}, {
+          messageIds: messageIds
+        }).$promise;
+      };
 
-		return new ScheduleService();
-	}]);
+      SupportService.prototype.listenForClientMessages = function(onMessage) {
+        return new Socket('/support/message/client', onMessage);
+      };
+
+      return new SupportService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -3040,58 +3140,6 @@ angular
 
 		return new SettingsService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.support', [
-    'tl.support.service',
-    'tl.support.message',
-    'tl.support.task',
-    function(service, message, task) {
-      this.service = service;
-      this.message = message;
-      this.task = task;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.support.service', [
-    'tl.socket',
-    'tl.support.message',
-    function(Socket, Message) {
-      'use strict';
-
-      var SupportService = function() {};
-
-      SupportService.prototype.listClientMessages = function(options) {
-        options = options || {};
-        return Message.resource.list(options).$promise;
-      };
-
-      SupportService.prototype.sendInboundMessage = function(text, options) {
-        options = options || {};
-
-        return Message.resource.sendInboundMessage({}, {
-          text: text,
-          data: options.data,
-          city: options.city
-        }).$promise;
-      };
-
-      SupportService.prototype.markMessagesRead = function(messageIds) {
-        return Message.resource.markMessagesRead({}, {
-          messageIds: messageIds
-        }).$promise;
-      };
-
-      SupportService.prototype.listenForClientMessages = function(onMessage) {
-        return new Socket('/support/message/client', onMessage);
-      };
-
-      return new SupportService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
