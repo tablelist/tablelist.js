@@ -8,10 +8,13 @@ angular
 
       var SupportAgentService = Service.extend(Agent);
 
-      SupportAgentService.prototype.read = function(agentId) {
+      SupportAgentService.prototype.read = function(agentId, options) {
         if (!agentId) throw new Error('agentId is required');
+        options = options || {};
 
-        return Agent.read({ id: agentId }).$promise;
+        options.id = agentId;
+
+        return Agent.read(options).$promise;
       };
 
       SupportAgentService.prototype.list = function(options) {
@@ -39,10 +42,13 @@ angular
         return Agent.patch({ id: agentId }, options).$promise;
       };
 
-      SupportAgentService.prototype.remove = function(agentId) {
+      SupportAgentService.prototype.remove = function(agentId, options) {
         if (!agentId) throw new Error('agentId is required');
+        options = options || {};
 
-        return Agent.remove({ id: agentId }).$promise;
+        options.id = agentId;
+
+        return Agent.remove(options).$promise;
       };
 
       return new SupportAgentService();
