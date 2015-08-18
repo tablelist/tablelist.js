@@ -25,16 +25,18 @@ angular
         return Agent.create({}, options).$promise;
       };
 
-      SupportAgentService.prototype.update = function(options) {
+      SupportAgentService.prototype.update = function(agentId, options) {
+        if (!agentId) throw new Error('agentId is required');
         if (!options) throw new Error('options is required');
 
-        return Agent.update({}, options).$promise;
+        return Agent.update({ id: agentId }, options).$promise;
       };
 
-      SupportAgentService.prototype.patch = function(options) {
+      SupportAgentService.prototype.patch = function(agentId, options) {
+        if (!agentId) throw new Error('agentId is required');
         if (!options) throw new Error('options is required');
 
-        return Agent.patch({}, options).$promise;
+        return Agent.patch({ id: agentId }, options).$promise;
       };
 
       SupportAgentService.prototype.remove = function(agentId) {

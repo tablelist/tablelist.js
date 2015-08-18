@@ -24,12 +24,12 @@ angular
       },
       update: {
         method: 'PUT',
-        url: endpoint,
+        url: endpoint + '/:id',
         isArray: false
       },
       patch: {
         method: 'PATCH',
-        url: endpoint,
+        url: endpoint + '/:id',
         isArray: false
       },
       remove: {
