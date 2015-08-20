@@ -3,9 +3,11 @@ angular
   .factory('tl.promo.resource', ['tl.resource', function(resource) {
 
     var endpoint = '/promo/:id';
+    //           = '/promo/check/:code'
 
     return resource(endpoint, {
-      id: '@id'
+      id: '@id',
+      code: '@code',
     }, {
       redeem: {
         method: 'POST',
