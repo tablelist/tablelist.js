@@ -12,9 +12,9 @@ angular
         url: '/promo/redeem'
       },
     }, {
-      redeem: {
+      check: {
         method: 'GET',
-        url: '/promo/check/:id'
+        url: '/promo/check/:code'
       },
     });
   }]);
