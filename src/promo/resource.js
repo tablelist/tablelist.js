@@ -11,5 +11,10 @@ angular
         method: 'POST',
         url: '/promo/redeem'
       },
+    }, {
+      redeem: {
+        method: 'GET',
+        url: '/promo/check/:id'
+      },
     });
   }]);

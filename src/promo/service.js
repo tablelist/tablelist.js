@@ -11,6 +11,12 @@ angular
         });
       };
 
+      PromoService.prototype.check = function(promoCode) {
+        return Promo.check({
+          code: promoCode
+        });
+      };
+
       return new PromoService();
     }
   ]);
