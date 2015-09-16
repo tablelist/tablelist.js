@@ -18,6 +18,28 @@ angular
         return Inventory.listForVenue(options).$promise;
       };
 
+      InventoryService.prototype.createTier = function(inventoryId, options) {
+        if (!inventoryId) throw new Error('inventoryId is required');
+        if (!options) throw new Error('options is required');
+        if (options.price === undefined) throw new Error('options.price is required');
+        if (options.quantity === undefined) throw new Error('options.quantity is required');
+
+        return Inventory.createTier({
+          id: inventoryId
+        }, options).$promise;
+      };
+
+      InventoryService.prototype.updateTier = function(inventoryId, tierId, options) {
+        if (!inventoryId) throw new Error('inventoryId is required');
+        if (!tierId) throw new Error('tierId is required');
+        if (!options) throw new Error('options is required');
+
+        return Inventory.updateTier({
+          id: inventoryId,
+          tierId: tierId
+        }, options).$promise;
+      };
+
       return new InventoryService();
     }
   ]);

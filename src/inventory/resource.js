@@ -8,12 +8,23 @@ angular
       var endpoint = '/inventory/:id';
 
       return resource(endpoint, {
-        id: '@id'
+        id: '@id',
+        tierId: '@tierId'
       }, {
         listForVenue: {
           method: 'GET',
           url: '/inventory',
           isArray: true
+        },
+        createTier: {
+          method: 'POST',
+          url: endpoint + '/tier',
+          isArray: false
+        },
+        updateTier: {
+          method: 'PUT',
+          url: endpoint + '/tier/:tierId',
+          isArray: false
         }
       });
     }
