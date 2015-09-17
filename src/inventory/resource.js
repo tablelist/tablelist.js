@@ -25,6 +25,11 @@ angular
           method: 'PUT',
           url: endpoint + '/tier/:tierId',
           isArray: false
+        },
+        deleteTier: {
+          method: 'DELETE',
+          url: endpoint + '/tier/:tierId',
+          isArray: false
         }
       });
     }

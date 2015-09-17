@@ -40,6 +40,16 @@ angular
         }, options).$promise;
       };
 
+      InventoryService.prototype.deleteTier = function(inventoryId, tierId, options) {
+        if (!inventoryId) throw new Error('inventoryId is required');
+        if (!tierId) throw new Error('tierId is required');
+
+        return Inventory.deleteTier({
+          id: inventoryId,
+          tierId: tierId
+        }, options).$promise;
+      };
+
       return new InventoryService();
     }
   ]);
