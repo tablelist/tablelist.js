@@ -68,11 +68,16 @@ angular
       config.useAuthHeader = useAuthHeader || false;
     }
 
+    function setApiUrl(apiUrl) {
+      config.API = apiUrl;
+    }
+
     return {
       setEnv: setEnv,
       setSubclient: setSubclient,
       setVersion: setVersion,
       setUseAuthHeader: setUseAuthHeader,
+      setApiUrl: setApiUrl,
 
       // needed for Provider
       $get: function() {
@@ -4487,6 +4492,102 @@ angular
 
 angular
   .module('tl')
+  .service('tl.support.message', [
+    'tl.support.message.resource',
+    'tl.support.message.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/message';
+
+    return resource(endpoint, {}, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      markMessagesRead: {
+        method: 'POST',
+        url: endpoint + '/read',
+        isArray: true
+      },
+      sendInboundMessage: {
+        method: 'POST',
+        url: endpoint + '/inbound',
+        isArray: false
+      },
+      sendOutboundMessage: {
+        method: 'POST',
+        url: endpoint + '/outbound',
+        isArray: false
+      },
+      sendInternalMessage: {
+        method: 'POST',
+        url: endpoint + '/internal',
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.message.service', [
+    'tl.service',
+    'tl.support.message.resource',
+    function(Service, Message) {
+      'use strict';
+
+      var SupportMessageService = Service.extend(Message);
+
+      return new SupportMessageService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.support.task', [
+    'tl.support.task.resource',
+    'tl.support.task.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.task.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/task';
+
+    return resource(endpoint, {}, {
+
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.task.service', [
+    'tl.service',
+    'tl.support.task.resource',
+    function(Service, Task) {
+      'use strict';
+
+      var SupportTaskService = Service.extend(Task);
+
+      return new SupportTaskService();
+    }
+  ]);
+
+angular
+  .module('tl')
   .service('tl.support.agent', [
     'tl.support.agent.resource',
     'tl.support.agent.service',
@@ -4592,101 +4693,5 @@ angular
       };
 
       return new SupportAgentService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.support.message', [
-    'tl.support.message.resource',
-    'tl.support.message.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/message';
-
-    return resource(endpoint, {}, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      markMessagesRead: {
-        method: 'POST',
-        url: endpoint + '/read',
-        isArray: true
-      },
-      sendInboundMessage: {
-        method: 'POST',
-        url: endpoint + '/inbound',
-        isArray: false
-      },
-      sendOutboundMessage: {
-        method: 'POST',
-        url: endpoint + '/outbound',
-        isArray: false
-      },
-      sendInternalMessage: {
-        method: 'POST',
-        url: endpoint + '/internal',
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.message.service', [
-    'tl.service',
-    'tl.support.message.resource',
-    function(Service, Message) {
-      'use strict';
-
-      var SupportMessageService = Service.extend(Message);
-
-      return new SupportMessageService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.support.task', [
-    'tl.support.task.resource',
-    'tl.support.task.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.task.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/task';
-
-    return resource(endpoint, {}, {
-
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.task.service', [
-    'tl.service',
-    'tl.support.task.resource',
-    function(Service, Task) {
-      'use strict';
-
-      var SupportTaskService = Service.extend(Task);
-
-      return new SupportTaskService();
     }
   ]);
