@@ -68,11 +68,16 @@ angular
       config.useAuthHeader = useAuthHeader || false;
     }
 
+    function setApiUrl(apiUrl) {
+      config.API = apiUrl;
+    }
+
     return {
       setEnv: setEnv,
       setSubclient: setSubclient,
       setVersion: setVersion,
       setUseAuthHeader: setUseAuthHeader,
+      setApiUrl: setApiUrl,
 
       // needed for Provider
       $get: function() {
