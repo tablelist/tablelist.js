@@ -34,6 +34,15 @@ angular
         return Feed.listUserFeed(options).$promise;
       };
 
+      FeedService.prototype.listFeedLikes = function(userId, options) {
+        if (!userId) throw new Error('FeedService.listFeedLikes - userId is required');
+        options = options || {};
+
+        options.userId = userId;
+
+        return Feed.listFeedLikes(options).$promise;
+      };
+
       FeedService.prototype.addLike = function(feedId, options) {
         if (!feedId) throw new Error('FeedService.addLike - feedId is required');
 
