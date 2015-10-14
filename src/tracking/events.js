@@ -74,4 +74,8 @@ angular
 
 		// Easter Eggs
 		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture"
+
+		// Inventory Search
+		InventorySearched : "TLInventorySearched",
+		InventorySearchResultSelected : "TLInventorySearchResultSelected",
 	});
