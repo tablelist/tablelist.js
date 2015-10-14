@@ -12,7 +12,7 @@ angular
         create: {
           method: 'POST',
           url: endpoint,
-          isArray: false
+          isArray: true
         },
         remove: {
           method: 'DELETE',
