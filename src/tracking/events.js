@@ -73,7 +73,7 @@ angular
 		AboutWebsiteViewed: "TLAboutWebsiteViewed",
 
 		// Easter Eggs
-		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture"
+		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture",
 
 		// Inventory Search
 		InventorySearched : "TLInventorySearched",
