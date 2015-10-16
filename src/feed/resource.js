@@ -29,11 +29,6 @@ angular
           url: '/user/:userId/feed',
           isArray: true
         },
-        listFeedLikes: {
-          method: 'GET',
-          url: '/user/:userId/feed/like',
-          isArray: true
-        },
         addLike: {
           method: 'POST',
           url: endpoint + '/:id/like',
