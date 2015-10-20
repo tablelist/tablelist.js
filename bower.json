@@ -1,6 +1,6 @@
 {
   "name": "Tablelist JS SDK",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "homepage": "https://github.com/tablelist/tablelist.js",
   "authors": [
     "Andrew Barba <andrew@tablelist.com>",
@@ -10,7 +10,7 @@
     "Matt Peoples <matt@tablelist.com>"
   ],
   "description": "Tablelist JS SDK",
-  "main": "src/index.js",
+  "main": "release/tablelist.js",
   "keywords": [
     "tablelist"
   ],
