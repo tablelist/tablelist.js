@@ -113,6 +113,27 @@ angular.module('tl').service('tl.booking.service', [
       }, options).$promise;
     };
 
+    BookingService.prototype.updateOutgoingPayment = function(id, outgoingPaymentId, options) {
+      if (!id) throw new Error('id is required');
+      if (!outgoingPaymentId) throw new Error('outgoingPaymentId is required');
+      if (!options) throw new Error('options is required');
+
+      return Booking.updateOutgoingPayment({
+        id: id,
+        outgoingPaymentId: outgoingPaymentId
+      }, options).$promise;
+    };
+
+    BookingService.prototype.deleteOutgoingPayment = function(id, outgoingPaymentId) {
+      if (!id) throw new Error('id is required');
+      if (!outgoingPaymentId) throw new Error('outgoingPaymentId is required');
+
+      return Booking.deleteOutgoingPayment({
+        id: id,
+        outgoingPaymentId: outgoingPaymentId
+      }).$promise;
+    };
+
     BookingService.prototype.readSplitTable = function(splitCode, success, error) {
       return Booking.readSplitTable({
         code: splitCode
@@ -186,7 +207,7 @@ angular.module('tl').service('tl.booking.service', [
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      var id = options.id; 
+      var id = options.id;
       delete options.id;
 
       return Booking.update({

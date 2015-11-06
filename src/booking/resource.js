@@ -32,7 +32,7 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: 'booking/join'
       },
-      decline : {
+      decline: {
         method: 'POST',
         url: endpoint + '/decline'
       },
@@ -44,6 +44,18 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'GET',
         url: endpoint + '/outgoing-payment',
         isArray: true
+      },
+      createOutgoingPayment: {
+        method: 'POST',
+        url: endpoint + '/outgoing-payment',
+      },
+      updateOutgoingPayment: {
+        method: 'PUT',
+        url: endpoint + '/outgoing-payment/:outgoingPaymentId',
+      },
+      deleteOutgoingPayment: {
+        method: 'DELETE',
+        url: endpoint + '/outgoing-payment/:outgoingPaymentId',
       },
       readSplitTable: {
         method: 'GET',
@@ -61,10 +73,6 @@ angular.module('tl').factory('tl.booking.resource', [
       accept: {
         method: 'POST',
         url: 'booking/:id/accept'
-      },
-      createOutgoingPayment: {
-        method: 'POST',
-        url: endpoint + '/outgoing-payment',
       },
       refundBookingUser: {
         method: 'POST',
