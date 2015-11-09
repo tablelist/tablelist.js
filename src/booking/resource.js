@@ -49,14 +49,6 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: endpoint + '/outgoing-payment',
       },
-      updateOutgoingPayment: {
-        method: 'PUT',
-        url: endpoint + '/outgoing-payment/:outgoingPaymentId',
-      },
-      deleteOutgoingPayment: {
-        method: 'DELETE',
-        url: endpoint + '/outgoing-payment/:outgoingPaymentId',
-      },
       readSplitTable: {
         method: 'GET',
         url: 'booking/split/:code'

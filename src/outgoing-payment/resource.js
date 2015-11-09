@@ -17,7 +17,15 @@ angular.module('tl').factory('tl.outgoingPayment.resource', [
         method: 'GET',
         url: endpoint + '/authorization',
         isArray: true
-      }
+      },
+      update: {
+        method: 'PUT',
+        url: endpoint
+      },
+      delete: {
+        method: 'DELETE',
+        url: endpoint
+      },
     });
   }
 ]);

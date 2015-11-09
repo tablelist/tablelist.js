@@ -1256,37 +1256,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1477,6 +1446,37 @@ angular.module('tl').service('tl.auth.service', [
 
 angular
 	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
 	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1531,14 +1531,6 @@ angular.module('tl').factory('tl.booking.resource', [
       createOutgoingPayment: {
         method: 'POST',
         url: endpoint + '/outgoing-payment',
-      },
-      updateOutgoingPayment: {
-        method: 'PUT',
-        url: endpoint + '/outgoing-payment/:outgoingPaymentId',
-      },
-      deleteOutgoingPayment: {
-        method: 'DELETE',
-        url: endpoint + '/outgoing-payment/:outgoingPaymentId',
       },
       readSplitTable: {
         method: 'GET',
@@ -1685,27 +1677,6 @@ angular.module('tl').service('tl.booking.service', [
       }, options).$promise;
     };
 
-    BookingService.prototype.updateOutgoingPayment = function(id, outgoingPaymentId, options) {
-      if (!id) throw new Error('id is required');
-      if (!outgoingPaymentId) throw new Error('outgoingPaymentId is required');
-      if (!options) throw new Error('options is required');
-
-      return Booking.updateOutgoingPayment({
-        id: id,
-        outgoingPaymentId: outgoingPaymentId
-      }, options).$promise;
-    };
-
-    BookingService.prototype.deleteOutgoingPayment = function(id, outgoingPaymentId) {
-      if (!id) throw new Error('id is required');
-      if (!outgoingPaymentId) throw new Error('outgoingPaymentId is required');
-
-      return Booking.deleteOutgoingPayment({
-        id: id,
-        outgoingPaymentId: outgoingPaymentId
-      }).$promise;
-    };
-
     BookingService.prototype.readSplitTable = function(splitCode, success, error) {
       return Booking.readSplitTable({
         code: splitCode
@@ -1827,133 +1798,6 @@ angular
 
 		return new CampaignService();
 	}]);
-
-
-angular
-	.module('tl')
-	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.event.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/event/:id';
-
-    return resource(endpoint, {
-      id: '@id',
-      imageId: '@imageId'
-    }, {
-      update: {
-        method: 'PATCH',
-        url: endpoint,
-        isArray: false
-      },
-      list: {
-        method: 'GET',
-        url: '/event',
-        isArray: true
-      },
-      listForCity: {
-        method: 'GET',
-        url: '/city/:cityId/event',
-        isArray: true
-      },
-      addStaff: {
-        method: 'POST',
-        url: endpoint + '/staff',
-        isArray: false
-      },
-      updateStaff: {
-        method: 'PUT',
-        url: endpoint + '/staff/:staffId',
-        isArray: false
-      },
-      deleteStaff: {
-        method: 'DELETE',
-        url: endpoint + '/staff/:staffId',
-        isArray: false
-      },
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.event.service', ['tl.service', 'tl.event.resource', function(Service, Event) {
-
-    var EventService = Service.extend(Event);
-
-    EventService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Event.list(options).$promise;
-    };
-
-    EventService.prototype.read = function read(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Event.get(options).$promise;
-    };
-
-    EventService.prototype.create = function create(options) {
-      if (!options) throw new Error('options is required');
-
-      return Event.save({}, options).$promise;
-    };
-
-    EventService.prototype.update = function update(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Event.update({
-        id: options.id
-      }, options).$promise;
-    };
-
-    /*==============================================================*
-    /* Cities
-    /*==============================================================*/
-
-    EventService.prototype.listForCity = function(cityId, success, error) {
-      return Event.listForCity({
-        cityId: cityId
-      }, success, error);
-    };
-
-    EventService.prototype.listCityTonight = function(cityId, success, error) {
-      return Event.listCityTonight({
-        cityId: cityId
-      }, success, error);
-    };
-
-    EventService.prototype.addStaff = function(eventId, userId, success, error) {
-      return Event.addStaff({
-        id: eventId
-      }, {
-        userId: userId
-      }, success, error);
-    };
-
-    EventService.prototype.updateStaff = function(eventId, staffId, updates, success, error) {
-      return Event.updateStaff({
-        id: eventId,
-        staffId: staffId
-      }, updates, success, error);
-    };
-
-    EventService.prototype.deleteStaff = function(eventId, staffId, success, error) {
-      return Event.deleteStaff({
-        id: eventId,
-        staffId: staffId
-      }, success, error);
-    };
-
-    return new EventService();
-  }]);
 
 
 angular
@@ -2154,6 +1998,133 @@ angular
       return new ImageService();
     }
   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.event.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/event/:id';
+
+    return resource(endpoint, {
+      id: '@id',
+      imageId: '@imageId'
+    }, {
+      update: {
+        method: 'PATCH',
+        url: endpoint,
+        isArray: false
+      },
+      list: {
+        method: 'GET',
+        url: '/event',
+        isArray: true
+      },
+      listForCity: {
+        method: 'GET',
+        url: '/city/:cityId/event',
+        isArray: true
+      },
+      addStaff: {
+        method: 'POST',
+        url: endpoint + '/staff',
+        isArray: false
+      },
+      updateStaff: {
+        method: 'PUT',
+        url: endpoint + '/staff/:staffId',
+        isArray: false
+      },
+      deleteStaff: {
+        method: 'DELETE',
+        url: endpoint + '/staff/:staffId',
+        isArray: false
+      },
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.event.service', ['tl.service', 'tl.event.resource', function(Service, Event) {
+
+    var EventService = Service.extend(Event);
+
+    EventService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Event.list(options).$promise;
+    };
+
+    EventService.prototype.read = function read(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Event.get(options).$promise;
+    };
+
+    EventService.prototype.create = function create(options) {
+      if (!options) throw new Error('options is required');
+
+      return Event.save({}, options).$promise;
+    };
+
+    EventService.prototype.update = function update(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Event.update({
+        id: options.id
+      }, options).$promise;
+    };
+
+    /*==============================================================*
+    /* Cities
+    /*==============================================================*/
+
+    EventService.prototype.listForCity = function(cityId, success, error) {
+      return Event.listForCity({
+        cityId: cityId
+      }, success, error);
+    };
+
+    EventService.prototype.listCityTonight = function(cityId, success, error) {
+      return Event.listCityTonight({
+        cityId: cityId
+      }, success, error);
+    };
+
+    EventService.prototype.addStaff = function(eventId, userId, success, error) {
+      return Event.addStaff({
+        id: eventId
+      }, {
+        userId: userId
+      }, success, error);
+    };
+
+    EventService.prototype.updateStaff = function(eventId, staffId, updates, success, error) {
+      return Event.updateStaff({
+        id: eventId,
+        staffId: staffId
+      }, updates, success, error);
+    };
+
+    EventService.prototype.deleteStaff = function(eventId, staffId, success, error) {
+      return Event.deleteStaff({
+        id: eventId,
+        staffId: staffId
+      }, success, error);
+    };
+
+    return new EventService();
+  }]);
 
 
 angular
@@ -2702,7 +2673,15 @@ angular.module('tl').factory('tl.outgoingPayment.resource', [
         method: 'GET',
         url: endpoint + '/authorization',
         isArray: true
-      }
+      },
+      update: {
+        method: 'PUT',
+        url: endpoint
+      },
+      delete: {
+        method: 'DELETE',
+        url: endpoint
+      },
     });
   }
 ]);
@@ -2730,6 +2709,24 @@ angular.module('tl').service('tl.outgoingPayment.service', [
         id: id,
       }, success, error);
     };
+
+    OutgoingPaymentService.prototype.update = function(id, options) {
+      if (!id) throw new Error('id is required');
+      if (!options) throw new Error('options is required');
+
+      return OutgoingPayment.update({
+        id: id
+      }, options).$promise;
+    };
+
+    OutgoingPaymentService.prototype.delete = function(id) {
+      if (!id) throw new Error('id is required');
+
+      return OutgoingPayment.delete({
+        id: id
+      }).$promise;
+    };
+
 
     return new OutgoingPaymentService();
   }
@@ -2969,6 +2966,54 @@ angular
 
 		return new ProspectService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.report.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/report/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			reports: {
+				method: 'GET',
+				url: '/report-type'
+			},
+			download: {
+				method: 'GET',
+				url: endpoint + '/download'
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
+
+		var ReportService = Service.extend(Report);
+
+		ReportService.prototype.reports = function(success, error) {
+			return Report.reports({}, success, error);
+		};
+
+		ReportService.prototype.listReports = function(key, success, error) {
+			return Report.query({ report: key }, success, error);
+		};
+
+		ReportService.prototype.download = function(reportId, success, error) {
+			return Report.download({ id: reportId }, success, error);
+		};
+
+		return new ReportService();
+	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -3029,54 +3074,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.report.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/report/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			reports: {
-				method: 'GET',
-				url: '/report-type'
-			},
-			download: {
-				method: 'GET',
-				url: endpoint + '/download'
-			}
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
-
-		var ReportService = Service.extend(Report);
-
-		ReportService.prototype.reports = function(success, error) {
-			return Report.reports({}, success, error);
-		};
-
-		ReportService.prototype.listReports = function(key, success, error) {
-			return Report.query({ report: key }, success, error);
-		};
-
-		ReportService.prototype.download = function(reportId, success, error) {
-			return Report.download({ id: reportId }, success, error);
-		};
-
-		return new ReportService();
-	}]);
 
 angular
 	.module('tl')
@@ -3253,6 +3250,58 @@ angular
 
 		return new ScheduleService();
 	}]);
+angular
+  .module('tl')
+  .service('tl.support', [
+    'tl.support.service',
+    'tl.support.message',
+    'tl.support.task',
+    function(service, message, task) {
+      this.service = service;
+      this.message = message;
+      this.task = task;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.support.service', [
+    'tl.socket',
+    'tl.support.message',
+    function(Socket, Message) {
+      'use strict';
+
+      var SupportService = function() {};
+
+      SupportService.prototype.listClientMessages = function(options) {
+        options = options || {};
+        return Message.resource.list(options).$promise;
+      };
+
+      SupportService.prototype.sendInboundMessage = function(text, options) {
+        options = options || {};
+
+        return Message.resource.sendInboundMessage({}, {
+          text: text,
+          data: options.data,
+          city: options.city
+        }).$promise;
+      };
+
+      SupportService.prototype.markMessagesRead = function(messageIds) {
+        return Message.resource.markMessagesRead({}, {
+          messageIds: messageIds
+        }).$promise;
+      };
+
+      SupportService.prototype.listenForClientMessages = function(onMessage) {
+        return new Socket('/support/message/client', onMessage);
+      };
+
+      return new SupportService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -3307,58 +3356,6 @@ angular
 
 		return new SettingsService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.support', [
-    'tl.support.service',
-    'tl.support.message',
-    'tl.support.task',
-    function(service, message, task) {
-      this.service = service;
-      this.message = message;
-      this.task = task;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.support.service', [
-    'tl.socket',
-    'tl.support.message',
-    function(Socket, Message) {
-      'use strict';
-
-      var SupportService = function() {};
-
-      SupportService.prototype.listClientMessages = function(options) {
-        options = options || {};
-        return Message.resource.list(options).$promise;
-      };
-
-      SupportService.prototype.sendInboundMessage = function(text, options) {
-        options = options || {};
-
-        return Message.resource.sendInboundMessage({}, {
-          text: text,
-          data: options.data,
-          city: options.city
-        }).$promise;
-      };
-
-      SupportService.prototype.markMessagesRead = function(messageIds) {
-        return Message.resource.markMessagesRead({}, {
-          messageIds: messageIds
-        }).$promise;
-      };
-
-      SupportService.prototype.listenForClientMessages = function(onMessage) {
-        return new Socket('/support/message/client', onMessage);
-      };
-
-      return new SupportService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
