@@ -160,8 +160,7 @@ angular
         if (!options) throw new Error('options is required');        
 
         return Venue.updateInfo({
-          id: venueId,
-          itemId: itemId
+          venueId: venueId,
         }, options).$promise;
       };
 
