@@ -150,11 +150,14 @@ angular
       /*==============================================================*/
 
 
-      VenueService.prototype.listInfo = function listInfo(venueId) {
+      VenueService.prototype.listInfo = function listInfo(venueId, options) {
         if (!venueId) throw new Error('venueId is required');
-        return Venue.listInfo({
-          id: venueId
-        }).$promise;
+
+        options = options || {};
+
+        options.id = venueId;
+
+        return Venue.listInfo(options).$promise;
       };
 
       VenueService.prototype.updateInfo = function updateInfo(venueId, options) {
