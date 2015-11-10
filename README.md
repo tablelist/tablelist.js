@@ -54,11 +54,20 @@ make
 ```
 This will build `tablelist.js` and `tablelist-dev.js` in the `./build` directory.
 
+or 
+
+```
+gulp release
+```
+
+for building tablelist.js, and tablelist.min.js in the `./release` directory.
+
 #### Testing
 
 To run the unit tests call:
 ```
 make tests
 ```
+
 
 You can also open `./test/index.html` manually.

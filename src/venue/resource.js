@@ -127,8 +127,7 @@ angular
 
       listInfo: {
         method: 'GET',
-        url: endpoint + '/info',
-        isArray: true
+        url: endpoint + '/info'
       },
       
       updateInfo: {
