@@ -146,6 +146,30 @@ angular
       };
 
       /*==============================================================*
+      /* Info
+      /*==============================================================*/
+
+
+      VenueService.prototype.listInfo = function listInfo(venueId, options) {
+        if (!venueId) throw new Error('venueId is required');
+
+        options = options || {};
+
+        options.id = venueId;
+
+        return Venue.listInfo(options).$promise;
+      };
+
+      VenueService.prototype.updateInfo = function updateInfo(venueId, options) {
+        if (!venueId) throw new Error('venueId is required');
+        if (!options) throw new Error('options is required');        
+
+        return Venue.updateInfo({
+          id: venueId,
+        }, options).$promise;
+      };
+
+      /*==============================================================*
       /*
       /*==============================================================*/
 
