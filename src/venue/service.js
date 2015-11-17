@@ -152,6 +152,7 @@ angular
 
       VenueService.prototype.listInfo = function listInfo(venueId, options) {
         if (!venueId) throw new Error('venueId is required');
+        // if (!fields) throw new Error('fields is required');
 
         options = options || {};
 
@@ -160,9 +161,26 @@ angular
         return Venue.listInfo(options).$promise;
       };
 
+      VenueService.prototype.createInfo = function updateInfo(venueId, options) {
+        if (!venueId) throw new Error('venueId is required');
+
+        return Venue.createInfo({
+          id: venueId,
+        }, options).$promise;
+      };
+
+      VenueService.prototype.readInfo = function updateInfo(venueId, options) {
+        if (!venueId) throw new Error('venueId is required');
+        // if (!key) throw new Error('key is required');
+
+        return Venue.readInfo({
+          id: venueId,
+        }, options).$promise;
+      };
+
       VenueService.prototype.updateInfo = function updateInfo(venueId, options) {
         if (!venueId) throw new Error('venueId is required');
-        if (!options) throw new Error('options is required');        
+        // if (!key) throw new Error('key is required');    
 
         return Venue.updateInfo({
           id: venueId,

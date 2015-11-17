@@ -127,12 +127,23 @@ angular
 
       listInfo: {
         method: 'GET',
-        url: endpoint + '/info'
+        url: endpoint + '/info',
+        isArray: true,
+      },
+
+      createInfo: {
+        method: 'POST',
+        url: endpoint + '/info/'
+      },
+
+      readInfo: {
+        method: 'GET',
+        url: endpoint + '/info/:key'
       },
       
       updateInfo: {
         method: 'PUT',
-        url: endpoint + '/info'
+        url: endpoint + '/info/:key'
       },
 
       /*==============================================================*
