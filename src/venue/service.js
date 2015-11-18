@@ -152,42 +152,45 @@ angular
 
       VenueService.prototype.listInfo = function listInfo(venueId, options) {
         if (!venueId) throw new Error('venueId is required');
-        // if (!fields) throw new Error('fields is required');
 
         options = options || {};
 
-        options.id = venueId;
-
-        return Venue.listInfo(options).$promise;
-      };
-
-      VenueService.prototype.createInfo = function updateInfo(venueId, key, options) {
-        if (!venueId) throw new Error('venueId is required');
-        if (!key) throw new Error('key is required');
-
-        return Venue.createInfo({
-          id: venueId,
-          key: key,
+        return Venue.listInfo({
+          id : venueId,
         }, options).$promise;
       };
 
-      VenueService.prototype.readInfo = function updateInfo(venueId, key, options) {
+      VenueService.prototype.createInfo = function createInfo(venueId, options) {
+        if (!venueId) throw new Error('venueId is required');
+        if (!options) throw new Error('options is required');
+        if (!options.key) throw new Error('options.key is required');
+
+        return Venue.createInfo({
+          id : venueId,
+        }, options).$promise;
+      };
+
+      VenueService.prototype.readInfo = function readInfo(venueId, key, options) {
         if (!venueId) throw new Error('venueId is required');
         if (!key) throw new Error('key is required');
 
+        options = options || {};
+
         return Venue.readInfo({
-          id: venueId,
-          key: key,
+          id : venueId,
+          key : key,
         }, options).$promise;
       };
 
       VenueService.prototype.updateInfo = function updateInfo(venueId, key, options) {
         if (!venueId) throw new Error('venueId is required');
-        if (!key) throw new Error('key is required');    
+        if (!key) throw new Error('key is required');
+
+        options = options || {};
 
         return Venue.updateInfo({
-          id: venueId,
-          key: key,
+          id : venueId,
+          key : key,
         }, options).$promise;
       };
 
