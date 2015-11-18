@@ -161,29 +161,33 @@ angular
         return Venue.listInfo(options).$promise;
       };
 
-      VenueService.prototype.createInfo = function updateInfo(venueId, options) {
+      VenueService.prototype.createInfo = function updateInfo(venueId, key, options) {
         if (!venueId) throw new Error('venueId is required');
+        if (!key) throw new Error('key is required');
 
         return Venue.createInfo({
           id: venueId,
+          key: key,
         }, options).$promise;
       };
 
-      VenueService.prototype.readInfo = function updateInfo(venueId, options) {
+      VenueService.prototype.readInfo = function updateInfo(venueId, key, options) {
         if (!venueId) throw new Error('venueId is required');
-        // if (!key) throw new Error('key is required');
+        if (!key) throw new Error('key is required');
 
         return Venue.readInfo({
           id: venueId,
+          key: key,
         }, options).$promise;
       };
 
-      VenueService.prototype.updateInfo = function updateInfo(venueId, options) {
+      VenueService.prototype.updateInfo = function updateInfo(venueId, key, options) {
         if (!venueId) throw new Error('venueId is required');
-        // if (!key) throw new Error('key is required');    
+        if (!key) throw new Error('key is required');    
 
         return Venue.updateInfo({
           id: venueId,
+          key: key,
         }, options).$promise;
       };
 
