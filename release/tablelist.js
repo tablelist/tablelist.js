@@ -943,6 +943,52 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatesale.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-sale';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliatesale.service', [
+  'tl.affiliatesale.resource',
+  'tl.service',
+  function(AffiliateSale, Service) {
+    'use strict';
+
+    var AffiliateSaleService = Service.extend(AffiliateSale);
+
+    AffiliateSaleService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return AffiliateSale.list(options).$promise;
+    };
+
+    return new AffiliateSaleService();
+  }
+]);
+
+
+angular
+	.module('tl')
 	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1209,52 +1255,6 @@ angular
       return new AmbassadorService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatesale.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-sale';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliatesale.service', [
-  'tl.affiliatesale.resource',
-  'tl.service',
-  function(AffiliateSale, Service) {
-    'use strict';
-
-    var AffiliateSaleService = Service.extend(AffiliateSale);
-
-    AffiliateSaleService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return AffiliateSale.list(options).$promise;
-    };
-
-    return new AffiliateSaleService();
-  }
-]);
 
 
 angular
@@ -2129,6 +2129,87 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/inquiry/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+	      approve: {
+	        method: 'POST',
+	        url: endpoint + '/approve',
+	        isArray: false
+	      },
+	      decline: {
+	        method: 'POST',
+	        url: endpoint + '/decline',
+	        isArray: false
+	      },
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.inquiry.service', [
+    'tl.service',
+    'tl.inquiry.resource',
+    function(Service, Inquiry) {
+      'use strict';
+
+      /*==============================================================*
+      /* Constants
+      /*==============================================================*/
+      var DEFAULT_LIMIT = 100;
+      var DEFAULT_SORT = '-created';
+
+      /*==============================================================*
+      /* Constructor
+      /*==============================================================*/
+      var InquiryService = Service.extend(Inquiry);
+
+      InquiryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        options.sort = options.sort || DEFAULT_SORT;
+        options.limit = options.limit || DEFAULT_LIMIT;
+
+        return Inquiry.query(options).$promise;
+      };
+
+      InquiryService.prototype.approve = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.inquiryId) throw new Error('options.inquiryId is required');
+
+        options.id = options.inquiryId;
+        delete options.inquiryId;
+
+        return Inquiry.approve(options).$promise;
+      };
+
+      InquiryService.prototype.decline = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.inquiryId) throw new Error('options.inquiryId is required');
+
+        options.id = options.inquiryId;
+        delete options.inquiryId;
+
+        return Inquiry.decline(options).$promise;
+      };
+
+      return new InquiryService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
 	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2223,87 +2304,6 @@ angular
       };
 
       return new InventoryService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/inquiry/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-	      approve: {
-	        method: 'POST',
-	        url: endpoint + '/approve',
-	        isArray: false
-	      },
-	      decline: {
-	        method: 'POST',
-	        url: endpoint + '/decline',
-	        isArray: false
-	      },
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.inquiry.service', [
-    'tl.service',
-    'tl.inquiry.resource',
-    function(Service, Inquiry) {
-      'use strict';
-
-      /*==============================================================*
-      /* Constants
-      /*==============================================================*/
-      var DEFAULT_LIMIT = 100;
-      var DEFAULT_SORT = '-created';
-
-      /*==============================================================*
-      /* Constructor
-      /*==============================================================*/
-      var InquiryService = Service.extend(Inquiry);
-
-      InquiryService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        options.sort = options.sort || DEFAULT_SORT;
-        options.limit = options.limit || DEFAULT_LIMIT;
-
-        return Inquiry.query(options).$promise;
-      };
-
-      InquiryService.prototype.approve = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.inquiryId) throw new Error('options.inquiryId is required');
-
-        options.id = options.inquiryId;
-        delete options.inquiryId;
-
-        return Inquiry.approve(options).$promise;
-      };
-
-      InquiryService.prototype.decline = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.inquiryId) throw new Error('options.inquiryId is required');
-
-        options.id = options.inquiryId;
-        delete options.inquiryId;
-
-        return Inquiry.decline(options).$promise;
-      };
-
-      return new InquiryService();
     }
   ]);
 
@@ -3106,35 +3106,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.reward.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/reward/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
-
-		var RewardService = Service.extend(Reward);
-
-		return new RewardService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.sale', ['tl.sale.resource', 'tl.sale.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3475,6 +3446,35 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.reward.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/reward/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
+
+		var RewardService = Service.extend(Reward);
+
+		return new RewardService();
+	}]);
 
 angular
 	.module('tl')
@@ -4295,11 +4295,19 @@ angular
 
       listInfo: {
         method: 'GET',
-        url: endpoint + '/info'
+        url: endpoint + '/info',
+        isArray: true,
       },
-      
+      readInfo: {
+        method: 'GET',
+        url: endpoint + '/info/:key'
+      },
       updateInfo: {
         method: 'PUT',
+        url: endpoint + '/info/:key'
+      },
+      createInfo: {
+        method: 'POST',
         url: endpoint + '/info'
       },
 
@@ -4525,23 +4533,80 @@ angular
       /* Info
       /*==============================================================*/
 
-
+     /**
+      * List the information pages available on a venue
+      * 
+      * @method listInfo
+      * @param {String} venueId
+      * @param {Object} [options]
+      * @param {String} [options.fields] - CSV of fields to be returned.
+      */
       VenueService.prototype.listInfo = function listInfo(venueId, options) {
         if (!venueId) throw new Error('venueId is required');
 
         options = options || {};
 
-        options.id = venueId;
-
-        return Venue.listInfo(options).$promise;
+        return Venue.listInfo({
+          id : venueId
+        }, options).$promise;
       };
 
-      VenueService.prototype.updateInfo = function updateInfo(venueId, options) {
+     /**
+      * Create a new information page on a venue
+      * 
+      * @method createInfo
+      * @param {String} venueId
+      * @param {Object} options
+      * @param {String} options.key - unique key of the page
+      * @param {String} [options.text] - content of the page
+      * @param {String} [options.title] - title of the page
+      */
+      VenueService.prototype.createInfo = function createInfo(venueId, options) {
         if (!venueId) throw new Error('venueId is required');
-        if (!options) throw new Error('options is required');        
+        if (!options) throw new Error('options is required');
+        if (!options.key) throw new Error('options.key is required');
+
+        return Venue.createInfo({
+          id : venueId
+        }, options).$promise;
+      };
+
+     /**
+      * Read an information page on a venue
+      * 
+      * @method readInfo
+      * @param {String} venueId
+      * @param {String} key - unique key of the page
+      */
+      VenueService.prototype.readInfo = function readInfo(venueId, key) {
+        if (!venueId) throw new Error('venueId is required');
+        if (!key) throw new Error('key is required');
+
+        return Venue.readInfo({
+          id : venueId,
+          key : key
+        }).$promise;
+      };
+
+     /**
+      * Update an information page on a venue
+      * 
+      * @method updateInfo
+      * @param {String} venueId
+      * @param {String} key - unique key of the page
+      * @param {Object} options
+      * @param {String} [options.text] - content of the page
+      * @param {String} [options.title] - title of the page
+      */
+      VenueService.prototype.updateInfo = function updateInfo(venueId, key, options) {
+        if (!venueId) throw new Error('venueId is required');
+        if (!key) throw new Error('key is required');
+
+        options = options || {};
 
         return Venue.updateInfo({
-          id: venueId,
+          id : venueId,
+          key : key
         }, options).$promise;
       };
 
