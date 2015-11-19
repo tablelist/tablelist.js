@@ -149,7 +149,14 @@ angular
       /* Info
       /*==============================================================*/
 
-
+     /**
+      * List the information pages available on a venue
+      * 
+      * @method listInfo
+      * @param {String} venueId
+      * @param {Object} [options]
+      * @param {String} [options.fields] - CSV of fields to be returned.
+      */
       VenueService.prototype.listInfo = function listInfo(venueId, options) {
         if (!venueId) throw new Error('venueId is required');
 
@@ -160,6 +167,16 @@ angular
         }, options).$promise;
       };
 
+     /**
+      * Create a new information page on a venue
+      * 
+      * @method createInfo
+      * @param {String} venueId
+      * @param {Object} options
+      * @param {String} options.key - unique key of the page
+      * @param {String} [options.text] - content of the page
+      * @param {String} [options.title] - title of the page
+      */
       VenueService.prototype.createInfo = function createInfo(venueId, options) {
         if (!venueId) throw new Error('venueId is required');
         if (!options) throw new Error('options is required');
@@ -170,6 +187,13 @@ angular
         }, options).$promise;
       };
 
+     /**
+      * Read an information page on a venue
+      * 
+      * @method readInfo
+      * @param {String} venueId
+      * @param {String} key - unique key of the page
+      */
       VenueService.prototype.readInfo = function readInfo(venueId, key) {
         if (!venueId) throw new Error('venueId is required');
         if (!key) throw new Error('key is required');
@@ -180,6 +204,16 @@ angular
         }).$promise;
       };
 
+     /**
+      * Update an information page on a venue
+      * 
+      * @method updateInfo
+      * @param {String} venueId
+      * @param {String} key - unique key of the page
+      * @param {Object} options
+      * @param {String} [options.text] - content of the page
+      * @param {String} [options.title] - title of the page
+      */
       VenueService.prototype.updateInfo = function updateInfo(venueId, key, options) {
         if (!venueId) throw new Error('venueId is required');
         if (!key) throw new Error('key is required');
