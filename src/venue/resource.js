@@ -140,7 +140,7 @@ angular
       },
       createInfo: {
         method: 'POST',
-        url: endpoint + '/info/'
+        url: endpoint + '/info'
       },
 
       /*==============================================================*

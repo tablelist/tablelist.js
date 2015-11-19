@@ -156,7 +156,7 @@ angular
         options = options || {};
 
         return Venue.listInfo({
-          id : venueId,
+          id : venueId
         }, options).$promise;
       };
 
@@ -166,20 +166,18 @@ angular
         if (!options.key) throw new Error('options.key is required');
 
         return Venue.createInfo({
-          id : venueId,
+          id : venueId
         }, options).$promise;
       };
 
-      VenueService.prototype.readInfo = function readInfo(venueId, key, options) {
+      VenueService.prototype.readInfo = function readInfo(venueId, key) {
         if (!venueId) throw new Error('venueId is required');
         if (!key) throw new Error('key is required');
 
-        options = options || {};
-
         return Venue.readInfo({
           id : venueId,
-          key : key,
-        }, options).$promise;
+          key : key
+        }).$promise;
       };
 
       VenueService.prototype.updateInfo = function updateInfo(venueId, key, options) {
@@ -190,7 +188,7 @@ angular
 
         return Venue.updateInfo({
           id : venueId,
-          key : key,
+          key : key
         }, options).$promise;
       };
 
