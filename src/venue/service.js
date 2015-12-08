@@ -78,6 +78,17 @@ angular
         return Venue.listInventory(options).$promise;
       };
 
+      VenueService.prototype.listActiveInventory = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
+        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
+        options.ticket = options.ticket || 'false';
+
+        return Venue.listActiveInventory(options).$promise;
+      };
+
       VenueService.prototype.listInventoryTierConfigs = function(options) {
         if (!options) throw new Error('options.required');
         if (!options.id) throw new Error('options.id is required');

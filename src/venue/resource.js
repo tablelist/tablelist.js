@@ -58,6 +58,11 @@ angular
         url: endpoint + '/inventory',
         isArray: false
       },
+      listActiveInventory: {
+        method: 'GET',
+        url: endpoint + '/active-inventory',
+        isArray: true
+      },
       listInventoryAdmin: {
         method: 'GET',
         url: endpoint + '/inventory/admin',
