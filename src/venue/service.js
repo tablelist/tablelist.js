@@ -73,18 +73,18 @@ angular
 
         options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
         options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-        options.ticket = options.ticket || 'false';
 
         return Venue.listInventory(options).$promise;
       };
 
-      VenueService.prototype.listActiveInventory = function(options) {
+      VenueService.prototype.listActiveInventory = function(venueId, options) {
+        
+        if (!venueId) throw new Error('venueId is required');
         if (!options) throw new Error('options.required');
-        if (!options.id) throw new Error('options.id is required');
 
-        options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
-        options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-        options.ticket = options.ticket || 'false';
+        options.id = venueId;
+        options.start = options.start || moment().startOf('month').unix();
+        options.end = options.end || moment().endOf('month').unix();
 
         return Venue.listActiveInventory(options).$promise;
       };
