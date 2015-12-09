@@ -80,11 +80,13 @@ angular
       VenueService.prototype.listActiveInventory = function(venueId, options) {
         
         if (!venueId) throw new Error('venueId is required');
-        if (!options) throw new Error('options.required');
+        if (!options) throw new Error('options is required');
+        if (!options.start) throw new Error('options.start required');
+        if (!options.end) throw new Error('options.end required');
 
         options.id = venueId;
-        options.start = options.start || moment().startOf('month').unix();
-        options.end = options.end || moment().endOf('month').unix();
+        options.start = options.start;
+        options.end = options.end;
 
         return Venue.listActiveInventory(options).$promise;
       };
