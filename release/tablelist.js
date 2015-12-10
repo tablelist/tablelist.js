@@ -3106,6 +3106,35 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.reward.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/reward/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
+
+		var RewardService = Service.extend(Reward);
+
+		return new RewardService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.sale', ['tl.sale.resource', 'tl.sale.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3446,35 +3475,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.reward', ['tl.reward.resource', 'tl.reward.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.reward.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/reward/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.reward.service', ['tl.service', 'tl.reward.resource', function(Service, Reward){
-
-		var RewardService = Service.extend(Reward);
-
-		return new RewardService();
-	}]);
 
 angular
 	.module('tl')
@@ -4226,6 +4226,11 @@ angular
         url: endpoint + '/inventory',
         isArray: false
       },
+      listActiveInventory: {
+        method: 'GET',
+        url: endpoint + '/active-inventory',
+        isArray: true
+      },
       listInventoryAdmin: {
         method: 'GET',
         url: endpoint + '/inventory/admin',
@@ -4457,9 +4462,20 @@ angular
 
         options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
         options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-        options.ticket = options.ticket || 'false';
 
         return Venue.listInventory(options).$promise;
+      };
+
+      VenueService.prototype.listActiveInventory = function(venueId, options) {
+        
+        if (!venueId) throw new Error('venueId is required');
+        if (!options) throw new Error('options.required');
+
+        options.id = venueId;
+        options.start = options.start || moment().startOf('month').unix();
+        options.end = options.end || moment().endOf('month').unix();
+
+        return Venue.listActiveInventory(options).$promise;
       };
 
       VenueService.prototype.listInventoryTierConfigs = function(options) {
@@ -4744,6 +4760,66 @@ angular
 
 angular
   .module('tl')
+  .service('tl.support.message', [
+    'tl.support.message.resource',
+    'tl.support.message.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/message';
+
+    return resource(endpoint, {}, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      markMessagesRead: {
+        method: 'POST',
+        url: endpoint + '/read',
+        isArray: true
+      },
+      sendInboundMessage: {
+        method: 'POST',
+        url: endpoint + '/inbound',
+        isArray: false
+      },
+      sendOutboundMessage: {
+        method: 'POST',
+        url: endpoint + '/outbound',
+        isArray: false
+      },
+      sendInternalMessage: {
+        method: 'POST',
+        url: endpoint + '/internal',
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.message.service', [
+    'tl.service',
+    'tl.support.message.resource',
+    function(Service, Message) {
+      'use strict';
+
+      var SupportMessageService = Service.extend(Message);
+
+      return new SupportMessageService();
+    }
+  ]);
+
+angular
+  .module('tl')
   .service('tl.support.agent', [
     'tl.support.agent.resource',
     'tl.support.agent.service',
@@ -4849,66 +4925,6 @@ angular
       };
 
       return new SupportAgentService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.support.message', [
-    'tl.support.message.resource',
-    'tl.support.message.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/message';
-
-    return resource(endpoint, {}, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      markMessagesRead: {
-        method: 'POST',
-        url: endpoint + '/read',
-        isArray: true
-      },
-      sendInboundMessage: {
-        method: 'POST',
-        url: endpoint + '/inbound',
-        isArray: false
-      },
-      sendOutboundMessage: {
-        method: 'POST',
-        url: endpoint + '/outbound',
-        isArray: false
-      },
-      sendInternalMessage: {
-        method: 'POST',
-        url: endpoint + '/internal',
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.message.service', [
-    'tl.service',
-    'tl.support.message.resource',
-    function(Service, Message) {
-      'use strict';
-
-      var SupportMessageService = Service.extend(Message);
-
-      return new SupportMessageService();
     }
   ]);
 
