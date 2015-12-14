@@ -58,6 +58,11 @@ angular
         url: endpoint + '/inventory',
         isArray: false
       },
+      listActiveInventory: {
+        method: 'GET',
+        url: endpoint + '/active-inventory',
+        isArray: true
+      },
       listInventoryAdmin: {
         method: 'GET',
         url: endpoint + '/inventory/admin',
@@ -119,6 +124,28 @@ angular
       deleteItem: {
         method: 'DELETE',
         url: endpoint + '/item/:itemId'
+      },
+
+      /*==============================================================*
+      /* Info
+      /*==============================================================*/
+
+      listInfo: {
+        method: 'GET',
+        url: endpoint + '/info',
+        isArray: true,
+      },
+      readInfo: {
+        method: 'GET',
+        url: endpoint + '/info/:key'
+      },
+      updateInfo: {
+        method: 'PUT',
+        url: endpoint + '/info/:key'
+      },
+      createInfo: {
+        method: 'POST',
+        url: endpoint + '/info'
       },
 
       /*==============================================================*

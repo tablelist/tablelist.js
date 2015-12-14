@@ -22,6 +22,24 @@ angular.module('tl').service('tl.outgoingPayment.service', [
       }, success, error);
     };
 
+    OutgoingPaymentService.prototype.update = function(id, options) {
+      if (!id) throw new Error('id is required');
+      if (!options) throw new Error('options is required');
+
+      return OutgoingPayment.update({
+        id: id
+      }, options).$promise;
+    };
+
+    OutgoingPaymentService.prototype.delete = function(id) {
+      if (!id) throw new Error('id is required');
+
+      return OutgoingPayment.delete({
+        id: id
+      }).$promise;
+    };
+
+
     return new OutgoingPaymentService();
   }
 ]);

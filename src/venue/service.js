@@ -73,9 +73,22 @@ angular
 
         options.start = options.start || moment().startOf('month').format("YYYY-MM-DD");
         options.end = options.end || moment().endOf('month').format("YYYY-MM-DD");
-        options.ticket = options.ticket || 'false';
 
         return Venue.listInventory(options).$promise;
+      };
+
+      VenueService.prototype.listActiveInventory = function(venueId, options) {
+
+        if (!venueId) throw new Error('venueId is required');
+        if (!options) throw new Error('options is required');
+        if (!options.start) throw new Error('options.start required');
+        if (!options.end) throw new Error('options.end required');
+
+        options.id = venueId;
+        options.start = options.start;
+        options.end = options.end;
+
+        return Venue.listActiveInventory(options).$promise;
       };
 
       VenueService.prototype.listInventoryTierConfigs = function(options) {
@@ -142,6 +155,87 @@ angular
         return Venue.deleteItem({
           id: venueId,
           itemId: itemId
+        }, options).$promise;
+      };
+
+      /*==============================================================*
+      /* Info
+      /*==============================================================*/
+
+     /**
+      * List the information pages available on a venue
+      *
+      * @method listInfo
+      * @param {String} venueId
+      * @param {Object} [options]
+      * @param {String} [options.fields] - CSV of fields to be returned.
+      */
+      VenueService.prototype.listInfo = function listInfo(venueId, options) {
+        if (!venueId) throw new Error('venueId is required');
+
+        options = options || {};
+
+        return Venue.listInfo({
+          id : venueId
+        }, options).$promise;
+      };
+
+     /**
+      * Create a new information page on a venue
+      *
+      * @method createInfo
+      * @param {String} venueId
+      * @param {Object} options
+      * @param {String} options.key - unique key of the page
+      * @param {String} [options.text] - content of the page
+      * @param {String} [options.title] - title of the page
+      */
+      VenueService.prototype.createInfo = function createInfo(venueId, options) {
+        if (!venueId) throw new Error('venueId is required');
+        if (!options) throw new Error('options is required');
+        if (!options.key) throw new Error('options.key is required');
+
+        return Venue.createInfo({
+          id : venueId
+        }, options).$promise;
+      };
+
+     /**
+      * Read an information page on a venue
+      *
+      * @method readInfo
+      * @param {String} venueId
+      * @param {String} key - unique key of the page
+      */
+      VenueService.prototype.readInfo = function readInfo(venueId, key) {
+        if (!venueId) throw new Error('venueId is required');
+        if (!key) throw new Error('key is required');
+
+        return Venue.readInfo({
+          id : venueId,
+          key : key
+        }).$promise;
+      };
+
+     /**
+      * Update an information page on a venue
+      *
+      * @method updateInfo
+      * @param {String} venueId
+      * @param {String} key - unique key of the page
+      * @param {Object} options
+      * @param {String} [options.text] - content of the page
+      * @param {String} [options.title] - title of the page
+      */
+      VenueService.prototype.updateInfo = function updateInfo(venueId, key, options) {
+        if (!venueId) throw new Error('venueId is required');
+        if (!key) throw new Error('key is required');
+
+        options = options || {};
+
+        return Venue.updateInfo({
+          id : venueId,
+          key : key
         }, options).$promise;
       };
 

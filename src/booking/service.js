@@ -186,7 +186,7 @@ angular.module('tl').service('tl.booking.service', [
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
 
-      var id = options.id; 
+      var id = options.id;
       delete options.id;
 
       return Booking.update({
