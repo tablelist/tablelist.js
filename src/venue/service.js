@@ -146,12 +146,47 @@ angular
       };
 
       /*==============================================================*
-      /*
+      /* Sales
       /*==============================================================*/
 
-      VenueService.prototype.listBookings = function(params, success, error) {
-        return Venue.listBookings(params, success, error);
+      VenueService.prototype.listBookings = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listBookings(options).$promise;
       };
+
+      VenueService.prototype.listTableBookings = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listTableBookings(options).$promise;
+      };
+
+      VenueService.prototype.listAdmissionBookings = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listAdmissionBookings(options).$promise;
+      };
+
+      VenueService.prototype.listTickets = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listTickets(options).$promise;
+      };
+
+      VenueService.prototype.listTicketStats = function(options) {
+        if (!options) throw new Error('options.required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return Venue.listTicketStats(options).$promise;
+      };
+
+      /*==============================================================*
+      /* Events
+      /*==============================================================*/
 
       VenueService.prototype.listEvents = function(options) {
         if (!options) throw new Error('options.required');
@@ -159,6 +194,10 @@ angular
 
         return Venue.listEvents(options).$promise;
       };
+
+      /*==============================================================*
+      /* Reviews
+      /*==============================================================*/
 
       VenueService.prototype.listReviews = function(options) {
         if (!options) throw new Error('options.required');

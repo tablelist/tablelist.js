@@ -162,6 +162,30 @@ angular
         isArray: true
       },
 
+      listTableBookings: {
+        method: 'GET',
+        url: endpoint + '/booking/table',
+        isArray: true
+      },
+
+      listAdmissionBookings: {
+        method: 'GET',
+        url: endpoint + '/booking/admission',
+        isArray: true
+      },
+
+      listTickets: {
+        method: 'GET',
+        url: endpoint + '/ticket',
+        isArray: true
+      },
+
+      listTicketStats: {
+        method: 'GET',
+        url: endpoint + '/ticket/stats',
+        isArray: false
+      },
+
       listReviews: {
         method: 'GET',
         url: endpoint + '/review',
