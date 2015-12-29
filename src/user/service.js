@@ -344,6 +344,16 @@ angular
         return User.listAffiliates(options).$promise;
       };
 
+      UserService.prototype.listStats = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listStats(options).$promise;
+      };
+
       UserService.prototype.access = function access(options) {
         if (!options) throw new Error('options is required');
         if (!options.userId) throw new Error('options.userId is required');

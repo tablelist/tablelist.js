@@ -113,6 +113,11 @@ angular
         url: endpoint + '/venue',
         isArray: true
       },
+      listStats: {
+        method: "GET",
+        url: endpoint + '/stats',
+        isArray: true
+      },
       favorite: {
         method: "POST",
         url: endpoint + '/favorite',

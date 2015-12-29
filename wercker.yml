@@ -1,18 +1,28 @@
-box: wercker/ubuntu12.04-nodejs0.10
+box: node:4.2.4
 
 build:
-    steps:
-      - npm-install
-      - plasticine/bower-install@0.0.4
-      - yeehaa/gulp@0.0.4
-      - script:
-          name: echo nodejs information
-          code: |
-            echo "node version $(node -v) running"
-            echo "npm version $(npm -v) running"
+  steps:
+    - script:
+        name: build info
+        code: |
+          echo "node version $(node -v) running"
+          echo "npm version $(npm -v) running"
 
-    after-steps:
-      - hipchat-notify:
-          token: $HIPCHAT_TOKEN
-          room-id: 232970
-          from-name: Wercker
+    - npm-install
+
+    - script:
+        name: bower
+        code: |
+          npm install -g bower
+          bower install --allow-root
+
+    - script:
+        name: gulp
+        code: |
+          npm install -g gulp-cli
+          gulp test --allow-root
+
+  after-steps:
+    - slack-notifier:
+        url: $SLACK_URL
+        channel: $SLACK_CHANNEL
