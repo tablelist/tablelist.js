@@ -1,7 +1,7 @@
 
 angular
 	.module('tl')
-	.factory('tl.clent.resource', ['tl.resource', function(resource){
+	.factory('tl.client.resource', ['tl.resource', function(resource){
 
 		var endpoint = '/client';
 
