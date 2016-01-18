@@ -1831,6 +1831,58 @@ angular.module('tl').service('tl.city.service', [
 
 angular
 	.module('tl')
+	.service('tl.client', ['tl.client.resource', 'tl.client.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.clent.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/client';
+
+		return resource(endpoint, {
+			// nothing here 
+		}, {
+			paymentToken: {
+				method: 'GET',
+				url: '/paymentToken',
+				isArray: false
+			},
+			startup: {
+				method: 'GET',
+				url: '/startup',
+				isArray: false
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.client.service', ['tl.service', 'tl.client.resource', function(Service, Client){
+
+		var ClientService = function(){};
+
+		/**
+		 * Get's the paymentToken for use with the Braintree SDK
+		 */
+		ClientService.prototype.paymentToken = function(success, error) {
+			return Client.paymentToken({}, success, error);
+		};
+
+		/**
+		 * Get's the startup config object
+		 */
+		ClientService.prototype.startup = function(success, error) {
+			return Client.startup({}, success, error);
+		};
+
+		return new ClientService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2129,6 +2181,87 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/inquiry/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+	      approve: {
+	        method: 'POST',
+	        url: endpoint + '/approve',
+	        isArray: false
+	      },
+	      decline: {
+	        method: 'POST',
+	        url: endpoint + '/decline',
+	        isArray: false
+	      },
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.inquiry.service', [
+    'tl.service',
+    'tl.inquiry.resource',
+    function(Service, Inquiry) {
+      'use strict';
+
+      /*==============================================================*
+      /* Constants
+      /*==============================================================*/
+      var DEFAULT_LIMIT = 100;
+      var DEFAULT_SORT = '-created';
+
+      /*==============================================================*
+      /* Constructor
+      /*==============================================================*/
+      var InquiryService = Service.extend(Inquiry);
+
+      InquiryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        options.sort = options.sort || DEFAULT_SORT;
+        options.limit = options.limit || DEFAULT_LIMIT;
+
+        return Inquiry.query(options).$promise;
+      };
+
+      InquiryService.prototype.approve = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.inquiryId) throw new Error('options.inquiryId is required');
+
+        options.id = options.inquiryId;
+        delete options.inquiryId;
+
+        return Inquiry.approve(options).$promise;
+      };
+
+      InquiryService.prototype.decline = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.inquiryId) throw new Error('options.inquiryId is required');
+
+        options.id = options.inquiryId;
+        delete options.inquiryId;
+
+        return Inquiry.decline(options).$promise;
+      };
+
+      return new InquiryService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
 	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2226,87 +2359,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/inquiry/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-	      approve: {
-	        method: 'POST',
-	        url: endpoint + '/approve',
-	        isArray: false
-	      },
-	      decline: {
-	        method: 'POST',
-	        url: endpoint + '/decline',
-	        isArray: false
-	      },
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.inquiry.service', [
-    'tl.service',
-    'tl.inquiry.resource',
-    function(Service, Inquiry) {
-      'use strict';
-
-      /*==============================================================*
-      /* Constants
-      /*==============================================================*/
-      var DEFAULT_LIMIT = 100;
-      var DEFAULT_SORT = '-created';
-
-      /*==============================================================*
-      /* Constructor
-      /*==============================================================*/
-      var InquiryService = Service.extend(Inquiry);
-
-      InquiryService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        options.sort = options.sort || DEFAULT_SORT;
-        options.limit = options.limit || DEFAULT_LIMIT;
-
-        return Inquiry.query(options).$promise;
-      };
-
-      InquiryService.prototype.approve = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.inquiryId) throw new Error('options.inquiryId is required');
-
-        options.id = options.inquiryId;
-        delete options.inquiryId;
-
-        return Inquiry.approve(options).$promise;
-      };
-
-      InquiryService.prototype.decline = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.inquiryId) throw new Error('options.inquiryId is required');
-
-        options.id = options.inquiryId;
-        delete options.inquiryId;
-
-        return Inquiry.decline(options).$promise;
-      };
-
-      return new InquiryService();
-    }
-  ]);
-
 angular
   .module('tl')
   .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
@@ -2352,6 +2404,69 @@ angular
       };
 
       return new InventorySummaryService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.invoice.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/invoice/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        // add additional methods here
+        update: {
+          method: 'PUT',
+          url: endpoint,
+          isArray: false
+        },
+        readPdf: {
+          method: 'GET',
+          url: endpoint + '/pdf',
+          isArray: false
+        },
+        createPdf: {
+          method: 'POST',
+          url: endpoint + '/pdf',
+          isArray: false
+        }
+
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.invoice.service', ['tl.service', 'tl.invoice.resource',
+    function(Service, Invoice) {
+
+      var InvoiceService = Service.extend(Invoice);
+
+      InvoiceService.prototype.readPdf = function(invoiceId) {
+        return Invoice.readPdf({
+          id: invoiceId
+        });
+      };
+
+      InvoiceService.prototype.createPdf = function(invoiceId) {
+        return Invoice.createPdf({
+          id: invoiceId
+        });
+      };
+
+      return new InvoiceService();
     }
   ]);
 
@@ -2479,69 +2594,6 @@ angular
 
     return new ItemService();
   }]);
-
-angular
-  .module('tl')
-  .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.invoice.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/invoice/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        // add additional methods here
-        update: {
-          method: 'PUT',
-          url: endpoint,
-          isArray: false
-        },
-        readPdf: {
-          method: 'GET',
-          url: endpoint + '/pdf',
-          isArray: false
-        },
-        createPdf: {
-          method: 'POST',
-          url: endpoint + '/pdf',
-          isArray: false
-        }
-
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.invoice.service', ['tl.service', 'tl.invoice.resource',
-    function(Service, Invoice) {
-
-      var InvoiceService = Service.extend(Invoice);
-
-      InvoiceService.prototype.readPdf = function(invoiceId) {
-        return Invoice.readPdf({
-          id: invoiceId
-        });
-      };
-
-      InvoiceService.prototype.createPdf = function(invoiceId) {
-        return Invoice.createPdf({
-          id: invoiceId
-        });
-      };
-
-      return new InvoiceService();
-    }
-  ]);
 
 
 angular
@@ -3430,6 +3482,51 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.tracker', [
+    'tl.tracker.resource',
+    'tl.tracker.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tracker';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      create: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tracker.service', [
+    'tl.service',
+    'tl.tracker.resource',
+    function(Service, Tracker) {
+      'use strict';
+
+      var TrackerService = Service.extend(Tracker);
+
+      TrackerService.prototype.create = function(options) {
+        return Tracker.save({}, options).$promise;
+      };
+
+      return new TrackerService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -4129,51 +4226,6 @@ angular
     }
   ]);
 
-angular
-  .module('tl')
-  .service('tl.tracker', [
-    'tl.tracker.resource',
-    'tl.tracker.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tracker';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      create: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tracker.service', [
-    'tl.service',
-    'tl.tracker.resource',
-    function(Service, Tracker) {
-      'use strict';
-
-      var TrackerService = Service.extend(Tracker);
-
-      TrackerService.prototype.create = function(options) {
-        return Tracker.save({}, options).$promise;
-      };
-
-      return new TrackerService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
@@ -4840,66 +4892,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.support.message', [
-    'tl.support.message.resource',
-    'tl.support.message.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/message';
-
-    return resource(endpoint, {}, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      markMessagesRead: {
-        method: 'POST',
-        url: endpoint + '/read',
-        isArray: true
-      },
-      sendInboundMessage: {
-        method: 'POST',
-        url: endpoint + '/inbound',
-        isArray: false
-      },
-      sendOutboundMessage: {
-        method: 'POST',
-        url: endpoint + '/outbound',
-        isArray: false
-      },
-      sendInternalMessage: {
-        method: 'POST',
-        url: endpoint + '/internal',
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.message.service', [
-    'tl.service',
-    'tl.support.message.resource',
-    function(Service, Message) {
-      'use strict';
-
-      var SupportMessageService = Service.extend(Message);
-
-      return new SupportMessageService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.support.agent', [
     'tl.support.agent.resource',
     'tl.support.agent.service',
@@ -5005,6 +4997,66 @@ angular
       };
 
       return new SupportAgentService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.support.message', [
+    'tl.support.message.resource',
+    'tl.support.message.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/message';
+
+    return resource(endpoint, {}, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      markMessagesRead: {
+        method: 'POST',
+        url: endpoint + '/read',
+        isArray: true
+      },
+      sendInboundMessage: {
+        method: 'POST',
+        url: endpoint + '/inbound',
+        isArray: false
+      },
+      sendOutboundMessage: {
+        method: 'POST',
+        url: endpoint + '/outbound',
+        isArray: false
+      },
+      sendInternalMessage: {
+        method: 'POST',
+        url: endpoint + '/internal',
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.message.service', [
+    'tl.service',
+    'tl.support.message.resource',
+    function(Service, Message) {
+      'use strict';
+
+      var SupportMessageService = Service.extend(Message);
+
+      return new SupportMessageService();
     }
   ]);
 
