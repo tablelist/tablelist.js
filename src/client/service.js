@@ -6,7 +6,7 @@ angular
 		var ClientService = function(){};
 
 		/**
-		 * Get's the paymentToken for use with the Braintree SDK
+		 * Generate new merchant payment token (for use with Braintree API)
 		 */
 		ClientService.prototype.paymentToken = function(success, error) {
 			return Client.paymentToken({}, success, error);

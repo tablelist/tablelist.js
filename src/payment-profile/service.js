@@ -6,7 +6,17 @@ angular
 
       var PaymentService = Service.extend(Payment);
 
+      PaymentService.prototype.addPaymentMethodNonce = function(options) {
+        var data = {
+          paymentMethodNonce : options.paymentMethodNonce,
+        };
+
+        return this.create(data).$promise;
+      };
+
       PaymentService.prototype.addPaymentProfile = function(options) {
+        console.log('DEPRECATED - use .addPaymentMethodNonce');
+
         var data = {
           cardholderName: options.name,
           cardNumber: utils.digits(options.number),
@@ -19,6 +29,7 @@ angular
       };
 
       PaymentService.prototype.updatePaymentProfile = function(options) {
+
         var profileId = options.id;
         if (!profileId) {
           throw "An existing profile is required. Missing options.id";

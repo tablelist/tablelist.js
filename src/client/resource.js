@@ -9,13 +9,13 @@ angular
 			// nothing here 
 		}, {
 			paymentToken: {
-				method: 'GET',
-				url: '/paymentToken',
+				method: 'POST',
+				url: endpoint + '/paymentToken',
 				isArray: false
 			},
 			startup: {
 				method: 'GET',
-				url: '/startup',
+				url: endpoint + '/startup',
 				isArray: false
 			}
 		});
