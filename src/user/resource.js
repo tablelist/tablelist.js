@@ -133,6 +133,11 @@ angular
         url: endpoint + '/favorite',
         isArray: true
       },
+      listReviews: {
+        method: 'GET',
+        url: endpoint + '/reviews',
+        isArray: true
+      },
       markAffiliate: {
         method: "POST",
         url: endpoint + '/affiliate',
