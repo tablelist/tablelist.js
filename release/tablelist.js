@@ -1,5 +1,5 @@
 /**
- * Tablelist.js
+ * Tablelist.js 1.4.0
  *
  * Dependencies:
  *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular.min.js
@@ -1838,7 +1838,7 @@ angular
 
 angular
 	.module('tl')
-	.factory('tl.clent.resource', ['tl.resource', function(resource){
+	.factory('tl.client.resource', ['tl.resource', function(resource){
 
 		var endpoint = '/client';
 
@@ -1846,13 +1846,13 @@ angular
 			// nothing here 
 		}, {
 			paymentToken: {
-				method: 'GET',
-				url: '/paymentToken',
+				method: 'POST',
+				url: endpoint + '/paymentToken',
 				isArray: false
 			},
 			startup: {
 				method: 'GET',
-				url: '/startup',
+				url: endpoint + '/startup',
 				isArray: false
 			}
 		});
@@ -1865,7 +1865,7 @@ angular
 		var ClientService = function(){};
 
 		/**
-		 * Get's the paymentToken for use with the Braintree SDK
+		 * Generate new merchant payment token (for use with Braintree API)
 		 */
 		ClientService.prototype.paymentToken = function(success, error) {
 			return Client.paymentToken({}, success, error);
@@ -2409,69 +2409,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.invoice.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/invoice/:id';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        // add additional methods here
-        update: {
-          method: 'PUT',
-          url: endpoint,
-          isArray: false
-        },
-        readPdf: {
-          method: 'GET',
-          url: endpoint + '/pdf',
-          isArray: false
-        },
-        createPdf: {
-          method: 'POST',
-          url: endpoint + '/pdf',
-          isArray: false
-        }
-
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.invoice.service', ['tl.service', 'tl.invoice.resource',
-    function(Service, Invoice) {
-
-      var InvoiceService = Service.extend(Invoice);
-
-      InvoiceService.prototype.readPdf = function(invoiceId) {
-        return Invoice.readPdf({
-          id: invoiceId
-        });
-      };
-
-      InvoiceService.prototype.createPdf = function(invoiceId) {
-        return Invoice.createPdf({
-          id: invoiceId
-        });
-      };
-
-      return new InvoiceService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.inventory-tier-config', ['tl.inventory-tier-config.resource', 'tl.inventory-tier-config.service', function(resource, service) {
     this.resource = resource;
     this.service = service;
@@ -2551,6 +2488,69 @@ angular
       };
 
       return new InventoryTierConfigService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.invoice.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/invoice/:id';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        // add additional methods here
+        update: {
+          method: 'PUT',
+          url: endpoint,
+          isArray: false
+        },
+        readPdf: {
+          method: 'GET',
+          url: endpoint + '/pdf',
+          isArray: false
+        },
+        createPdf: {
+          method: 'POST',
+          url: endpoint + '/pdf',
+          isArray: false
+        }
+
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.invoice.service', ['tl.service', 'tl.invoice.resource',
+    function(Service, Invoice) {
+
+      var InvoiceService = Service.extend(Invoice);
+
+      InvoiceService.prototype.readPdf = function(invoiceId) {
+        return Invoice.readPdf({
+          id: invoiceId
+        });
+      };
+
+      InvoiceService.prototype.createPdf = function(invoiceId) {
+        return Invoice.createPdf({
+          id: invoiceId
+        });
+      };
+
+      return new InvoiceService();
     }
   ]);
 
@@ -2812,7 +2812,17 @@ angular
 
       var PaymentService = Service.extend(Payment);
 
+      PaymentService.prototype.addPaymentMethodNonce = function(options) {
+        var data = {
+          paymentMethodNonce : options.paymentMethodNonce,
+        };
+
+        return this.create(data).$promise;
+      };
+
       PaymentService.prototype.addPaymentProfile = function(options) {
+        console.log('DEPRECATED - use .addPaymentMethodNonce');
+
         var data = {
           cardholderName: options.name,
           cardNumber: utils.digits(options.number),
@@ -2825,6 +2835,7 @@ angular
       };
 
       PaymentService.prototype.updatePaymentProfile = function(options) {
+
         var profileId = options.id;
         if (!profileId) {
           throw "An existing profile is required. Missing options.id";
