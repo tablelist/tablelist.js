@@ -135,7 +135,7 @@ angular
       },
       listReviews: {
         method: 'GET',
-        url: endpoint + '/reviews',
+        url: endpoint + '/review',
         isArray: true
       },
       markAffiliate: {
