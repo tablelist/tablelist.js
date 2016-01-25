@@ -14,6 +14,20 @@ angular
         return this.create(data).$promise;
       };
 
+      PaymentService.prototype.setDefaultPaymentProfile = function(options) {
+
+        var profileId = options.id;
+        
+        if (!profileId) {
+          throw "An existing profile is required. Missing options.id";
+        }
+        var data = {
+          default : true
+        };
+        
+        return this.update(profileId, data).$promise;
+      };
+
       PaymentService.prototype.addPaymentProfile = function(options) {
         console.log('DEPRECATED - use .addPaymentMethodNonce');
 
@@ -31,6 +45,7 @@ angular
       PaymentService.prototype.updatePaymentProfile = function(options) {
 
         var profileId = options.id;
+
         if (!profileId) {
           throw "An existing profile is required. Missing options.id";
         }
