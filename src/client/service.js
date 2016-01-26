@@ -8,15 +8,15 @@ angular
 		/**
 		 * Generate new merchant payment token (for use with Braintree API)
 		 */
-		ClientService.prototype.paymentToken = function(success, error) {
-			return Client.paymentToken({}, success, error);
+		ClientService.prototype.paymentToken = function() {
+			return Client.paymentToken().$promise;
 		};
 
 		/**
 		 * Get's the startup config object
 		 */
-		ClientService.prototype.startup = function(success, error) {
-			return Client.startup({}, success, error);
+		ClientService.prototype.startup = function() {
+			return Client.startup().$promise;
 		};
 
 		return new ClientService();
