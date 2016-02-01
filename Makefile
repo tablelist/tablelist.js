@@ -10,7 +10,7 @@ js:
 	gulp watch
 
 test: release
-	./node_modules/karma/bin/karma start karma.conf.js
+	./node_modules/karma/bin/karma start tests/karma.conf.js
 
 test-unit:
 	./node_modules/.bin/_mocha \

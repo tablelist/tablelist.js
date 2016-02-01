@@ -13,6 +13,21 @@ describe('Payment Profile', function(){
 		});
 	});
 
+	describe('Create with nonce', function(){
+		it('should create a payment profile with a nonce token', function(done){
+			
+			var options = {
+				paymentMethodNonce : '123',
+			}
+
+			tlPayment.service
+				.addPaymentMethodNonce(options, function(profile){
+					console.log(profile);
+					done();
+				}, done);
+		});
+	});
+
 	describe('Create', function(){
 		it('should create a payment profile', function(done){
 			var name = 'Andrew Barba';

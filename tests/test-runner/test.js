@@ -6,7 +6,7 @@ angular
 
     // Modules
     'tl.auth', 'tl.user', 'tl.booking', 'tl.venue',
-    'tl.city', 'tl.settings', 'tl.review', 'tl.reward',
+    'tl.city', 'tl.client', 'tl.settings', 'tl.review', 'tl.reward',
     'tl.table', 'tl.event', 'tl.item', 'tl.track', 'tl.prospect',
     'tl.inquiry', 'tl.inventory', 'tl.schedule', 'tl.payment',
     'tl.affiliate',
@@ -39,6 +39,7 @@ angular
       window.tlBooking = booking;
       window.tlVenue = venue;
       window.tlCity = city;
+      window.tlClient = client;
       window.tlSettings = settings;
       window.tlReview = review;
       window.tlReward = reward;
