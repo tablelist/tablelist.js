@@ -324,6 +324,16 @@ angular
         return User.listFavorites(options).$promise;
       };
 
+      UserService.prototype.listReviews = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listReviews(options).$promise;
+      };
+
       UserService.prototype.markAffiliate = function(userId, options) {
         if (!userId) throw new Error('userId is required');
         if (!options) throw new Error('options is required');

@@ -1867,15 +1867,15 @@ angular
 		/**
 		 * Generate new merchant payment token (for use with Braintree API)
 		 */
-		ClientService.prototype.paymentToken = function(success, error) {
-			return Client.paymentToken({}, success, error);
+		ClientService.prototype.paymentToken = function() {
+			return Client.paymentToken().$promise;
 		};
 
 		/**
 		 * Get's the startup config object
 		 */
-		ClientService.prototype.startup = function(success, error) {
-			return Client.startup({}, success, error);
+		ClientService.prototype.startup = function() {
+			return Client.startup().$promise;
 		};
 
 		return new ClientService();
@@ -3179,8 +3179,23 @@ angular
 
 		var ReviewService = Service.extend(Review);
 
+		ReviewService.prototype.read = function read(options) {
+			if (!options) throw new Error('options is required');
+			if (!options.id) throw new Error('options.id is required');
+
+			return Review.get(options).$promise;
+		};
+
+		ReviewService.prototype.update = function update(options) {
+			if (!options) throw new Error('options is required');
+			if (!options.id) throw new Error('options.id is required');
+
+			return Review.update({ id: options.id }, options).$promise;
+		};
+
 		return new ReviewService();
 	}]);
+
 
 angular
 	.module('tl')
@@ -3382,6 +3397,35 @@ angular
 
 		return new SettingsService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 angular
   .module('tl')
   .service('tl.support', [
@@ -3434,35 +3478,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -3864,6 +3879,11 @@ angular
         url: endpoint + '/favorite',
         isArray: true
       },
+      listReviews: {
+        method: 'GET',
+        url: endpoint + '/review',
+        isArray: true
+      },
       markAffiliate: {
         method: "POST",
         url: endpoint + '/affiliate',
@@ -4206,6 +4226,16 @@ angular
         delete options.userId;
 
         return User.listFavorites(options).$promise;
+      };
+
+      UserService.prototype.listReviews = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listReviews(options).$promise;
       };
 
       UserService.prototype.markAffiliate = function(userId, options) {
