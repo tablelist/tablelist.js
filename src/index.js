@@ -1,5 +1,5 @@
 /**
- * Tablelist.js 1.4.0
+ * Tablelist.js
  *
  * Dependencies:
  *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular.min.js
