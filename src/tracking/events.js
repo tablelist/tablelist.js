@@ -27,6 +27,7 @@ angular
 		EventViewed: "TLEventViewed",
 
 		// Booking Flow
+		BookingInventoryViewed: "TLBookingInventoryViewed",
 		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
 		BookingInfoViewed: "TLBookingInfoViewed",
 		BookingReviewViewed: "TLBookingReviewViewed",
