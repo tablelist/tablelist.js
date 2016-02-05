@@ -38,6 +38,33 @@ angular
     /* Cities
     /*==============================================================*/
 
+   /**
+    * List of events for the provided city. 
+    * Returns a promise. Supports additional 'options'.
+    *
+    * @method listEventsForCity
+    * @param {Object} options 
+    * @param {String} options.cityId - ID of a city
+    * @param {String} options.fields - CSV of fields to return
+    * @param {String} options.start  - unix start date for events
+    * @param {String} options.end    - unix end date for events
+    */
+
+    EventService.prototype.listEventsForCity = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.cityId) throw new Error('options.cityId is required');
+
+      return Event.listForCity(options).$promise;
+    };
+
+   /**
+    * List of events for the provided city. 
+    * Legacy support. 
+    *
+    * @method listForCity
+    * @param {String} cityId - ID of a city
+    */
+
     EventService.prototype.listForCity = function(cityId, success, error) {
       return Event.listForCity({
         cityId: cityId
