@@ -1974,7 +1974,7 @@ angular
     * List of events for the provided city. 
     * Returns a promise. Supports additional 'options'.
     *
-    * @method listEventsForCity
+    * @method listForCity
     * @param {Object} options 
     * @param {String} options.cityId - ID of a city
     * @param {String} options.fields - CSV of fields to return
@@ -1982,25 +1982,11 @@ angular
     * @param {String} options.end    - unix end date for events
     */
 
-    EventService.prototype.listEventsForCity = function(options) {
+    EventService.prototype.listForCity = function(options) {
       if (!options) throw new Error('options is required');
       if (!options.cityId) throw new Error('options.cityId is required');
 
       return Event.listForCity(options).$promise;
-    };
-
-   /**
-    * List of events for the provided city. 
-    * Legacy support. 
-    *
-    * @method listForCity
-    * @param {String} cityId - ID of a city
-    */
-
-    EventService.prototype.listForCity = function(cityId, success, error) {
-      return Event.listForCity({
-        cityId: cityId
-      }, success, error);
     };
 
     EventService.prototype.listCityTonight = function(cityId, success, error) {
@@ -2033,6 +2019,71 @@ angular
 
     return new EventService();
   }]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
 
 angular
   .module('tl')
@@ -2137,71 +2188,6 @@ angular
       };
 
       return new FeedService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
     }
   ]);
 
