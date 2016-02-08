@@ -49,6 +49,10 @@ angular
 		// Booking Review
 		BookingReviewSubmitted: "TLBookingReviewSubmitted",
 
+		// Favorites
+		FavoritedVenue: "TLFavoritedVenue",
+		FavoritedEvent: "TLFavoritedEvent",
+
 		// Referral
 		ReferralEntered: "TLReferralEntered",
 		ReferralSentFB: "TLReferralSentFB",
