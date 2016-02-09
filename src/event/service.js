@@ -43,8 +43,8 @@ angular
     * Returns a promise. Supports additional 'options'.
     *
     * @method listForCity
-    * @param {Object} options 
-    * @param {String} options.cityId - ID of a city
+    * @param [Object] options 
+    * @param [String] options.cityId - ID of a city
     * @param {String} options.fields - CSV of fields to return
     * @param {String} options.start  - unix start date for events
     * @param {String} options.end    - unix end date for events
