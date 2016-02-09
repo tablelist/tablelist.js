@@ -1,5 +1,5 @@
 /**
- * Tablelist.js 1.4.0
+ * Tablelist.js
  *
  * Dependencies:
  *  - http://ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular.min.js
@@ -1970,10 +1970,23 @@ angular
     /* Cities
     /*==============================================================*/
 
-    EventService.prototype.listForCity = function(cityId, success, error) {
-      return Event.listForCity({
-        cityId: cityId
-      }, success, error);
+   /**
+    * List of events for the provided city. 
+    * Returns a promise. Supports additional 'options'.
+    *
+    * @method listForCity
+    * @param {Object} options 
+    * @param {String} options.cityId - ID of a city
+    * @param {String} options.fields - CSV of fields to return
+    * @param {String} options.start  - unix start date for events
+    * @param {String} options.end    - unix end date for events
+    */
+
+    EventService.prototype.listForCity = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.cityId) throw new Error('options.cityId is required');
+
+      return Event.listForCity(options).$promise;
     };
 
     EventService.prototype.listCityTonight = function(cityId, success, error) {
@@ -2006,6 +2019,71 @@ angular
 
     return new EventService();
   }]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
 
 angular
   .module('tl')
@@ -2110,71 +2188,6 @@ angular
       };
 
       return new FeedService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
     }
   ]);
 
@@ -2812,6 +2825,14 @@ angular
 
       var PaymentService = Service.extend(Payment);
 
+       /**
+        * Create a new payment profile with
+        * a nonce token from braintree
+        *
+        * @method addPaymentMethodNonce
+        * @param {Object} options
+        * @param {String} options.paymentMethodNonce - nonce token from braintree
+        */
       PaymentService.prototype.addPaymentMethodNonce = function(options) {
         var data = {
           paymentMethodNonce : options.paymentMethodNonce,
@@ -2820,6 +2841,14 @@ angular
         return this.create(data).$promise;
       };
 
+      /**
+       * Set a payment profile as the user's default.
+       * Removes the 'default' flag from the previous default profile.
+       *
+       * @method setDefaultPaymentProfile
+       * @param {Object} options
+       * @param {String} options.id - payment profile id
+       */
       PaymentService.prototype.setDefaultPaymentProfile = function(options) {
 
         var profileId = options.id;
@@ -2834,6 +2863,20 @@ angular
         return this.update(profileId, data).$promise;
       };
 
+      /**
+       * Creates a new payment profile on a user
+       * from an entered credit card.
+       *
+       * @deprecated
+       * @method addPaymentProfile
+       * @param {Object} options
+       * @param {String} options.name
+       * @param {String} options.number
+       * @param {String} options.month
+       * @param {String} options.year
+       * @param {String} options.cvv
+       * @param {String} options.zip
+       */
       PaymentService.prototype.addPaymentProfile = function(options) {
         console.log('DEPRECATED - use .addPaymentMethodNonce');
 
@@ -2848,6 +2891,19 @@ angular
         return this.create(data).$promise;
       };
 
+      /**
+       * Updates a payment profile on a user
+       *
+       * @deprecated
+       * @method updatePaymentProfile
+       * @param {Object} options
+       * @param {String} options.name
+       * @param {String} options.number
+       * @param {String} options.month
+       * @param {String} options.year
+       * @param {String} options.cvv
+       * @param {String} options.zip
+       */
       PaymentService.prototype.updatePaymentProfile = function(options) {
 
         var profileId = options.id;
@@ -2866,8 +2922,25 @@ angular
         return this.update(profileId, data).$promise;
       };
 
-      // Deprecated
-
+      
+      /**
+       * Creates a new payment profile on a user
+       * from an entered credit card.
+       *
+       * @deprecated
+       * @method addPaymentProfile
+       * @param {String} name
+       * @param {String} number
+       * @param {String} month
+       * @param {String} year
+       * @param {String} cvv
+       * @param {String} address
+       * @param {String} city
+       * @param {String} state
+       * @param {String} zip
+       * @param {Function} success
+       * @param {Function} error
+       */
       PaymentService.prototype.addProfile = function(name, number, month, year, cvv, address, city, state, zip, success, error) {
         console.log('DEPRECATED - use .addPaymentProfile');
         var data = {
@@ -2887,6 +2960,24 @@ angular
         return this.create(data, success, error);
       };
 
+      /**
+       * Updates a payment profile on a user
+       *
+       * @deprecated
+       * @method addPaymentProfile
+       * @param {String} profileId
+       * @param {String} name
+       * @param {String} number
+       * @param {String} month
+       * @param {String} year
+       * @param {String} cvv
+       * @param {String} address
+       * @param {String} city
+       * @param {String} state
+       * @param {String} zip
+       * @param {Function} success
+       * @param {Function} error
+       */
       PaymentService.prototype.updateProfile = function(profileId, name, number, month, year, cvv, address, city, state, zip, success, error) {
         console.log('DEPRECATED - use .updatePaymentProfile');
         if (!profileId) {
@@ -3397,35 +3488,6 @@ angular
 
 		return new SettingsService();
 	}]);
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
 angular
   .module('tl')
   .service('tl.support', [
@@ -3478,6 +3540,35 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -3597,6 +3688,7 @@ angular
 		EventViewed: "TLEventViewed",
 
 		// Booking Flow
+		BookingInventoryViewed: "TLBookingInventoryViewed",
 		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
 		BookingInfoViewed: "TLBookingInfoViewed",
 		BookingReviewViewed: "TLBookingReviewViewed",
