@@ -66,6 +66,10 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: 'booking/:id/accept'
       },
+      authorize: {
+        method: 'POST',
+        url: 'booking/:id/authorize'
+      },
       refundBookingUser: {
         method: 'POST',
         url: endpoint + '/user/:userId/refund',
