@@ -153,6 +153,20 @@ angular.module('tl').service('tl.booking.service', [
       }, options).$promise;
     };
 
+    BookingService.prototype.authorize = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+      if (!options.userId) throw new Error('options.userId is required');
+      if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+      var id = options.id;
+      delete options.id;
+
+      return Booking.authorize({
+        id: id
+      }, options).$promise;
+    };
+
     BookingService.prototype.refundBookingUser = function(options) {
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');

@@ -1549,6 +1549,10 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: 'booking/:id/accept'
       },
+      authorize: {
+        method: 'POST',
+        url: 'booking/:id/authorize'
+      },
       refundBookingUser: {
         method: 'POST',
         url: endpoint + '/user/:userId/refund',
@@ -1717,6 +1721,20 @@ angular.module('tl').service('tl.booking.service', [
       }, options).$promise;
     };
 
+    BookingService.prototype.authorize = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+      if (!options.userId) throw new Error('options.userId is required');
+      if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+      var id = options.id;
+      delete options.id;
+
+      return Booking.authorize({
+        id: id
+      }, options).$promise;
+    };
+
     BookingService.prototype.refundBookingUser = function(options) {
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
@@ -1828,58 +1846,6 @@ angular.module('tl').service('tl.city.service', [
   }
 ]);
 
-
-angular
-	.module('tl')
-	.service('tl.client', ['tl.client.resource', 'tl.client.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.client.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/client';
-
-		return resource(endpoint, {
-			// nothing here 
-		}, {
-			paymentToken: {
-				method: 'POST',
-				url: endpoint + '/paymentToken',
-				isArray: false
-			},
-			startup: {
-				method: 'GET',
-				url: endpoint + '/startup',
-				isArray: false
-			}
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.client.service', ['tl.service', 'tl.client.resource', function(Service, Client){
-
-		var ClientService = function(){};
-
-		/**
-		 * Generate new merchant payment token (for use with Braintree API)
-		 */
-		ClientService.prototype.paymentToken = function() {
-			return Client.paymentToken().$promise;
-		};
-
-		/**
-		 * Get's the startup config object
-		 */
-		ClientService.prototype.startup = function() {
-			return Client.startup().$promise;
-		};
-
-		return new ClientService();
-	}]);
 
 angular
 	.module('tl')
@@ -2020,6 +1986,58 @@ angular
     return new EventService();
   }]);
 
+
+angular
+	.module('tl')
+	.service('tl.client', ['tl.client.resource', 'tl.client.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.client.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/client';
+
+		return resource(endpoint, {
+			// nothing here 
+		}, {
+			paymentToken: {
+				method: 'POST',
+				url: endpoint + '/paymentToken',
+				isArray: false
+			},
+			startup: {
+				method: 'GET',
+				url: endpoint + '/startup',
+				isArray: false
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.client.service', ['tl.service', 'tl.client.resource', function(Service, Client){
+
+		var ClientService = function(){};
+
+		/**
+		 * Generate new merchant payment token (for use with Braintree API)
+		 */
+		ClientService.prototype.paymentToken = function() {
+			return Client.paymentToken().$promise;
+		};
+
+		/**
+		 * Get's the startup config object
+		 */
+		ClientService.prototype.startup = function() {
+			return Client.startup().$promise;
+		};
+
+		return new ClientService();
+	}]);
 angular
   .module('tl')
   .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
