@@ -12,6 +12,10 @@ angular.module('tl').factory('tl.affiliatepayout.resource', [
         method: 'GET',
         url: endpoint,
         isArray: true
+      },
+      update: {
+        method: 'PUT',
+        url: endpoint + '/:id',
       }
     });
   }
