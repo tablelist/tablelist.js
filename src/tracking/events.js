@@ -60,6 +60,9 @@ angular
 		ReferralSentSMS: "TLReferralSentSMS",
 		ReferralSentEmail: "TLReferralSentEmail",
 
+		// SMS
+		SMSDownloadLinkRequested: "TLSMSDownloadLinkRequested",
+
 		// Payment
 		PaymentAdded: "TLPaymentAdded",
 		PaymentUpdated: "TLPaymentUpdated",

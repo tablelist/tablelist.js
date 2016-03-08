@@ -1849,6 +1849,58 @@ angular.module('tl').service('tl.city.service', [
 
 angular
 	.module('tl')
+	.service('tl.client', ['tl.client.resource', 'tl.client.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.client.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/client';
+
+		return resource(endpoint, {
+			// nothing here 
+		}, {
+			paymentToken: {
+				method: 'POST',
+				url: endpoint + '/paymentToken',
+				isArray: false
+			},
+			startup: {
+				method: 'GET',
+				url: endpoint + '/startup',
+				isArray: false
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.client.service', ['tl.service', 'tl.client.resource', function(Service, Client){
+
+		var ClientService = function(){};
+
+		/**
+		 * Generate new merchant payment token (for use with Braintree API)
+		 */
+		ClientService.prototype.paymentToken = function() {
+			return Client.paymentToken().$promise;
+		};
+
+		/**
+		 * Get's the startup config object
+		 */
+		ClientService.prototype.startup = function() {
+			return Client.startup().$promise;
+		};
+
+		return new ClientService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1986,58 +2038,6 @@ angular
     return new EventService();
   }]);
 
-
-angular
-	.module('tl')
-	.service('tl.client', ['tl.client.resource', 'tl.client.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.client.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/client';
-
-		return resource(endpoint, {
-			// nothing here 
-		}, {
-			paymentToken: {
-				method: 'POST',
-				url: endpoint + '/paymentToken',
-				isArray: false
-			},
-			startup: {
-				method: 'GET',
-				url: endpoint + '/startup',
-				isArray: false
-			}
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.client.service', ['tl.service', 'tl.client.resource', function(Service, Client){
-
-		var ClientService = function(){};
-
-		/**
-		 * Generate new merchant payment token (for use with Braintree API)
-		 */
-		ClientService.prototype.paymentToken = function() {
-			return Client.paymentToken().$promise;
-		};
-
-		/**
-		 * Get's the startup config object
-		 */
-		ClientService.prototype.startup = function() {
-			return Client.startup().$promise;
-		};
-
-		return new ClientService();
-	}]);
 angular
   .module('tl')
   .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
@@ -2392,54 +2392,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.inventory-summary.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory-summary';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        list: {
-          method: 'GET',
-          url: endpoint,
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory-summary.service', [
-    'tl.service',
-    'tl.inventory-summary.resource',
-    function(Service, InventorySummary) {
-      'use strict';
-
-      var InventorySummaryService = Service.extend(InventorySummary);
-
-      InventorySummaryService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return InventorySummary.list(options).$promise;
-      };
-
-      return new InventorySummaryService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.inventory-tier-config', ['tl.inventory-tier-config.resource', 'tl.inventory-tier-config.service', function(resource, service) {
     this.resource = resource;
     this.service = service;
@@ -2585,6 +2537,54 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.inventory-summary.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory-summary';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        list: {
+          method: 'GET',
+          url: endpoint,
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-summary.service', [
+    'tl.service',
+    'tl.inventory-summary.resource',
+    function(Service, InventorySummary) {
+      'use strict';
+
+      var InventorySummaryService = Service.extend(InventorySummary);
+
+      InventorySummaryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return InventorySummary.list(options).$promise;
+      };
+
+      return new InventorySummaryService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -2624,6 +2624,43 @@ angular
     };
 
     return new ItemService();
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Notify);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
   }]);
 
 
@@ -2693,43 +2730,6 @@ angular
 
     return new MetricService();
   }]);
-angular
-  .module('tl')
-  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.notify.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/notify/adminapp';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      sendAdminApp: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
-
-    var NotifyService = Service.extend(Notify);
-
-    NotifyService.prototype.sendAdminApp = function() {
-      return Notify.sendAdminApp().$promise;
-    };
-
-    return new NotifyService();
-  }]);
-
 
 angular
 	.module('tl')
@@ -3589,51 +3589,6 @@ angular
 	}]);
 angular
   .module('tl')
-  .service('tl.tag', [
-    'tl.tag.resource',
-    'tl.tag.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tag.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tag';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tag.service', [
-    'tl.service',
-    'tl.tag.resource',
-    function(Service, Tag) {
-      'use strict';
-
-      var TagService = Service.extend(Tag);
-
-      TagService.prototype.list = function(options) {
-        return Tag.list(options).$promise;
-      };
-
-      return new TagService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.tracker', [
     'tl.tracker.resource',
     'tl.tracker.service',
@@ -3674,6 +3629,51 @@ angular
       };
 
       return new TrackerService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.tag', [
+    'tl.tag.resource',
+    'tl.tag.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tag.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tag';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tag.service', [
+    'tl.service',
+    'tl.tag.resource',
+    function(Service, Tag) {
+      'use strict';
+
+      var TagService = Service.extend(Tag);
+
+      TagService.prototype.list = function(options) {
+        return Tag.list(options).$promise;
+      };
+
+      return new TagService();
     }
   ]);
 
@@ -3738,6 +3738,9 @@ angular
 		ReferralSentTW: "TLReferralSentTW",
 		ReferralSentSMS: "TLReferralSentSMS",
 		ReferralSentEmail: "TLReferralSentEmail",
+
+		// SMS
+		SMSDownloadLinkRequested: "TLSMSDownloadLinkRequested",
 
 		// Payment
 		PaymentAdded: "TLPaymentAdded",
