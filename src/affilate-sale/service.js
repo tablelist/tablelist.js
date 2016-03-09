@@ -6,6 +6,25 @@ angular.module('tl').service('tl.affiliatesale.service', [
 
     var AffiliateSaleService = Service.extend(AffiliateSale);
 
+    AffiliateSaleService.prototype.read = function read(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return AffiliateSale.read(options).$promise;
+    };
+
+    AffiliateSaleService.prototype.update = function update(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var id = options.id;
+      delete options.id;
+
+      return AffiliateSale.update({
+        id: id
+      }, options).$promise;
+    };
+
     AffiliateSaleService.prototype.list = function(options) {
       if (!options) throw new Error('options is required');
 
