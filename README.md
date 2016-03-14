@@ -45,6 +45,26 @@ make js
 ``` 
 This will allow you to develop and run unit tests without rebuilding from the terminal.
 
+#### Versioning the SDK
+
+Ensure that the version is incremented for each PR in the following files:
+
+**./bower.json**
+```
+{
+    "name": "Tablelist JS SDK",
+ -  "version": "1.4.5",
+ +  "version": "1.4.6",
+```
+
+**./package.json**
+```
+{
+    "name": "tablelist.js",
+ -  "version": "1.4.5",
+ +  "version": "1.4.6",
+```
+
 
 #### Build SDK
 
