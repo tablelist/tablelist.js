@@ -1,0 +1,23 @@
+// docs for jshint : http://www.jshint.com/docs/
+// options for jshint : http://www.jshint.com/docs/options/
+
+{
+  "undef": true,
+  "unused": true,
+  "node": true,
+  "esnext": true,
+  "globals": {
+    "describe": true,
+    "before": true,
+    "beforeEach": true,
+    "after": true,
+    "afterEach": true,
+    "it": true,
+    "Promise": true,
+    "expect": true,
+    "should": true
+  },
+  "camelcase": true,
+  "bitwise": true,
+  "eqeqeq": true
+}

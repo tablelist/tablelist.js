@@ -1,0 +1,23 @@
+// docs for jshint : http://www.jshint.com/docs/
+// options for jshint : http://www.jshint.com/docs/options/
+
+{
+  "undef": true,
+  "unused": true,
+  "node": false,
+  "esnext": true,
+  "globals": {
+    "angular": true,
+    "FormData": true,
+    "moment": true,
+    "console": true,
+    "window": true,
+    "localStorage": true,
+    "document": true,
+    "FB": true,
+    "sessionStorage": true
+  },
+  "camelcase": true,
+  "bitwise": true,
+  "eqeqeq": true
+}
