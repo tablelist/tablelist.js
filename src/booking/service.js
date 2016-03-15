@@ -74,6 +74,17 @@ angular.module('tl').service('tl.booking.service', [
       }, success, error);
     };
 
+    BookingService.prototype.cancellation = function(id, amount) {
+      if (!id) throw new Error('id is required');
+      if (!amount) throw new Error('amount is required');
+
+      return Booking.cancellation({
+        id: id
+      }, {
+        amount: amount
+      }).$promise;
+    };
+
     BookingService.prototype.join = function(splitCode, success, error) {
       return Booking.join({}, {
         splitCode: splitCode,

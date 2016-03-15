@@ -28,6 +28,10 @@ angular.module('tl').factory('tl.booking.resource', [
         method: 'POST',
         url: endpoint + '/refund'
       },
+      cancellation: {
+        method: 'POST',
+        url: endpoint + '/cancellation'
+      },
       join: {
         method: 'POST',
         url: 'booking/join'
