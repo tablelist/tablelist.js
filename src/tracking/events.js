@@ -29,7 +29,6 @@ angular
 		// Booking Flow
 		BookingInventoryViewed: "TLBookingInventoryViewed",
 		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
-		BookingInfoViewed: "TLBookingInfoViewed",
 		BookingReviewViewed: "TLBookingReviewViewed",
 		BookingTermsViewed: "TLBookingTermsViewed",
 		BookingComplete: "TLBookingComplete",
