@@ -9,7 +9,7 @@ angular
       itemId: '@itemId',
       imageId: '@imageId',
       cityId: '@cityId',
-      enabled: '@enabled'
+      onlyEnabled: '@onlyEnabled'
     }, {
       list: {
         method: 'GET',
