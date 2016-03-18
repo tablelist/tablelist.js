@@ -8,7 +8,8 @@ angular
       id: '@id',
       itemId: '@itemId',
       imageId: '@imageId',
-      cityId: '@cityId'
+      cityId: '@cityId',
+      enabled: '@enabled'
     }, {
       list: {
         method: 'GET',
