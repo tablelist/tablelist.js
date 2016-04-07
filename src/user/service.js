@@ -237,12 +237,27 @@ angular
         }, success, error);
       };
 
+      /**
+       * Add credit for a user
+       */
       UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
         return User.addCredit({
           id: userId
         }, {
           amount: amount,
           campaign: campaignId
+        }, success, error);
+      };
+
+      /**
+       * Add a subscription for a user
+       */
+      UserService.prototype.addSubscription = function(userId, planId, paymentProfileId, success, error) {
+        return User.addCredit({
+          id: userId
+        }, {
+          planId: planId,
+          paymentProfileId: paymentProfileId
         }, success, error);
       };
 
