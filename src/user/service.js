@@ -251,14 +251,22 @@ angular
 
       /**
        * Add a subscription for a user
+       *
+       * @method addSubscription
+       * @param {Object} options
+       * @param {String} [options.userId] - user to subscribe
+       * @param {String} [options.planId] - braintree reoccurring plan
+       * @param {String} [options.paymentProfileId] - payment profile to charge
        */
-      UserService.prototype.addSubscription = function(userId, planId, paymentProfileId, success, error) {
-        return User.addCredit({
-          id: userId
-        }, {
-          planId: planId,
-          paymentProfileId: paymentProfileId
-        }, success, error);
+      UserService.prototype.addSubscription = function(options, success, error) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.planId) throw new Error('options.planId is required');
+        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+        return User.addSubscription({
+          id: options.userId
+        }, options, success, error);
       };
 
       /**

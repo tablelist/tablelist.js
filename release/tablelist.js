@@ -3986,6 +3986,10 @@ angular
         method: "POST",
         url: endpoint + '/credit'
       },
+      addSubscription: {
+        method: "POST",
+        url: endpoint + '/subscription'
+      },
       findByReferral: {
         method: "GET",
         url: '/referral/:code'
@@ -4281,6 +4285,9 @@ angular
         }, success, error);
       };
 
+      /**
+       * Add credit for a user
+       */
       UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
         return User.addCredit({
           id: userId
@@ -4288,6 +4295,26 @@ angular
           amount: amount,
           campaign: campaignId
         }, success, error);
+      };
+
+      /**
+       * Add a subscription for a user
+       *
+       * @method addSubscription
+       * @param {Object} options
+       * @param {String} [options.userId] - user to subscribe
+       * @param {String} [options.planId] - braintree reoccurring plan
+       * @param {String} [options.paymentProfileId] - payment profile to charge
+       */
+      UserService.prototype.addSubscription = function(options, success, error) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.planId) throw new Error('options.planId is required');
+        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+        return User.addSubscription({
+          id: options.userId
+        }, options, success, error);
       };
 
       /**
