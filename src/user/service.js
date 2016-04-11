@@ -252,13 +252,12 @@ angular
       /**
        * Add a subscription for a user
        */
-      UserService.prototype.addSubscription = function(userId, planId, paymentProfileId, paymentMethodNonce, success, error) {
+      UserService.prototype.addSubscription = function(userId, planId, paymentProfileId, success, error) {
         return User.addCredit({
           id: userId
         }, {
           planId: planId,
-          paymentProfileId: paymentProfileId,
-          paymentMethodNonce: paymentMethodNonce
+          paymentProfileId: paymentProfileId
         }, success, error);
       };
 
