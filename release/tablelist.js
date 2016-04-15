@@ -1175,6 +1175,47 @@ angular.module('tl').service('tl.affiliate.service', [
   }
 ]);
 
+
+angular
+	.module('tl')
+	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.ambassador.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/ambassador';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        getAll: {
+          method: 'GET',
+          url: 'ambassador',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
+    function(Service, Ambassador) {
+
+      var AmbassadorService = Service.extend(Ambassador);
+
+      AmbassadorService.prototype.getAll = function(){
+        return Ambassador.getAll();
+      };
+
+      return new AmbassadorService();
+    }
+  ]);
+
 angular
 	.module('tl')
 	.service('tl.affiliatepayout', ['tl.affiliatepayout.resource', 'tl.affiliatepayout.service', function(resource, service){
@@ -1222,47 +1263,6 @@ angular.module('tl').service('tl.affiliatepayout.service', [
     return new AffiliatePayoutService();
   }
 ]);
-
-
-angular
-	.module('tl')
-	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.ambassador.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/ambassador';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        getAll: {
-          method: 'GET',
-          url: 'ambassador',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.ambassador.service', ['tl.service', 'tl.ambassador.resource',
-    function(Service, Ambassador) {
-
-      var AmbassadorService = Service.extend(Ambassador);
-
-      AmbassadorService.prototype.getAll = function(){
-        return Ambassador.getAll();
-      };
-
-      return new AmbassadorService();
-    }
-  ]);
 
 
 angular
@@ -1367,6 +1367,15 @@ angular.module('tl').service('tl.auth.service', [
     };
 
     /**
+     * Determine if we should consider this user as logged in
+     * Important to use this function instead of checking at
+     * the client level
+     */
+    AuthService.prototype.isLoggedIn = function() {
+      return this.authToken() ? true : false;
+    };
+
+    /**
      * Stores an auth token in the keychain
      */
     AuthService.prototype.setAuthToken = function(token) {
@@ -1405,7 +1414,7 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
 
       var _this = this;
-      
+
       // clear current auth and user
       _this.setAuthToken(null);
       user.setCurrentUser(null);
@@ -1428,7 +1437,7 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
 
       var _this = this;
-      
+
       // clear current auth and user
       _this.setAuthToken(null);
       user.setCurrentUser(null);
@@ -2313,6 +2322,54 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.inventory-summary.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory-summary';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        list: {
+          method: 'GET',
+          url: endpoint,
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-summary.service', [
+    'tl.service',
+    'tl.inventory-summary.resource',
+    function(Service, InventorySummary) {
+      'use strict';
+
+      var InventorySummaryService = Service.extend(InventorySummary);
+
+      InventorySummaryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return InventorySummary.list(options).$promise;
+      };
+
+      return new InventorySummaryService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -2410,54 +2467,6 @@ angular
       };
 
       return new InventoryService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.inventory-summary.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory-summary';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        list: {
-          method: 'GET',
-          url: endpoint,
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory-summary.service', [
-    'tl.service',
-    'tl.inventory-summary.resource',
-    function(Service, InventorySummary) {
-      'use strict';
-
-      var InventorySummaryService = Service.extend(InventorySummary);
-
-      InventorySummaryService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return InventorySummary.list(options).$promise;
-      };
-
-      return new InventorySummaryService();
     }
   ]);
 
@@ -2611,47 +2620,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.item.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/item/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: '/item',
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
-
-    var ItemService = Service.extend(Item);
-
-    ItemService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Item.list(options).$promise;
-    };
-
-    return new ItemService();
-  }]);
-
-
-angular
-	.module('tl')
 	.service('tl.metric', ['tl.metric.resource', 'tl.metric.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2716,6 +2684,47 @@ angular
 
     return new MetricService();
   }]);
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.item.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/item/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: '/item',
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
+
+    var ItemService = Service.extend(Item);
+
+    ItemService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Item.list(options).$promise;
+    };
+
+    return new ItemService();
+  }]);
+
 angular
   .module('tl')
   .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
@@ -3137,45 +3146,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.prospect.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/prospect/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
-
-		var ProspectService = Service.extend(Prospect);
-
-		/**
-		 * Updates the current prospect
-		 */
-		ProspectService.prototype.updateProspect = function(data, success, error) {
-			delete data._id;
-			delete data.id;
-			
-			return Prospect.update({}, data, success, error);
-		};
-
-		return new ProspectService();
-	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -3236,6 +3206,45 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.prospect', ['tl.prospect.resource', 'tl.prospect.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.prospect.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/prospect/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.prospect.service', ['tl.service', 'tl.prospect.resource', function(Service, Prospect){
+
+		var ProspectService = Service.extend(Prospect);
+
+		/**
+		 * Updates the current prospect
+		 */
+		ProspectService.prototype.updateProspect = function(data, success, error) {
+			delete data._id;
+			delete data.id;
+			
+			return Prospect.update({}, data, success, error);
+		};
+
+		return new ProspectService();
+	}]);
 
 angular
 	.module('tl')
@@ -3876,551 +3885,6 @@ angular
 
 		return new TrackService();
 	}]);
-
-
-angular
-	.module('tl')
-	.service('tl.user', ['tl.user.resource', 'tl.user.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.user.resource', ['tl.resource', function(resource) {
-    'use strict';
-
-    var endpoint = '/user/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: '/user',
-        isArray: true
-      },
-      me: {
-        method: 'GET',
-        url: '/me'
-      },
-      updateMe: {
-        method: 'PUT',
-        url: '/me'
-      },
-      search: {
-        method: 'GET',
-        url: '/user/search',
-        isArray: true
-      },
-      push: {
-        method: 'POST',
-        url: '/notify/push',
-        isArray: false
-      },
-      listBookings: {
-        method: 'GET',
-        url: endpoint + '/booking',
-        isArray: true
-      },
-      updatePreferredCity: {
-        method: 'PUT',
-        url: '/user/city'
-      },
-      requestVerificationCode: {
-        method: 'GET',
-        url: '/user/verify/:id'
-      },
-      requestVerificationCodeForCurrentUser: {
-        method: 'GET',
-        url: '/user/verify'
-      },
-      verifyPhoneNumber: {
-        method: 'PUT',
-        url: '/user/verify/:id'
-      },
-      verifyPhoneNumberForCurrentUser: {
-        method: 'PUT',
-        url: '/user/verify'
-      },
-      listPaymentProfiles: {
-        method: 'GET',
-        url: endpoint + '/paymentProfiles',
-        isArray: true
-      },
-      listReferrals: {
-        method: 'GET',
-        url: endpoint + '/referral',
-        isArray: true
-      },
-      listPromos: {
-        method: "GET",
-        url: endpoint + "/promo",
-        isArray: true
-      },
-      listTasks: {
-        method: 'GET',
-        url: endpoint + '/task',
-        isArray: true
-      },
-      listQuestions: {
-        method: 'GET',
-        url: endpoint + '/question',
-        isArray: true
-      },
-      listAnswers: {
-        method: 'GET',
-        url: endpoint + '/answer',
-        isArray: true
-      },
-      listNotifications: {
-        method: "GET",
-        url: '/notify/:id',
-        isArray: true
-      },
-      listHighPriority: {
-        method: "GET",
-        url: '/user/priority',
-        isArray: true
-      },
-      addCredit: {
-        method: "POST",
-        url: endpoint + '/credit'
-      },
-      findByReferral: {
-        method: "GET",
-        url: '/referral/:code'
-      },
-      getReferralStats: {
-        method: "GET",
-        url: endpoint + '/referral/stats'
-      },
-      listVenues: {
-        method: "GET",
-        url: endpoint + '/venue',
-        isArray: true
-      },
-      listStats: {
-        method: "GET",
-        url: endpoint + '/stats',
-        isArray: true
-      },
-      favorite: {
-        method: "POST",
-        url: endpoint + '/favorite',
-        isArray: false
-      },
-      unfavorite: {
-        method: "DELETE",
-        url: endpoint + '/favorite/:favoriteId',
-        isArray: false
-      },
-      listFavorites: {
-        method: "GET",
-        url: endpoint + '/favorite',
-        isArray: true
-      },
-      listReviews: {
-        method: 'GET',
-        url: endpoint + '/review',
-        isArray: true
-      },
-      markAffiliate: {
-        method: "POST",
-        url: endpoint + '/affiliate',
-        isArray: false
-      },
-      listAffiliates: {
-        method: "GET",
-        url: 'user/:id/affiliate',
-        isArray: true
-      },
-      access: {
-        method: 'GET',
-        url: 'user/:id/access',
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.user.service', ['$timeout', 'tl.storage', 'tl.keychain', 'tl.ee', 'tl.user.resource', 'tl.service',
-    function($timeout, storage, keychain, ee, User, Service) {
-      'use strict';
-
-      var USER_KEY = 'tl_user';
-      var EVENTS = {
-        USER_UPDATED: 'tl.user.updated'
-      };
-
-      var UserService = Service.extend(User);
-
-      UserService.prototype.list = function list(options) {
-        if (!options) throw new Error('options is required');
-
-        options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-        return User.list(options).$promise;
-      };
-
-      /**
-       * Returns a local copy of the current user
-       */
-      UserService.prototype.currentUser = function() {
-        return keychain.authToken() ? storage.get(USER_KEY) : null;
-      };
-
-      UserService.prototype.EVENTS = function() {
-        return EVENTS;
-      };
-
-      /**
-       * Sets a local copy of the current user
-       */
-      UserService.prototype.setCurrentUser = function(user) {
-        $timeout(function() { // fire notification on next run loop
-          ee.emit(EVENTS.USER_UPDATED, user);
-        });
-        return storage.set(USER_KEY, user);
-      };
-
-      /**
-       * Merges local copy of user with new data
-       */
-      UserService.prototype.saveCurrentUser = function(user) {
-        var _user = this.currentUser() || {};
-        var keys = Object.keys(user);
-        for (var i = 0; i < keys.length; i++) {
-          var key = keys[i];
-          var val = user[key];
-          _user[key] = val;
-        }
-        this.setCurrentUser(_user);
-      };
-
-      /**
-       * Fetches the current user from the API
-       */
-      UserService.prototype.me = function(success, error) {
-        var _this = this;
-
-        var promise = User.me().$promise;
-
-        promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-        }, error);
-
-        return promise;
-      };
-
-      /**
-       * Updates the current user
-       */
-      UserService.prototype.updateMe = function(body, success, error) {
-        var _this = this;
-        return User.updateMe({}, body).$promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-        }, error);
-      };
-
-      /**
-       * Sets the users preferred city
-       */
-      UserService.prototype.updatePreferredCity = function(cityId, success, error) {
-        var _this = this;
-        var body = {
-          city: cityId
-        };
-        return User.updatePreferredCity({}, body).$promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-        }, error);
-      };
-
-      /**
-       * Requests a verification code to verify a phone number
-       */
-      UserService.prototype.requestVerificationCode = function(id, success, error) {
-        return User.requestVerificationCode({
-          id: id
-        }, success, error);
-      };
-
-      /**
-       * Requests a verification code to verify a phone number
-       */
-      UserService.prototype.requestVerificationCodeForCurrentUser = function(success, error) {
-        return User.requestVerificationCodeForCurrentUser({}, success, error);
-      };
-
-      /**
-       * Verifies the users phone number
-       */
-      UserService.prototype.verifyPhoneNumber = function(id, code, success, error) {
-        var _this = this;
-        var data = {
-          id: id,
-          verificationCode: code
-        };
-        return User.verifyPhoneNumber({}, data).$promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-          return user;
-        }, error);
-      };
-
-      /**
-       * Verifies the users phone number
-       */
-      UserService.prototype.verifyPhoneNumberForCurrentUser = function(code, success, error) {
-        var _this = this;
-        var data = {
-          verificationCode: code
-        };
-        return User.verifyPhoneNumber({}, data).$promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-          return user;
-        }, error);
-      };
-
-      /**
-       * Lists a user's payment profiles
-       */
-      UserService.prototype.listPaymentProfiles = function(userId, success, error) {
-        return User.listPaymentProfiles({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's referrals
-       */
-      UserService.prototype.listReferrals = function(userId, success, error) {
-        return User.listReferrals({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's bookings
-       */
-      UserService.prototype.listBookings = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.id) throw new Error('options.id is required');
-
-        return User.listBookings(options).$promise;
-      };
-
-      /**
-       * Lists a user's promos
-       */
-      UserService.prototype.listPromos = function(userId, success, error) {
-        return User.listPromos({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's tasks
-       */
-      UserService.prototype.listTasks = function(userId, success, error) {
-        return User.listTasks({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's notifications
-       */
-      UserService.prototype.listNotifications = function(userId, success, error) {
-        return User.listNotifications({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's unanswered questions
-       */
-      UserService.prototype.listQuestions = function(userId, type, success, error) {
-        return User.listQuestions({
-          id: userId,
-          type: type
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's answers
-       */
-      UserService.prototype.listAnswers = function(userId, success, error) {
-        return User.listAnswers({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Returns an array of high priority users
-       */
-      UserService.prototype.listHighPriority = function(hours, priority, cityId, success, error) {
-        return User.listHighPriority({
-          hours: hours || 24,
-          priority: priority || 7,
-          city: cityId
-        }, success, error);
-      };
-
-      UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
-        return User.addCredit({
-          id: userId
-        }, {
-          amount: amount,
-          campaign: campaignId
-        }, success, error);
-      };
-
-      /**
-       * Find a user's name and photo by their referral code
-       */
-      UserService.prototype.findByReferral = function(code, success, error) {
-        return User.findByReferral({
-          code: code
-        }, success, error);
-      };
-      /**
-       * Get a user's referral stats
-       */
-      UserService.prototype.getReferralStats = function(userId, success, error) {
-        return User.getReferralStats({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Get a user's referral stats
-       */
-      UserService.prototype.search = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.query) throw new Error('options.query is required');
-
-        return User.search(options).$promise;
-      };
-
-      /**
-       * Lists a user's venues
-       */
-      UserService.prototype.listVenues = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listVenues(options).$promise;
-      };
-
-      UserService.prototype.favorite = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        var userId = options.userId;
-        delete options.userId;
-
-        return User.favorite({
-          id: userId
-        }, options).$promise;
-      };
-
-      UserService.prototype.unfavorite = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-        if (!options.favoriteId) throw new Error('options.favoriteId is required');
-
-        var userId = options.userId;
-        delete options.userId;
-        var favoriteId = options.favoriteId;
-        delete options.favoriteId;
-
-        return User.unfavorite({
-          id: userId,
-          favoriteId: favoriteId
-        }, options).$promise;
-      };
-
-      UserService.prototype.listFavorites = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listFavorites(options).$promise;
-      };
-
-      UserService.prototype.listReviews = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listReviews(options).$promise;
-      };
-
-      UserService.prototype.markAffiliate = function(userId, options) {
-        if (!userId) throw new Error('userId is required');
-        if (!options) throw new Error('options is required');
-        if (!options.name) throw new Error('options.name is required');
-
-        return User.markAffiliate({
-          id: userId
-        }, options).$promise;
-      };
-
-      UserService.prototype.listAffiliates = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listAffiliates(options).$promise;
-      };
-
-      UserService.prototype.listStats = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listStats(options).$promise;
-      };
-
-      UserService.prototype.access = function access(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.access(options).$promise;
-      };
-
-      return new UserService();
-    }
-  ]);
 
 
 angular
@@ -5087,6 +4551,551 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.user', ['tl.user.resource', 'tl.user.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.user.resource', ['tl.resource', function(resource) {
+    'use strict';
+
+    var endpoint = '/user/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: '/user',
+        isArray: true
+      },
+      me: {
+        method: 'GET',
+        url: '/me'
+      },
+      updateMe: {
+        method: 'PUT',
+        url: '/me'
+      },
+      search: {
+        method: 'GET',
+        url: '/user/search',
+        isArray: true
+      },
+      push: {
+        method: 'POST',
+        url: '/notify/push',
+        isArray: false
+      },
+      listBookings: {
+        method: 'GET',
+        url: endpoint + '/booking',
+        isArray: true
+      },
+      updatePreferredCity: {
+        method: 'PUT',
+        url: '/user/city'
+      },
+      requestVerificationCode: {
+        method: 'GET',
+        url: '/user/verify/:id'
+      },
+      requestVerificationCodeForCurrentUser: {
+        method: 'GET',
+        url: '/user/verify'
+      },
+      verifyPhoneNumber: {
+        method: 'PUT',
+        url: '/user/verify/:id'
+      },
+      verifyPhoneNumberForCurrentUser: {
+        method: 'PUT',
+        url: '/user/verify'
+      },
+      listPaymentProfiles: {
+        method: 'GET',
+        url: endpoint + '/paymentProfiles',
+        isArray: true
+      },
+      listReferrals: {
+        method: 'GET',
+        url: endpoint + '/referral',
+        isArray: true
+      },
+      listPromos: {
+        method: "GET",
+        url: endpoint + "/promo",
+        isArray: true
+      },
+      listTasks: {
+        method: 'GET',
+        url: endpoint + '/task',
+        isArray: true
+      },
+      listQuestions: {
+        method: 'GET',
+        url: endpoint + '/question',
+        isArray: true
+      },
+      listAnswers: {
+        method: 'GET',
+        url: endpoint + '/answer',
+        isArray: true
+      },
+      listNotifications: {
+        method: "GET",
+        url: '/notify/:id',
+        isArray: true
+      },
+      listHighPriority: {
+        method: "GET",
+        url: '/user/priority',
+        isArray: true
+      },
+      addCredit: {
+        method: "POST",
+        url: endpoint + '/credit'
+      },
+      findByReferral: {
+        method: "GET",
+        url: '/referral/:code'
+      },
+      getReferralStats: {
+        method: "GET",
+        url: endpoint + '/referral/stats'
+      },
+      listVenues: {
+        method: "GET",
+        url: endpoint + '/venue',
+        isArray: true
+      },
+      listStats: {
+        method: "GET",
+        url: endpoint + '/stats',
+        isArray: true
+      },
+      favorite: {
+        method: "POST",
+        url: endpoint + '/favorite',
+        isArray: false
+      },
+      unfavorite: {
+        method: "DELETE",
+        url: endpoint + '/favorite/:favoriteId',
+        isArray: false
+      },
+      listFavorites: {
+        method: "GET",
+        url: endpoint + '/favorite',
+        isArray: true
+      },
+      listReviews: {
+        method: 'GET',
+        url: endpoint + '/review',
+        isArray: true
+      },
+      markAffiliate: {
+        method: "POST",
+        url: endpoint + '/affiliate',
+        isArray: false
+      },
+      listAffiliates: {
+        method: "GET",
+        url: 'user/:id/affiliate',
+        isArray: true
+      },
+      access: {
+        method: 'GET',
+        url: 'user/:id/access',
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.user.service', ['$timeout', 'tl.storage', 'tl.keychain', 'tl.ee', 'tl.user.resource', 'tl.service',
+    function($timeout, storage, keychain, ee, User, Service) {
+      'use strict';
+
+      var USER_KEY = 'tl_user';
+      var EVENTS = {
+        USER_UPDATED: 'tl.user.updated'
+      };
+
+      var UserService = Service.extend(User);
+
+      UserService.prototype.list = function list(options) {
+        if (!options) throw new Error('options is required');
+
+        options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+        return User.list(options).$promise;
+      };
+
+      /**
+       * Returns a local copy of the current user
+       */
+      UserService.prototype.currentUser = function() {
+        return keychain.authToken() ? storage.get(USER_KEY) : null;
+      };
+
+      UserService.prototype.EVENTS = function() {
+        return EVENTS;
+      };
+
+      /**
+       * Sets a local copy of the current user
+       */
+      UserService.prototype.setCurrentUser = function(user) {
+        $timeout(function() { // fire notification on next run loop
+          ee.emit(EVENTS.USER_UPDATED, user);
+        });
+        return storage.set(USER_KEY, user);
+      };
+
+      /**
+       * Merges local copy of user with new data
+       */
+      UserService.prototype.saveCurrentUser = function(user) {
+        var _user = this.currentUser() || {};
+        var keys = Object.keys(user);
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          var val = user[key];
+          _user[key] = val;
+        }
+        this.setCurrentUser(_user);
+      };
+
+      /**
+       * Fetches the current user from the API
+       */
+      UserService.prototype.me = function(success, error) {
+        var _this = this;
+
+        var promise = User.me().$promise;
+
+        promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+        }, error);
+
+        return promise;
+      };
+
+      /**
+       * Updates the current user
+       */
+      UserService.prototype.updateMe = function(body, success, error) {
+        var _this = this;
+        return User.updateMe({}, body).$promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+        }, error);
+      };
+
+      /**
+       * Sets the users preferred city
+       */
+      UserService.prototype.updatePreferredCity = function(cityId, success, error) {
+        var _this = this;
+        var body = {
+          city: cityId
+        };
+        return User.updatePreferredCity({}, body).$promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+        }, error);
+      };
+
+      /**
+       * Requests a verification code to verify a phone number
+       */
+      UserService.prototype.requestVerificationCode = function(id, success, error) {
+        return User.requestVerificationCode({
+          id: id
+        }, success, error);
+      };
+
+      /**
+       * Requests a verification code to verify a phone number
+       */
+      UserService.prototype.requestVerificationCodeForCurrentUser = function(success, error) {
+        return User.requestVerificationCodeForCurrentUser({}, success, error);
+      };
+
+      /**
+       * Verifies the users phone number
+       */
+      UserService.prototype.verifyPhoneNumber = function(id, code, success, error) {
+        var _this = this;
+        var data = {
+          id: id,
+          verificationCode: code
+        };
+        return User.verifyPhoneNumber({}, data).$promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+          return user;
+        }, error);
+      };
+
+      /**
+       * Verifies the users phone number
+       */
+      UserService.prototype.verifyPhoneNumberForCurrentUser = function(code, success, error) {
+        var _this = this;
+        var data = {
+          verificationCode: code
+        };
+        return User.verifyPhoneNumber({}, data).$promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+          return user;
+        }, error);
+      };
+
+      /**
+       * Lists a user's payment profiles
+       */
+      UserService.prototype.listPaymentProfiles = function(userId, success, error) {
+        return User.listPaymentProfiles({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's referrals
+       */
+      UserService.prototype.listReferrals = function(userId, success, error) {
+        return User.listReferrals({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's bookings
+       */
+      UserService.prototype.listBookings = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return User.listBookings(options).$promise;
+      };
+
+      /**
+       * Lists a user's promos
+       */
+      UserService.prototype.listPromos = function(userId, success, error) {
+        return User.listPromos({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's tasks
+       */
+      UserService.prototype.listTasks = function(userId, success, error) {
+        return User.listTasks({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's notifications
+       */
+      UserService.prototype.listNotifications = function(userId, success, error) {
+        return User.listNotifications({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's unanswered questions
+       */
+      UserService.prototype.listQuestions = function(userId, type, success, error) {
+        return User.listQuestions({
+          id: userId,
+          type: type
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's answers
+       */
+      UserService.prototype.listAnswers = function(userId, success, error) {
+        return User.listAnswers({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Returns an array of high priority users
+       */
+      UserService.prototype.listHighPriority = function(hours, priority, cityId, success, error) {
+        return User.listHighPriority({
+          hours: hours || 24,
+          priority: priority || 7,
+          city: cityId
+        }, success, error);
+      };
+
+      UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
+        return User.addCredit({
+          id: userId
+        }, {
+          amount: amount,
+          campaign: campaignId
+        }, success, error);
+      };
+
+      /**
+       * Find a user's name and photo by their referral code
+       */
+      UserService.prototype.findByReferral = function(code, success, error) {
+        return User.findByReferral({
+          code: code
+        }, success, error);
+      };
+      /**
+       * Get a user's referral stats
+       */
+      UserService.prototype.getReferralStats = function(userId, success, error) {
+        return User.getReferralStats({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Get a user's referral stats
+       */
+      UserService.prototype.search = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.query) throw new Error('options.query is required');
+
+        return User.search(options).$promise;
+      };
+
+      /**
+       * Lists a user's venues
+       */
+      UserService.prototype.listVenues = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listVenues(options).$promise;
+      };
+
+      UserService.prototype.favorite = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        var userId = options.userId;
+        delete options.userId;
+
+        return User.favorite({
+          id: userId
+        }, options).$promise;
+      };
+
+      UserService.prototype.unfavorite = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.favoriteId) throw new Error('options.favoriteId is required');
+
+        var userId = options.userId;
+        delete options.userId;
+        var favoriteId = options.favoriteId;
+        delete options.favoriteId;
+
+        return User.unfavorite({
+          id: userId,
+          favoriteId: favoriteId
+        }, options).$promise;
+      };
+
+      UserService.prototype.listFavorites = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listFavorites(options).$promise;
+      };
+
+      UserService.prototype.listReviews = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listReviews(options).$promise;
+      };
+
+      UserService.prototype.markAffiliate = function(userId, options) {
+        if (!userId) throw new Error('userId is required');
+        if (!options) throw new Error('options is required');
+        if (!options.name) throw new Error('options.name is required');
+
+        return User.markAffiliate({
+          id: userId
+        }, options).$promise;
+      };
+
+      UserService.prototype.listAffiliates = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listAffiliates(options).$promise;
+      };
+
+      UserService.prototype.listStats = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listStats(options).$promise;
+      };
+
+      UserService.prototype.access = function access(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.access(options).$promise;
+      };
+
+      return new UserService();
+    }
+  ]);
+
 angular
   .module('tl')
   .service('tl.support.agent', [
@@ -5199,6 +5208,42 @@ angular
 
 angular
   .module('tl')
+  .service('tl.support.task', [
+    'tl.support.task.resource',
+    'tl.support.task.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.task.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/task';
+
+    return resource(endpoint, {}, {
+
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.task.service', [
+    'tl.service',
+    'tl.support.task.resource',
+    function(Service, Task) {
+      'use strict';
+
+      var SupportTaskService = Service.extend(Task);
+
+      return new SupportTaskService();
+    }
+  ]);
+
+angular
+  .module('tl')
   .service('tl.support.message', [
     'tl.support.message.resource',
     'tl.support.message.service',
@@ -5254,41 +5299,5 @@ angular
       var SupportMessageService = Service.extend(Message);
 
       return new SupportMessageService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.support.task', [
-    'tl.support.task.resource',
-    'tl.support.task.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.task.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/task';
-
-    return resource(endpoint, {}, {
-
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.task.service', [
-    'tl.service',
-    'tl.support.task.resource',
-    function(Service, Task) {
-      'use strict';
-
-      var SupportTaskService = Service.extend(Task);
-
-      return new SupportTaskService();
     }
   ]);
