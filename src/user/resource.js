@@ -100,6 +100,10 @@ angular
         method: "POST",
         url: endpoint + '/credit'
       },
+      addSubscription: {
+        method: "POST",
+        url: endpoint + '/subscription'
+      },
       findByReferral: {
         method: "GET",
         url: '/referral/:code'
