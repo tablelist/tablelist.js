@@ -339,6 +339,56 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatesale.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-sale';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      update: {
+        method: 'PUT',
+        url: endpoint + '/:id'
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliatesale.service', [
+  'tl.affiliatesale.resource',
+  'tl.service',
+  function(AffiliateSale, Service) {
+    'use strict';
+
+    var AffiliateSaleService = Service.extend(AffiliateSale);
+
+    AffiliateSaleService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return AffiliateSale.list(options).$promise;
+    };
+
+    return new AffiliateSaleService();
+  }
+]);
+
 /**
  * Angular module for setting, reading and removing cookies
  *
@@ -943,56 +993,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatesale.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-sale';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      update: {
-        method: 'PUT',
-        url: endpoint + '/:id'
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliatesale.service', [
-  'tl.affiliatesale.resource',
-  'tl.service',
-  function(AffiliateSale, Service) {
-    'use strict';
-
-    var AffiliateSaleService = Service.extend(AffiliateSale);
-
-    AffiliateSaleService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return AffiliateSale.list(options).$promise;
-    };
-
-    return new AffiliateSaleService();
-  }
-]);
-
-
-angular
-	.module('tl')
 	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1264,37 +1264,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1490,6 +1459,37 @@ angular.module('tl').service('tl.auth.service', [
     return new AuthService();
   }
 ]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
 
 
 angular
@@ -2424,54 +2424,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.inventory-summary.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory-summary';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        list: {
-          method: 'GET',
-          url: endpoint,
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory-summary.service', [
-    'tl.service',
-    'tl.inventory-summary.resource',
-    function(Service, InventorySummary) {
-      'use strict';
-
-      var InventorySummaryService = Service.extend(InventorySummary);
-
-      InventorySummaryService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return InventorySummary.list(options).$promise;
-      };
-
-      return new InventorySummaryService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.inventory-tier-config', ['tl.inventory-tier-config.resource', 'tl.inventory-tier-config.service', function(resource, service) {
     this.resource = resource;
     this.service = service;
@@ -2551,6 +2503,54 @@ angular
       };
 
       return new InventoryTierConfigService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.inventory-summary.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory-summary';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        list: {
+          method: 'GET',
+          url: endpoint,
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-summary.service', [
+    'tl.service',
+    'tl.inventory-summary.resource',
+    function(Service, InventorySummary) {
+      'use strict';
+
+      var InventorySummaryService = Service.extend(InventorySummary);
+
+      InventorySummaryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return InventorySummary.list(options).$promise;
+      };
+
+      return new InventorySummaryService();
     }
   ]);
 
@@ -3484,60 +3484,6 @@ angular
 
 		return new ScheduleService();
 	}]);
-
-angular
-	.module('tl')
-	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.settings.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/config';
-
-		return resource(endpoint, {
-			// nothing here 
-		}, {
-
-			status: {
-				method: 'GET',
-				url: '/status',
-				isArray: false
-			},
-
-			config: {
-				method: 'GET',
-				url: '/config',
-				isArray: false
-			}
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.settings.service', ['tl.service', 'tl.settings.resource', function(Service, Settings){
-
-		var SettingsService = function(){};
-
-		/**
-		 * Gets the server status
-		 */
-		SettingsService.prototype.status = function(success, error) {
-			return Settings.status({}, success, error);
-		};
-
-		/**
-		 * Fetches the configuration settings
-		 */
-		SettingsService.prototype.config = function(success, error) {
-			return Settings.config({}, success, error);
-		};
-
-		return new SettingsService();
-	}]);
 angular
   .module('tl')
   .service('tl.support', [
@@ -3593,6 +3539,60 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.settings.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/config';
+
+		return resource(endpoint, {
+			// nothing here 
+		}, {
+
+			status: {
+				method: 'GET',
+				url: '/status',
+				isArray: false
+			},
+
+			config: {
+				method: 'GET',
+				url: '/config',
+				isArray: false
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.settings.service', ['tl.service', 'tl.settings.resource', function(Service, Settings){
+
+		var SettingsService = function(){};
+
+		/**
+		 * Gets the server status
+		 */
+		SettingsService.prototype.status = function(success, error) {
+			return Settings.status({}, success, error);
+		};
+
+		/**
+		 * Fetches the configuration settings
+		 */
+		SettingsService.prototype.config = function(success, error) {
+			return Settings.config({}, success, error);
+		};
+
+		return new SettingsService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3619,51 +3619,6 @@ angular
 
 		return new TableService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.tracker', [
-    'tl.tracker.resource',
-    'tl.tracker.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tracker';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      create: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tracker.service', [
-    'tl.service',
-    'tl.tracker.resource',
-    function(Service, Tracker) {
-      'use strict';
-
-      var TrackerService = Service.extend(Tracker);
-
-      TrackerService.prototype.create = function(options) {
-        return Tracker.save({}, options).$promise;
-      };
-
-      return new TrackerService();
-    }
-  ]);
-
 angular
   .module('tl')
   .service('tl.tag', [
@@ -3706,6 +3661,51 @@ angular
       };
 
       return new TagService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.tracker', [
+    'tl.tracker.resource',
+    'tl.tracker.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tracker';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      create: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tracker.service', [
+    'tl.service',
+    'tl.tracker.resource',
+    function(Service, Tracker) {
+      'use strict';
+
+      var TrackerService = Service.extend(Tracker);
+
+      TrackerService.prototype.create = function(options) {
+        return Tracker.save({}, options).$promise;
+      };
+
+      return new TrackerService();
     }
   ]);
 
@@ -3998,6 +3998,10 @@ angular
       addSubscription: {
         method: "POST",
         url: endpoint + '/subscription'
+      },
+      removeSubscription: {
+        method: "POST",
+        url: endpoint + '/subscription/remove'
       },
       findByReferral: {
         method: "GET",
@@ -4324,6 +4328,15 @@ angular
         return User.addSubscription({
           id: options.userId
         }, options, success, error);
+      };
+
+      /**
+       * Remove a subscription for a user
+       */
+      UserService.prototype.removeSubscription = function(userId, success, error) {
+        return User.removeSubscription({
+          id: userId
+        }, success, error);
       };
 
       /**
