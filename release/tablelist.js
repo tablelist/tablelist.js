@@ -1367,6 +1367,15 @@ angular.module('tl').service('tl.auth.service', [
     };
 
     /**
+     * Determine if we should consider this user as logged in
+     * Important to use this function instead of checking at
+     * the client level
+     */
+    AuthService.prototype.isLoggedIn = function() {
+      return this.authToken() ? true : false;
+    };
+
+    /**
      * Stores an auth token in the keychain
      */
     AuthService.prototype.setAuthToken = function(token) {
@@ -1405,7 +1414,7 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
 
       var _this = this;
-      
+
       // clear current auth and user
       _this.setAuthToken(null);
       user.setCurrentUser(null);
@@ -1428,7 +1437,7 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
 
       var _this = this;
-      
+
       // clear current auth and user
       _this.setAuthToken(null);
       user.setCurrentUser(null);
@@ -3612,51 +3621,6 @@ angular
 	}]);
 angular
   .module('tl')
-  .service('tl.tag', [
-    'tl.tag.resource',
-    'tl.tag.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tag.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tag';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tag.service', [
-    'tl.service',
-    'tl.tag.resource',
-    function(Service, Tag) {
-      'use strict';
-
-      var TagService = Service.extend(Tag);
-
-      TagService.prototype.list = function(options) {
-        return Tag.list(options).$promise;
-      };
-
-      return new TagService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.tracker', [
     'tl.tracker.resource',
     'tl.tracker.service',
@@ -3697,6 +3661,51 @@ angular
       };
 
       return new TrackerService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.tag', [
+    'tl.tag.resource',
+    'tl.tag.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tag.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tag';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tag.service', [
+    'tl.service',
+    'tl.tag.resource',
+    function(Service, Tag) {
+      'use strict';
+
+      var TagService = Service.extend(Tag);
+
+      TagService.prototype.list = function(options) {
+        return Tag.list(options).$promise;
+      };
+
+      return new TagService();
     }
   ]);
 

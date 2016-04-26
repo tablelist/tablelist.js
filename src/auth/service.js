@@ -16,6 +16,15 @@ angular.module('tl').service('tl.auth.service', [
     };
 
     /**
+     * Determine if we should consider this user as logged in
+     * Important to use this function instead of checking at
+     * the client level
+     */
+    AuthService.prototype.isLoggedIn = function() {
+      return this.authToken() ? true : false;
+    };
+
+    /**
      * Stores an auth token in the keychain
      */
     AuthService.prototype.setAuthToken = function(token) {
@@ -54,7 +63,7 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
 
       var _this = this;
-      
+
       // clear current auth and user
       _this.setAuthToken(null);
       user.setCurrentUser(null);
@@ -77,7 +86,7 @@ angular.module('tl').service('tl.auth.service', [
       success = success || function() {};
 
       var _this = this;
-      
+
       // clear current auth and user
       _this.setAuthToken(null);
       user.setCurrentUser(null);
