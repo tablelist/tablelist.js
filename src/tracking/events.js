@@ -72,6 +72,7 @@ angular
 		// Payment
 		PaymentAdded: "TLPaymentAdded",
 		PaymentUpdated: "TLPaymentUpdated",
+		PaymentFailed: "TLPaymentFailed",
 
 		// Promo Code
 		CodeRedeemed: "TLPromoCodeRedeemed",
