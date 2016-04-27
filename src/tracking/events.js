@@ -53,8 +53,7 @@ angular
 		MembershipInfoViewed: "TLMembershipInfoViewed",
 		MembershipTermsViewed: "TLMembershipTermsViewed",
 		MembershipSubscribed: "TLMembershipSubscribed",
-		MembershipFailed: "TLMembershipFailed",
-		MembershipCancelled: "TLMembershipCancelled",
+		MembershipUnsubscribed: "TLMembershipUnsubscribed",
 
 		// Favorites
 		FavoritedVenue: "TLFavoritedVenue",
