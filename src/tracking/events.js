@@ -49,6 +49,13 @@ angular
 		// Booking Review
 		BookingReviewSubmitted: "TLBookingReviewSubmitted",
 
+		// Membership
+		MembershipInfoViewed: "TLMembershipInfoViewed",
+		MembershipTermsViewed: "TLMembershipTermsViewed",
+		MembershipSubscribed: "TLMembershipSubscribed",
+		MembershipFailed: "TLMembershipFailed",
+		MembershipCancelled: "TLMembershipCancelled",
+
 		// Favorites
 		FavoritedVenue: "TLFavoritedVenue",
 		FavoritedEvent: "TLFavoritedEvent",
