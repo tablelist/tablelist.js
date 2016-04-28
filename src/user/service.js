@@ -272,8 +272,8 @@ angular
       /**
        * Remove a subscription for a user
        */
-      UserService.prototype.removeSubscription = function(userId, success, error) {
-        return User.removeSubscription({
+      UserService.prototype.cancelSubscription = function(userId, success, error) {
+        return User.cancelSubscription({
           id: userId
         }, success, error);
       };

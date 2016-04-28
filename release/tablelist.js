@@ -2847,6 +2847,44 @@ angular.module('tl').service('tl.outgoingPayment.service', [
   }
 ]);
 
+angular
+  .module('tl')
+  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.permission.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/permission/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      listVenuePermissions: {
+        method: 'GET',
+        url: '/permission/venue'
+      },
+    });
+  }]);
+
+ angular
+   .module('tl')
+   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
+     function(Permission, Service) {
+
+       var PermissionService = Service.extend(Permission);
+
+       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
+         return Permission.listVenuePermissions(options).$promise;
+       };
+
+       return new PermissionService();
+     }
+   ]);
+
 
 angular
 	.module('tl')
@@ -3057,44 +3095,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.permission', ['tl.permission.resource', 'tl.permission.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.permission.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/permission/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      listVenuePermissions: {
-        method: 'GET',
-        url: '/permission/venue'
-      },
-    });
-  }]);
-
- angular
-   .module('tl')
-   .service('tl.permission.service', ['tl.permission.resource', 'tl.service',
-     function(Permission, Service) {
-
-       var PermissionService = Service.extend(Permission);
-
-       PermissionService.prototype.listVenuePermissions = function listVenuePermissions(options) {
-         return Permission.listVenuePermissions(options).$promise;
-       };
-
-       return new PermissionService();
-     }
-   ]);
-
-angular
-  .module('tl')
   .service('tl.promo', ['tl.promo.resource', 'tl.promo.service', function(resource, service) {
     this.resource = resource;
     this.service = service;
@@ -3185,6 +3185,66 @@ angular
 
 		return new ProspectService();
 	}]);
+angular
+  .module('tl')
+  .service('tl.question', ['tl.question.resource', 'tl.question.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.question.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/question';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        get: {
+          method: 'GET',
+          url: endpoint + '/:id'
+        },
+        listAnswers: {
+          method: 'GET',
+          url: endpoint + '/:id/answers',
+          isArray: true
+        },
+        listTotalsForAnswers: {
+          method: 'GET',
+          url: endpoint + '/:id/answers/totals',
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.question.service', ['tl.question.resource', 'tl.service',
+    function(Question, Service) {
+
+      var QuestionService = Service.extend(Question);
+
+      QuestionService.prototype.listAnswers = function(id) {
+        return Question.listAnswers({
+          id: id
+        });
+      };
+
+      QuestionService.prototype.listTotalsForAnswers = function(id) {
+        return Question.listTotalsForAnswers({
+          id: id
+        });
+      };
+
+      return new QuestionService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -3276,66 +3336,6 @@ angular
 
 		return new ReviewService();
 	}]);
-
-angular
-  .module('tl')
-  .service('tl.question', ['tl.question.resource', 'tl.question.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.question.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/question';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        get: {
-          method: 'GET',
-          url: endpoint + '/:id'
-        },
-        listAnswers: {
-          method: 'GET',
-          url: endpoint + '/:id/answers',
-          isArray: true
-        },
-        listTotalsForAnswers: {
-          method: 'GET',
-          url: endpoint + '/:id/answers/totals',
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.question.service', ['tl.question.resource', 'tl.service',
-    function(Question, Service) {
-
-      var QuestionService = Service.extend(Question);
-
-      QuestionService.prototype.listAnswers = function(id) {
-        return Question.listAnswers({
-          id: id
-        });
-      };
-
-      QuestionService.prototype.listTotalsForAnswers = function(id) {
-        return Question.listTotalsForAnswers({
-          id: id
-        });
-      };
-
-      return new QuestionService();
-    }
-  ]);
 
 
 angular
@@ -3999,9 +3999,9 @@ angular
         method: "POST",
         url: endpoint + '/subscription'
       },
-      removeSubscription: {
+      cancelSubscription: {
         method: "POST",
-        url: endpoint + '/subscription/remove'
+        url: endpoint + '/subscription/cancel'
       },
       findByReferral: {
         method: "GET",
@@ -4333,8 +4333,8 @@ angular
       /**
        * Remove a subscription for a user
        */
-      UserService.prototype.removeSubscription = function(userId, success, error) {
-        return User.removeSubscription({
+      UserService.prototype.cancelSubscription = function(userId, success, error) {
+        return User.cancelSubscription({
           id: userId
         }, success, error);
       };
