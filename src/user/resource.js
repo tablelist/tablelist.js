@@ -104,6 +104,10 @@ angular
         method: "POST",
         url: endpoint + '/subscription'
       },
+      cancelSubscription: {
+        method: "DELETE",
+        url: endpoint + '/subscription'
+      },
       findByReferral: {
         method: "GET",
         url: '/referral/:code'
