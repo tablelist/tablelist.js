@@ -270,6 +270,15 @@ angular
       };
 
       /**
+       * Remove a subscription for a user
+       */
+      UserService.prototype.cancelSubscription = function(userId, success, error) {
+        return User.cancelSubscription({
+          id: userId
+        }, success, error);
+      };
+
+      /**
        * Find a user's name and photo by their referral code
        */
       UserService.prototype.findByReferral = function(code, success, error) {
