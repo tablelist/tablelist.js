@@ -51,6 +51,7 @@ angular
 
 		// Membership
 		MembershipInfoViewed: "TLMembershipInfoViewed",
+		MembershipApplyClicked: "TLMembershipApplyClicked",
 		MembershipTermsViewed: "TLMembershipTermsViewed",
 		MembershipSubscribed: "TLMembershipSubscribed",
 		MembershipUnsubscribed: "TLMembershipUnsubscribed",
@@ -72,7 +73,7 @@ angular
 		// Payment
 		PaymentAdded: "TLPaymentAdded",
 		PaymentUpdated: "TLPaymentUpdated",
-		PaymentFailed: "TLPaymentFailed",
+		PaymentInfoError: "TLPaymentInfoError",
 
 		// Promo Code
 		CodeRedeemed: "TLPromoCodeRedeemed",
