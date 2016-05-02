@@ -943,6 +943,56 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatesale.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-sale';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      update: {
+        method: 'PUT',
+        url: endpoint + '/:id'
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliatesale.service', [
+  'tl.affiliatesale.resource',
+  'tl.service',
+  function(AffiliateSale, Service) {
+    'use strict';
+
+    var AffiliateSaleService = Service.extend(AffiliateSale);
+
+    AffiliateSaleService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return AffiliateSale.list(options).$promise;
+    };
+
+    return new AffiliateSaleService();
+  }
+]);
+
+
+angular
+	.module('tl')
 	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1122,56 +1172,6 @@ angular.module('tl').service('tl.affiliate.service', [
     };
 
     return new AffiliateService();
-  }
-]);
-
-
-angular
-	.module('tl')
-	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatesale.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-sale';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      update: {
-        method: 'PUT',
-        url: endpoint + '/:id'
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliatesale.service', [
-  'tl.affiliatesale.resource',
-  'tl.service',
-  function(AffiliateSale, Service) {
-    'use strict';
-
-    var AffiliateSaleService = Service.extend(AffiliateSale);
-
-    AffiliateSaleService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return AffiliateSale.list(options).$promise;
-    };
-
-    return new AffiliateSaleService();
   }
 ]);
 
@@ -3760,6 +3760,13 @@ angular
 		// Booking Review
 		BookingReviewSubmitted: "TLBookingReviewSubmitted",
 
+		// Membership
+		MembershipInfoViewed: "TLMembershipInfoViewed",
+		MembershipApplyClicked: "TLMembershipApplyClicked",
+		MembershipTermsViewed: "TLMembershipTermsViewed",
+		MembershipSubscribed: "TLMembershipSubscribed",
+		MembershipUnsubscribed: "TLMembershipUnsubscribed",
+
 		// Favorites
 		FavoritedVenue: "TLFavoritedVenue",
 		FavoritedEvent: "TLFavoritedEvent",
@@ -3777,6 +3784,7 @@ angular
 		// Payment
 		PaymentAdded: "TLPaymentAdded",
 		PaymentUpdated: "TLPaymentUpdated",
+		PaymentInfoError: "TLPaymentInfoError",
 
 		// Promo Code
 		CodeRedeemed: "TLPromoCodeRedeemed",
@@ -3798,6 +3806,7 @@ angular
 		InventorySearched : "TLInventorySearched",
 		InventorySearchResultSelected : "TLInventorySearchResultSelected",
 	});
+
 
 angular
 	.module('tl')
@@ -5138,6 +5147,66 @@ angular
 
 angular
   .module('tl')
+  .service('tl.support.message', [
+    'tl.support.message.resource',
+    'tl.support.message.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/message';
+
+    return resource(endpoint, {}, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      markMessagesRead: {
+        method: 'POST',
+        url: endpoint + '/read',
+        isArray: true
+      },
+      sendInboundMessage: {
+        method: 'POST',
+        url: endpoint + '/inbound',
+        isArray: false
+      },
+      sendOutboundMessage: {
+        method: 'POST',
+        url: endpoint + '/outbound',
+        isArray: false
+      },
+      sendInternalMessage: {
+        method: 'POST',
+        url: endpoint + '/internal',
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.message.service', [
+    'tl.service',
+    'tl.support.message.resource',
+    function(Service, Message) {
+      'use strict';
+
+      var SupportMessageService = Service.extend(Message);
+
+      return new SupportMessageService();
+    }
+  ]);
+
+angular
+  .module('tl')
   .service('tl.support.agent', [
     'tl.support.agent.resource',
     'tl.support.agent.service',
@@ -5243,66 +5312,6 @@ angular
       };
 
       return new SupportAgentService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.support.message', [
-    'tl.support.message.resource',
-    'tl.support.message.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/message';
-
-    return resource(endpoint, {}, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      markMessagesRead: {
-        method: 'POST',
-        url: endpoint + '/read',
-        isArray: true
-      },
-      sendInboundMessage: {
-        method: 'POST',
-        url: endpoint + '/inbound',
-        isArray: false
-      },
-      sendOutboundMessage: {
-        method: 'POST',
-        url: endpoint + '/outbound',
-        isArray: false
-      },
-      sendInternalMessage: {
-        method: 'POST',
-        url: endpoint + '/internal',
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.message.service', [
-    'tl.service',
-    'tl.support.message.resource',
-    function(Service, Message) {
-      'use strict';
-
-      var SupportMessageService = Service.extend(Message);
-
-      return new SupportMessageService();
     }
   ]);
 
