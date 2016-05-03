@@ -51,8 +51,8 @@ angular
 
 		// Membership
 		MembershipInfoViewed: "TLMembershipInfoViewed",
-		MembershipApplyClicked: "TLMembershipApplyClicked",
-		MembershipTermsViewed: "TLMembershipTermsViewed",
+		MembershipApplyViewed: "TLMembershipApplyViewed",
+		MembershipCheckoutViewed: "TLMembershipCheckoutViewed",
 		MembershipSubscribed: "TLMembershipSubscribed",
 		MembershipUnsubscribed: "TLMembershipUnsubscribed",
 

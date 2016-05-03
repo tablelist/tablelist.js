@@ -1264,37 +1264,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1815,6 +1784,37 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
 	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1930,6 +1930,112 @@ angular
 
 		return new ClientService();
 	}]);
+angular
+  .module('tl')
+  .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.feed.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/feed';
+
+      return resource(endpoint, {
+        id: '@id',
+        userId: '@userId'
+      }, {
+        create: {
+          method: 'POST',
+          url: endpoint,
+          isArray: true
+        },
+        remove: {
+          method: 'DELETE',
+          url: endpoint + '/:id',
+          isArray: false
+        },
+        list: {
+          method: 'GET',
+          url: endpoint,
+          isArray: true
+        },
+        listUserFeed: {
+          method: 'GET',
+          url: '/user/:userId/feed',
+          isArray: true
+        },
+        addLike: {
+          method: 'POST',
+          url: endpoint + '/:id/like',
+          isArray: false
+        },
+        removeLike: {
+          method: 'DELETE',
+          url: endpoint + '/:id/like',
+          isArray: false
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.feed.service', ['tl.service', 'tl.feed.resource',
+    function(Service, Feed) {
+
+      var FeedService = Service.extend(Feed);
+
+      FeedService.prototype.create = function(options) {
+        if (!options) throw new Error('FeedService.create - options is required');
+
+        return Feed.create({}, options).$promise;
+      };
+
+      FeedService.prototype.remove = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.remove - feedId is required');
+        options = options || {};
+
+        options.id = feedId;
+
+        return Feed.remove(options).$promise;
+      };
+
+      FeedService.prototype.list = function(options) {
+        options = options || {};
+        return Feed.list(options).$promise;
+      };
+
+      FeedService.prototype.listUserFeed = function(userId, options) {
+        if (!userId) throw new Error('FeedService.listUserFeed - userId is required');
+        options = options || {};
+
+        options.userId = userId;
+
+        return Feed.listUserFeed(options).$promise;
+      };
+
+      FeedService.prototype.addLike = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.addLike - feedId is required');
+
+        return Feed.addLike({ id: feedId }, options).$promise;
+      };
+
+      FeedService.prototype.removeLike = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.removeLike - feedId is required');
+
+        return Feed.removeLike({ id: feedId }, options).$promise;
+      };
+
+      return new FeedService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -2069,112 +2175,6 @@ angular
 
     return new EventService();
   }]);
-
-angular
-  .module('tl')
-  .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.feed.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/feed';
-
-      return resource(endpoint, {
-        id: '@id',
-        userId: '@userId'
-      }, {
-        create: {
-          method: 'POST',
-          url: endpoint,
-          isArray: true
-        },
-        remove: {
-          method: 'DELETE',
-          url: endpoint + '/:id',
-          isArray: false
-        },
-        list: {
-          method: 'GET',
-          url: endpoint,
-          isArray: true
-        },
-        listUserFeed: {
-          method: 'GET',
-          url: '/user/:userId/feed',
-          isArray: true
-        },
-        addLike: {
-          method: 'POST',
-          url: endpoint + '/:id/like',
-          isArray: false
-        },
-        removeLike: {
-          method: 'DELETE',
-          url: endpoint + '/:id/like',
-          isArray: false
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.feed.service', ['tl.service', 'tl.feed.resource',
-    function(Service, Feed) {
-
-      var FeedService = Service.extend(Feed);
-
-      FeedService.prototype.create = function(options) {
-        if (!options) throw new Error('FeedService.create - options is required');
-
-        return Feed.create({}, options).$promise;
-      };
-
-      FeedService.prototype.remove = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.remove - feedId is required');
-        options = options || {};
-
-        options.id = feedId;
-
-        return Feed.remove(options).$promise;
-      };
-
-      FeedService.prototype.list = function(options) {
-        options = options || {};
-        return Feed.list(options).$promise;
-      };
-
-      FeedService.prototype.listUserFeed = function(userId, options) {
-        if (!userId) throw new Error('FeedService.listUserFeed - userId is required');
-        options = options || {};
-
-        options.userId = userId;
-
-        return Feed.listUserFeed(options).$promise;
-      };
-
-      FeedService.prototype.addLike = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.addLike - feedId is required');
-
-        return Feed.addLike({ id: feedId }, options).$promise;
-      };
-
-      FeedService.prototype.removeLike = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.removeLike - feedId is required');
-
-        return Feed.removeLike({ id: feedId }, options).$promise;
-      };
-
-      return new FeedService();
-    }
-  ]);
 
 angular
   .module('tl')
@@ -3762,8 +3762,8 @@ angular
 
 		// Membership
 		MembershipInfoViewed: "TLMembershipInfoViewed",
-		MembershipApplyClicked: "TLMembershipApplyClicked",
-		MembershipTermsViewed: "TLMembershipTermsViewed",
+		MembershipApplyViewed: "TLMembershipApplyViewed",
+		MembershipCheckoutViewed: "TLMembershipCheckoutViewed",
 		MembershipSubscribed: "TLMembershipSubscribed",
 		MembershipUnsubscribed: "TLMembershipUnsubscribed",
 
@@ -5147,66 +5147,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.support.message', [
-    'tl.support.message.resource',
-    'tl.support.message.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/message';
-
-    return resource(endpoint, {}, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      markMessagesRead: {
-        method: 'POST',
-        url: endpoint + '/read',
-        isArray: true
-      },
-      sendInboundMessage: {
-        method: 'POST',
-        url: endpoint + '/inbound',
-        isArray: false
-      },
-      sendOutboundMessage: {
-        method: 'POST',
-        url: endpoint + '/outbound',
-        isArray: false
-      },
-      sendInternalMessage: {
-        method: 'POST',
-        url: endpoint + '/internal',
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.message.service', [
-    'tl.service',
-    'tl.support.message.resource',
-    function(Service, Message) {
-      'use strict';
-
-      var SupportMessageService = Service.extend(Message);
-
-      return new SupportMessageService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.support.agent', [
     'tl.support.agent.resource',
     'tl.support.agent.service',
@@ -5312,6 +5252,66 @@ angular
       };
 
       return new SupportAgentService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.support.message', [
+    'tl.support.message.resource',
+    'tl.support.message.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/message';
+
+    return resource(endpoint, {}, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      markMessagesRead: {
+        method: 'POST',
+        url: endpoint + '/read',
+        isArray: true
+      },
+      sendInboundMessage: {
+        method: 'POST',
+        url: endpoint + '/inbound',
+        isArray: false
+      },
+      sendOutboundMessage: {
+        method: 'POST',
+        url: endpoint + '/outbound',
+        isArray: false
+      },
+      sendInternalMessage: {
+        method: 'POST',
+        url: endpoint + '/internal',
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.message.service', [
+    'tl.service',
+    'tl.support.message.resource',
+    function(Service, Message) {
+      'use strict';
+
+      var SupportMessageService = Service.extend(Message);
+
+      return new SupportMessageService();
     }
   ]);
 
