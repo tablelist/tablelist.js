@@ -49,6 +49,13 @@ angular
 		// Booking Review
 		BookingReviewSubmitted: "TLBookingReviewSubmitted",
 
+		// Membership
+		MembershipInfoViewed: "TLMembershipInfoViewed",
+		MembershipApplyViewed: "TLMembershipApplyViewed",
+		MembershipCheckoutViewed: "TLMembershipCheckoutViewed",
+		MembershipSubscribed: "TLMembershipSubscribed",
+		MembershipUnsubscribed: "TLMembershipUnsubscribed",
+
 		// Favorites
 		FavoritedVenue: "TLFavoritedVenue",
 		FavoritedEvent: "TLFavoritedEvent",
@@ -66,6 +73,7 @@ angular
 		// Payment
 		PaymentAdded: "TLPaymentAdded",
 		PaymentUpdated: "TLPaymentUpdated",
+		PaymentInfoError: "TLPaymentInfoError",
 
 		// Promo Code
 		CodeRedeemed: "TLPromoCodeRedeemed",
