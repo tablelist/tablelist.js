@@ -1264,6 +1264,37 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
+
 angular
   .module('tl')
   .service('tl.auth', ['tl.auth.resource', 'tl.auth.service',
@@ -1784,37 +1815,6 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1930,112 +1930,6 @@ angular
 
 		return new ClientService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.feed.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/feed';
-
-      return resource(endpoint, {
-        id: '@id',
-        userId: '@userId'
-      }, {
-        create: {
-          method: 'POST',
-          url: endpoint,
-          isArray: true
-        },
-        remove: {
-          method: 'DELETE',
-          url: endpoint + '/:id',
-          isArray: false
-        },
-        list: {
-          method: 'GET',
-          url: endpoint,
-          isArray: true
-        },
-        listUserFeed: {
-          method: 'GET',
-          url: '/user/:userId/feed',
-          isArray: true
-        },
-        addLike: {
-          method: 'POST',
-          url: endpoint + '/:id/like',
-          isArray: false
-        },
-        removeLike: {
-          method: 'DELETE',
-          url: endpoint + '/:id/like',
-          isArray: false
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.feed.service', ['tl.service', 'tl.feed.resource',
-    function(Service, Feed) {
-
-      var FeedService = Service.extend(Feed);
-
-      FeedService.prototype.create = function(options) {
-        if (!options) throw new Error('FeedService.create - options is required');
-
-        return Feed.create({}, options).$promise;
-      };
-
-      FeedService.prototype.remove = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.remove - feedId is required');
-        options = options || {};
-
-        options.id = feedId;
-
-        return Feed.remove(options).$promise;
-      };
-
-      FeedService.prototype.list = function(options) {
-        options = options || {};
-        return Feed.list(options).$promise;
-      };
-
-      FeedService.prototype.listUserFeed = function(userId, options) {
-        if (!userId) throw new Error('FeedService.listUserFeed - userId is required');
-        options = options || {};
-
-        options.userId = userId;
-
-        return Feed.listUserFeed(options).$promise;
-      };
-
-      FeedService.prototype.addLike = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.addLike - feedId is required');
-
-        return Feed.addLike({ id: feedId }, options).$promise;
-      };
-
-      FeedService.prototype.removeLike = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.removeLike - feedId is required');
-
-        return Feed.removeLike({ id: feedId }, options).$promise;
-      };
-
-      return new FeedService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
@@ -2175,6 +2069,112 @@ angular
 
     return new EventService();
   }]);
+
+angular
+  .module('tl')
+  .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.feed.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/feed';
+
+      return resource(endpoint, {
+        id: '@id',
+        userId: '@userId'
+      }, {
+        create: {
+          method: 'POST',
+          url: endpoint,
+          isArray: true
+        },
+        remove: {
+          method: 'DELETE',
+          url: endpoint + '/:id',
+          isArray: false
+        },
+        list: {
+          method: 'GET',
+          url: endpoint,
+          isArray: true
+        },
+        listUserFeed: {
+          method: 'GET',
+          url: '/user/:userId/feed',
+          isArray: true
+        },
+        addLike: {
+          method: 'POST',
+          url: endpoint + '/:id/like',
+          isArray: false
+        },
+        removeLike: {
+          method: 'DELETE',
+          url: endpoint + '/:id/like',
+          isArray: false
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.feed.service', ['tl.service', 'tl.feed.resource',
+    function(Service, Feed) {
+
+      var FeedService = Service.extend(Feed);
+
+      FeedService.prototype.create = function(options) {
+        if (!options) throw new Error('FeedService.create - options is required');
+
+        return Feed.create({}, options).$promise;
+      };
+
+      FeedService.prototype.remove = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.remove - feedId is required');
+        options = options || {};
+
+        options.id = feedId;
+
+        return Feed.remove(options).$promise;
+      };
+
+      FeedService.prototype.list = function(options) {
+        options = options || {};
+        return Feed.list(options).$promise;
+      };
+
+      FeedService.prototype.listUserFeed = function(userId, options) {
+        if (!userId) throw new Error('FeedService.listUserFeed - userId is required');
+        options = options || {};
+
+        options.userId = userId;
+
+        return Feed.listUserFeed(options).$promise;
+      };
+
+      FeedService.prototype.addLike = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.addLike - feedId is required');
+
+        return Feed.addLike({ id: feedId }, options).$promise;
+      };
+
+      FeedService.prototype.removeLike = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.removeLike - feedId is required');
+
+        return Feed.removeLike({ id: feedId }, options).$promise;
+      };
+
+      return new FeedService();
+    }
+  ]);
 
 angular
   .module('tl')
@@ -2554,6 +2554,47 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.item.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/item/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: '/item',
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
+
+    var ItemService = Service.extend(Item);
+
+    ItemService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Item.list(options).$promise;
+    };
+
+    return new ItemService();
+  }]);
+
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -2616,47 +2657,6 @@ angular
       return new InvoiceService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.item.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/item/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: '/item',
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
-
-    var ItemService = Service.extend(Item);
-
-    ItemService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Item.list(options).$promise;
-    };
-
-    return new ItemService();
-  }]);
 
 
 angular
@@ -3248,6 +3248,50 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.review.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/review/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
+
+		var ReviewService = Service.extend(Review);
+
+		ReviewService.prototype.read = function read(options) {
+			if (!options) throw new Error('options is required');
+			if (!options.id) throw new Error('options.id is required');
+
+			return Review.get(options).$promise;
+		};
+
+		ReviewService.prototype.update = function update(options) {
+			if (!options) throw new Error('options is required');
+			if (!options.id) throw new Error('options.id is required');
+
+			return Review.update({ id: options.id }, options).$promise;
+		};
+
+		return new ReviewService();
+	}]);
+
+
+angular
+	.module('tl')
 	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3293,50 +3337,6 @@ angular
 
 		return new ReportService();
 	}]);
-
-angular
-	.module('tl')
-	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.review.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/review/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
-
-		var ReviewService = Service.extend(Review);
-
-		ReviewService.prototype.read = function read(options) {
-			if (!options) throw new Error('options is required');
-			if (!options.id) throw new Error('options.id is required');
-
-			return Review.get(options).$promise;
-		};
-
-		ReviewService.prototype.update = function update(options) {
-			if (!options) throw new Error('options is required');
-			if (!options.id) throw new Error('options.id is required');
-
-			return Review.update({ id: options.id }, options).$promise;
-		};
-
-		return new ReviewService();
-	}]);
-
 
 angular
 	.module('tl')
@@ -3538,6 +3538,35 @@ angular
 
 		return new SettingsService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 angular
   .module('tl')
   .service('tl.support', [
@@ -3590,35 +3619,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -3894,591 +3894,6 @@ angular
 
 		return new TrackService();
 	}]);
-
-
-angular
-	.module('tl')
-	.service('tl.user', ['tl.user.resource', 'tl.user.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.user.resource', ['tl.resource', function(resource) {
-    'use strict';
-
-    var endpoint = '/user/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: '/user',
-        isArray: true
-      },
-      me: {
-        method: 'GET',
-        url: '/me'
-      },
-      updateMe: {
-        method: 'PUT',
-        url: '/me'
-      },
-      search: {
-        method: 'GET',
-        url: '/user/search',
-        isArray: true
-      },
-      push: {
-        method: 'POST',
-        url: '/notify/push',
-        isArray: false
-      },
-      listBookings: {
-        method: 'GET',
-        url: endpoint + '/booking',
-        isArray: true
-      },
-      updatePreferredCity: {
-        method: 'PUT',
-        url: '/user/city'
-      },
-      requestVerificationCode: {
-        method: 'GET',
-        url: '/user/verify/:id'
-      },
-      requestVerificationCodeForCurrentUser: {
-        method: 'GET',
-        url: '/user/verify'
-      },
-      verifyPhoneNumber: {
-        method: 'PUT',
-        url: '/user/verify/:id'
-      },
-      verifyPhoneNumberForCurrentUser: {
-        method: 'PUT',
-        url: '/user/verify'
-      },
-      listPaymentProfiles: {
-        method: 'GET',
-        url: endpoint + '/paymentProfiles',
-        isArray: true
-      },
-      listReferrals: {
-        method: 'GET',
-        url: endpoint + '/referral',
-        isArray: true
-      },
-      listPromos: {
-        method: "GET",
-        url: endpoint + "/promo",
-        isArray: true
-      },
-      listTasks: {
-        method: 'GET',
-        url: endpoint + '/task',
-        isArray: true
-      },
-      listQuestions: {
-        method: 'GET',
-        url: endpoint + '/question',
-        isArray: true
-      },
-      listAnswers: {
-        method: 'GET',
-        url: endpoint + '/answer',
-        isArray: true
-      },
-      listNotifications: {
-        method: "GET",
-        url: '/notify/:id',
-        isArray: true
-      },
-      listHighPriority: {
-        method: "GET",
-        url: '/user/priority',
-        isArray: true
-      },
-      addCredit: {
-        method: "POST",
-        url: endpoint + '/credit'
-      },
-      addSubscription: {
-        method: "POST",
-        url: endpoint + '/subscription'
-      },
-      cancelSubscription: {
-        method: "DELETE",
-        url: endpoint + '/subscription'
-      },
-      findByReferral: {
-        method: "GET",
-        url: '/referral/:code'
-      },
-      getReferralStats: {
-        method: "GET",
-        url: endpoint + '/referral/stats'
-      },
-      listVenues: {
-        method: "GET",
-        url: endpoint + '/venue',
-        isArray: true
-      },
-      listStats: {
-        method: "GET",
-        url: endpoint + '/stats',
-        isArray: true
-      },
-      favorite: {
-        method: "POST",
-        url: endpoint + '/favorite',
-        isArray: false
-      },
-      unfavorite: {
-        method: "DELETE",
-        url: endpoint + '/favorite/:favoriteId',
-        isArray: false
-      },
-      listFavorites: {
-        method: "GET",
-        url: endpoint + '/favorite',
-        isArray: true
-      },
-      listReviews: {
-        method: 'GET',
-        url: endpoint + '/review',
-        isArray: true
-      },
-      markAffiliate: {
-        method: "POST",
-        url: endpoint + '/affiliate',
-        isArray: false
-      },
-      listAffiliates: {
-        method: "GET",
-        url: 'user/:id/affiliate',
-        isArray: true
-      },
-      access: {
-        method: 'GET',
-        url: 'user/:id/access',
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.user.service', ['$timeout', 'tl.storage', 'tl.keychain', 'tl.ee', 'tl.user.resource', 'tl.service',
-    function($timeout, storage, keychain, ee, User, Service) {
-      'use strict';
-
-      var USER_KEY = 'tl_user';
-      var EVENTS = {
-        USER_UPDATED: 'tl.user.updated'
-      };
-
-      var UserService = Service.extend(User);
-
-      UserService.prototype.list = function list(options) {
-        if (!options) throw new Error('options is required');
-
-        options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-        return User.list(options).$promise;
-      };
-
-      /**
-       * Returns a local copy of the current user
-       */
-      UserService.prototype.currentUser = function() {
-        return keychain.authToken() ? storage.get(USER_KEY) : null;
-      };
-
-      UserService.prototype.EVENTS = function() {
-        return EVENTS;
-      };
-
-      /**
-       * Sets a local copy of the current user
-       */
-      UserService.prototype.setCurrentUser = function(user) {
-        $timeout(function() { // fire notification on next run loop
-          ee.emit(EVENTS.USER_UPDATED, user);
-        });
-        return storage.set(USER_KEY, user);
-      };
-
-      /**
-       * Merges local copy of user with new data
-       */
-      UserService.prototype.saveCurrentUser = function(user) {
-        var _user = this.currentUser() || {};
-        var keys = Object.keys(user);
-        for (var i = 0; i < keys.length; i++) {
-          var key = keys[i];
-          var val = user[key];
-          _user[key] = val;
-        }
-        this.setCurrentUser(_user);
-      };
-
-      /**
-       * Fetches the current user from the API
-       */
-      UserService.prototype.me = function(success, error) {
-        var _this = this;
-
-        var promise = User.me().$promise;
-
-        promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-        }, error);
-
-        return promise;
-      };
-
-      /**
-       * Updates the current user
-       */
-      UserService.prototype.updateMe = function(body, success, error) {
-        var _this = this;
-        return User.updateMe({}, body).$promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-        }, error);
-      };
-
-      /**
-       * Sets the users preferred city
-       */
-      UserService.prototype.updatePreferredCity = function(cityId, success, error) {
-        var _this = this;
-        var body = {
-          city: cityId
-        };
-        return User.updatePreferredCity({}, body).$promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-        }, error);
-      };
-
-      /**
-       * Requests a verification code to verify a phone number
-       */
-      UserService.prototype.requestVerificationCode = function(id, success, error) {
-        return User.requestVerificationCode({
-          id: id
-        }, success, error);
-      };
-
-      /**
-       * Requests a verification code to verify a phone number
-       */
-      UserService.prototype.requestVerificationCodeForCurrentUser = function(success, error) {
-        return User.requestVerificationCodeForCurrentUser({}, success, error);
-      };
-
-      /**
-       * Verifies the users phone number
-       */
-      UserService.prototype.verifyPhoneNumber = function(id, code, success, error) {
-        var _this = this;
-        var data = {
-          id: id,
-          verificationCode: code
-        };
-        return User.verifyPhoneNumber({}, data).$promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-          return user;
-        }, error);
-      };
-
-      /**
-       * Verifies the users phone number
-       */
-      UserService.prototype.verifyPhoneNumberForCurrentUser = function(code, success, error) {
-        var _this = this;
-        var data = {
-          verificationCode: code
-        };
-        return User.verifyPhoneNumber({}, data).$promise.then(function(user) {
-          _this.saveCurrentUser(user);
-          if (success) {
-            success(user);
-          }
-          return user;
-        }, error);
-      };
-
-      /**
-       * Lists a user's payment profiles
-       */
-      UserService.prototype.listPaymentProfiles = function(userId, success, error) {
-        return User.listPaymentProfiles({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's referrals
-       */
-      UserService.prototype.listReferrals = function(userId, success, error) {
-        return User.listReferrals({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's bookings
-       */
-      UserService.prototype.listBookings = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.id) throw new Error('options.id is required');
-
-        return User.listBookings(options).$promise;
-      };
-
-      /**
-       * Lists a user's promos
-       */
-      UserService.prototype.listPromos = function(userId, success, error) {
-        return User.listPromos({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's tasks
-       */
-      UserService.prototype.listTasks = function(userId, success, error) {
-        return User.listTasks({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's notifications
-       */
-      UserService.prototype.listNotifications = function(userId, success, error) {
-        return User.listNotifications({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's unanswered questions
-       */
-      UserService.prototype.listQuestions = function(userId, type, success, error) {
-        return User.listQuestions({
-          id: userId,
-          type: type
-        }, success, error);
-      };
-
-      /**
-       * Lists a user's answers
-       */
-      UserService.prototype.listAnswers = function(userId, success, error) {
-        return User.listAnswers({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Returns an array of high priority users
-       */
-      UserService.prototype.listHighPriority = function(hours, priority, cityId, success, error) {
-        return User.listHighPriority({
-          hours: hours || 24,
-          priority: priority || 7,
-          city: cityId
-        }, success, error);
-      };
-
-      /**
-       * Add credit for a user
-       */
-      UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
-        return User.addCredit({
-          id: userId
-        }, {
-          amount: amount,
-          campaign: campaignId
-        }, success, error);
-      };
-
-      /**
-       * Add a subscription for a user
-       *
-       * @method addSubscription
-       * @param {Object} options
-       * @param {String} [options.userId] - user to subscribe
-       * @param {String} [options.planId] - braintree reoccurring plan
-       * @param {String} [options.paymentProfileId] - payment profile to charge
-       */
-      UserService.prototype.addSubscription = function(options, success, error) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-        if (!options.planId) throw new Error('options.planId is required');
-        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
-
-        return User.addSubscription({
-          id: options.userId
-        }, options, success, error);
-      };
-
-      /**
-       * Remove a subscription for a user
-       */
-      UserService.prototype.cancelSubscription = function(userId, success, error) {
-        return User.cancelSubscription({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Find a user's name and photo by their referral code
-       */
-      UserService.prototype.findByReferral = function(code, success, error) {
-        return User.findByReferral({
-          code: code
-        }, success, error);
-      };
-      /**
-       * Get a user's referral stats
-       */
-      UserService.prototype.getReferralStats = function(userId, success, error) {
-        return User.getReferralStats({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Get a user's referral stats
-       */
-      UserService.prototype.search = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.query) throw new Error('options.query is required');
-
-        return User.search(options).$promise;
-      };
-
-      /**
-       * Lists a user's venues
-       */
-      UserService.prototype.listVenues = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listVenues(options).$promise;
-      };
-
-      UserService.prototype.favorite = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        var userId = options.userId;
-        delete options.userId;
-
-        return User.favorite({
-          id: userId
-        }, options).$promise;
-      };
-
-      UserService.prototype.unfavorite = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-        if (!options.favoriteId) throw new Error('options.favoriteId is required');
-
-        var userId = options.userId;
-        delete options.userId;
-        var favoriteId = options.favoriteId;
-        delete options.favoriteId;
-
-        return User.unfavorite({
-          id: userId,
-          favoriteId: favoriteId
-        }, options).$promise;
-      };
-
-      UserService.prototype.listFavorites = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listFavorites(options).$promise;
-      };
-
-      UserService.prototype.listReviews = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listReviews(options).$promise;
-      };
-
-      UserService.prototype.markAffiliate = function(userId, options) {
-        if (!userId) throw new Error('userId is required');
-        if (!options) throw new Error('options is required');
-        if (!options.name) throw new Error('options.name is required');
-
-        return User.markAffiliate({
-          id: userId
-        }, options).$promise;
-      };
-
-      UserService.prototype.listAffiliates = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listAffiliates(options).$promise;
-      };
-
-      UserService.prototype.listStats = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.listStats(options).$promise;
-      };
-
-      UserService.prototype.access = function access(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.userId) throw new Error('options.userId is required');
-
-        options.id = options.userId;
-        delete options.userId;
-
-        return User.access(options).$promise;
-      };
-
-      return new UserService();
-    }
-  ]);
 
 
 angular
@@ -5142,6 +4557,624 @@ angular
       };
 
       return new VenueService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.user', ['tl.user.resource', 'tl.user.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.user.resource', ['tl.resource', function(resource) {
+    'use strict';
+
+    var endpoint = '/user/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: '/user',
+        isArray: true
+      },
+      me: {
+        method: 'GET',
+        url: '/me'
+      },
+      updateMe: {
+        method: 'PUT',
+        url: '/me'
+      },
+      search: {
+        method: 'GET',
+        url: '/user/search',
+        isArray: true
+      },
+      push: {
+        method: 'POST',
+        url: '/notify/push',
+        isArray: false
+      },
+      listBookings: {
+        method: 'GET',
+        url: endpoint + '/booking',
+        isArray: true
+      },
+      updatePreferredCity: {
+        method: 'PUT',
+        url: '/user/city'
+      },
+      requestVerificationCode: {
+        method: 'GET',
+        url: '/user/verify/:id'
+      },
+      requestVerificationCodeForCurrentUser: {
+        method: 'GET',
+        url: '/user/verify'
+      },
+      verifyPhoneNumber: {
+        method: 'PUT',
+        url: '/user/verify/:id'
+      },
+      verifyPhoneNumberForCurrentUser: {
+        method: 'PUT',
+        url: '/user/verify'
+      },
+      listPaymentProfiles: {
+        method: 'GET',
+        url: endpoint + '/paymentProfiles',
+        isArray: true
+      },
+      listReferrals: {
+        method: 'GET',
+        url: endpoint + '/referral',
+        isArray: true
+      },
+      listPromos: {
+        method: "GET",
+        url: endpoint + "/promo",
+        isArray: true
+      },
+      listTasks: {
+        method: 'GET',
+        url: endpoint + '/task',
+        isArray: true
+      },
+      listQuestions: {
+        method: 'GET',
+        url: endpoint + '/question',
+        isArray: true
+      },
+      listAnswers: {
+        method: 'GET',
+        url: endpoint + '/answer',
+        isArray: true
+      },
+      listNotifications: {
+        method: "GET",
+        url: '/notify/:id',
+        isArray: true
+      },
+      listHighPriority: {
+        method: "GET",
+        url: '/user/priority',
+        isArray: true
+      },
+      addCredit: {
+        method: "POST",
+        url: endpoint + '/credit'
+      },
+      addSubscription: {
+        method: "POST",
+        url: endpoint + '/subscription'
+      },
+      cancelSubscription: {
+        method: "DELETE",
+        url: endpoint + '/subscription'
+      },
+      subscriptionAction: {
+        method: "POST",
+        url: endpoint + '/subscription/:subscriptionId/action',
+      },
+      findByReferral: {
+        method: "GET",
+        url: '/referral/:code'
+      },
+      getReferralStats: {
+        method: "GET",
+        url: endpoint + '/referral/stats'
+      },
+      listVenues: {
+        method: "GET",
+        url: endpoint + '/venue',
+        isArray: true
+      },
+      listStats: {
+        method: "GET",
+        url: endpoint + '/stats',
+        isArray: true
+      },
+      favorite: {
+        method: "POST",
+        url: endpoint + '/favorite',
+        isArray: false
+      },
+      unfavorite: {
+        method: "DELETE",
+        url: endpoint + '/favorite/:favoriteId',
+        isArray: false
+      },
+      listFavorites: {
+        method: "GET",
+        url: endpoint + '/favorite',
+        isArray: true
+      },
+      listReviews: {
+        method: 'GET',
+        url: endpoint + '/review',
+        isArray: true
+      },
+      markAffiliate: {
+        method: "POST",
+        url: endpoint + '/affiliate',
+        isArray: false
+      },
+      listAffiliates: {
+        method: "GET",
+        url: 'user/:id/affiliate',
+        isArray: true
+      },
+      access: {
+        method: 'GET',
+        url: 'user/:id/access',
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.user.service', ['$timeout', 'tl.storage', 'tl.keychain', 'tl.ee', 'tl.user.resource', 'tl.service',
+    function($timeout, storage, keychain, ee, User, Service) {
+      'use strict';
+
+      var USER_KEY = 'tl_user';
+      var EVENTS = {
+        USER_UPDATED: 'tl.user.updated'
+      };
+
+      var SUBSCRIPTION_ACTION = {
+        UPDATE_PAYMENT_METHOD: 'UPDATE_PAYMENT_METHOD',
+      };
+
+      var UserService = Service.extend(User);
+
+      UserService.prototype.list = function list(options) {
+        if (!options) throw new Error('options is required');
+
+        options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+        return User.list(options).$promise;
+      };
+
+      /**
+       * Returns a local copy of the current user
+       */
+      UserService.prototype.currentUser = function() {
+        return keychain.authToken() ? storage.get(USER_KEY) : null;
+      };
+
+      UserService.prototype.EVENTS = function() {
+        return EVENTS;
+      };
+
+      /**
+       * Sets a local copy of the current user
+       */
+      UserService.prototype.setCurrentUser = function(user) {
+        $timeout(function() { // fire notification on next run loop
+          ee.emit(EVENTS.USER_UPDATED, user);
+        });
+        return storage.set(USER_KEY, user);
+      };
+
+      /**
+       * Merges local copy of user with new data
+       */
+      UserService.prototype.saveCurrentUser = function(user) {
+        var _user = this.currentUser() || {};
+        var keys = Object.keys(user);
+        for (var i = 0; i < keys.length; i++) {
+          var key = keys[i];
+          var val = user[key];
+          _user[key] = val;
+        }
+        this.setCurrentUser(_user);
+      };
+
+      /**
+       * Fetches the current user from the API
+       */
+      UserService.prototype.me = function(success, error) {
+        var _this = this;
+
+        var promise = User.me().$promise;
+
+        promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+        }, error);
+
+        return promise;
+      };
+
+      /**
+       * Updates the current user
+       */
+      UserService.prototype.updateMe = function(body, success, error) {
+        var _this = this;
+        return User.updateMe({}, body).$promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+        }, error);
+      };
+
+      /**
+       * Sets the users preferred city
+       */
+      UserService.prototype.updatePreferredCity = function(cityId, success, error) {
+        var _this = this;
+        var body = {
+          city: cityId
+        };
+        return User.updatePreferredCity({}, body).$promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+        }, error);
+      };
+
+      /**
+       * Requests a verification code to verify a phone number
+       */
+      UserService.prototype.requestVerificationCode = function(id, success, error) {
+        return User.requestVerificationCode({
+          id: id
+        }, success, error);
+      };
+
+      /**
+       * Requests a verification code to verify a phone number
+       */
+      UserService.prototype.requestVerificationCodeForCurrentUser = function(success, error) {
+        return User.requestVerificationCodeForCurrentUser({}, success, error);
+      };
+
+      /**
+       * Verifies the users phone number
+       */
+      UserService.prototype.verifyPhoneNumber = function(id, code, success, error) {
+        var _this = this;
+        var data = {
+          id: id,
+          verificationCode: code
+        };
+        return User.verifyPhoneNumber({}, data).$promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+          return user;
+        }, error);
+      };
+
+      /**
+       * Verifies the users phone number
+       */
+      UserService.prototype.verifyPhoneNumberForCurrentUser = function(code, success, error) {
+        var _this = this;
+        var data = {
+          verificationCode: code
+        };
+        return User.verifyPhoneNumber({}, data).$promise.then(function(user) {
+          _this.saveCurrentUser(user);
+          if (success) {
+            success(user);
+          }
+          return user;
+        }, error);
+      };
+
+      /**
+       * Lists a user's payment profiles
+       */
+      UserService.prototype.listPaymentProfiles = function(userId, success, error) {
+        return User.listPaymentProfiles({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's referrals
+       */
+      UserService.prototype.listReferrals = function(userId, success, error) {
+        return User.listReferrals({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's bookings
+       */
+      UserService.prototype.listBookings = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
+
+        return User.listBookings(options).$promise;
+      };
+
+      /**
+       * Lists a user's promos
+       */
+      UserService.prototype.listPromos = function(userId, success, error) {
+        return User.listPromos({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's tasks
+       */
+      UserService.prototype.listTasks = function(userId, success, error) {
+        return User.listTasks({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's notifications
+       */
+      UserService.prototype.listNotifications = function(userId, success, error) {
+        return User.listNotifications({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's unanswered questions
+       */
+      UserService.prototype.listQuestions = function(userId, type, success, error) {
+        return User.listQuestions({
+          id: userId,
+          type: type
+        }, success, error);
+      };
+
+      /**
+       * Lists a user's answers
+       */
+      UserService.prototype.listAnswers = function(userId, success, error) {
+        return User.listAnswers({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Returns an array of high priority users
+       */
+      UserService.prototype.listHighPriority = function(hours, priority, cityId, success, error) {
+        return User.listHighPriority({
+          hours: hours || 24,
+          priority: priority || 7,
+          city: cityId
+        }, success, error);
+      };
+
+      /**
+       * Add credit for a user
+       */
+      UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
+        return User.addCredit({
+          id: userId
+        }, {
+          amount: amount,
+          campaign: campaignId
+        }, success, error);
+      };
+
+      /**
+       * Add a subscription for a user
+       *
+       * @method addSubscription
+       * @param {Object} options
+       * @param {String} [options.userId] - user to subscribe
+       * @param {String} [options.planId] - braintree reoccurring plan
+       * @param {String} [options.paymentProfileId] - payment profile to charge
+       */
+      UserService.prototype.addSubscription = function(options, success, error) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.planId) throw new Error('options.planId is required');
+        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+        return User.addSubscription({
+          id: options.userId
+        }, options, success, error);
+      };
+
+      /**
+       * Remove a subscription for a user
+       */
+      UserService.prototype.cancelSubscription = function(userId, success, error) {
+        return User.cancelSubscription({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Update the payment profile for a user's subscription
+       *
+       * @method updateSubscriptionPaymentMethod
+       * @param {Object} options
+       * @param {String} [options.userId] - user to subscribe
+       * @param {String} [options.paymentProfileId] - payment profile to charge
+       */
+      UserService.prototype.updateSubscriptionPaymentMethod = function(options, success, error) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.subscriptionId) throw new Error('options.subscriptionId is required');
+        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+        var body = {
+          type: SUBSCRIPTION_ACTION.UPDATE_PAYMENT_METHOD,
+          paymentProfileId: options.paymentProfileId,
+        };
+
+        return User.subscriptionAction({
+          id: options.userId,
+          subscriptionId: options.subscriptionId,
+        }, body, success, error);
+      };
+
+      /**
+       * Find a user's name and photo by their referral code
+       */
+      UserService.prototype.findByReferral = function(code, success, error) {
+        return User.findByReferral({
+          code: code
+        }, success, error);
+      };
+      /**
+       * Get a user's referral stats
+       */
+      UserService.prototype.getReferralStats = function(userId, success, error) {
+        return User.getReferralStats({
+          id: userId
+        }, success, error);
+      };
+
+      /**
+       * Get a user's referral stats
+       */
+      UserService.prototype.search = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.query) throw new Error('options.query is required');
+
+        return User.search(options).$promise;
+      };
+
+      /**
+       * Lists a user's venues
+       */
+      UserService.prototype.listVenues = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listVenues(options).$promise;
+      };
+
+      UserService.prototype.favorite = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        var userId = options.userId;
+        delete options.userId;
+
+        return User.favorite({
+          id: userId
+        }, options).$promise;
+      };
+
+      UserService.prototype.unfavorite = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.favoriteId) throw new Error('options.favoriteId is required');
+
+        var userId = options.userId;
+        delete options.userId;
+        var favoriteId = options.favoriteId;
+        delete options.favoriteId;
+
+        return User.unfavorite({
+          id: userId,
+          favoriteId: favoriteId
+        }, options).$promise;
+      };
+
+      UserService.prototype.listFavorites = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listFavorites(options).$promise;
+      };
+
+      UserService.prototype.listReviews = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listReviews(options).$promise;
+      };
+
+      UserService.prototype.markAffiliate = function(userId, options) {
+        if (!userId) throw new Error('userId is required');
+        if (!options) throw new Error('options is required');
+        if (!options.name) throw new Error('options.name is required');
+
+        return User.markAffiliate({
+          id: userId
+        }, options).$promise;
+      };
+
+      UserService.prototype.listAffiliates = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listAffiliates(options).$promise;
+      };
+
+      UserService.prototype.listStats = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listStats(options).$promise;
+      };
+
+      UserService.prototype.access = function access(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.access(options).$promise;
+      };
+
+      return new UserService();
     }
   ]);
 

@@ -9,6 +9,10 @@ angular
         USER_UPDATED: 'tl.user.updated'
       };
 
+      var SUBSCRIPTION_ACTION = {
+        UPDATE_PAYMENT_METHOD: 'UPDATE_PAYMENT_METHOD',
+      };
+
       var UserService = Service.extend(User);
 
       UserService.prototype.list = function list(options) {
@@ -276,6 +280,31 @@ angular
         return User.cancelSubscription({
           id: userId
         }, success, error);
+      };
+
+      /**
+       * Update the payment profile for a user's subscription
+       *
+       * @method updateSubscriptionPaymentMethod
+       * @param {Object} options
+       * @param {String} [options.userId] - user to subscribe
+       * @param {String} [options.paymentProfileId] - payment profile to charge
+       */
+      UserService.prototype.updateSubscriptionPaymentMethod = function(options, success, error) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.subscriptionId) throw new Error('options.subscriptionId is required');
+        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+        var body = {
+          type: SUBSCRIPTION_ACTION.UPDATE_PAYMENT_METHOD,
+          paymentProfileId: options.paymentProfileId,
+        };
+
+        return User.subscriptionAction({
+          id: options.userId,
+          subscriptionId: options.subscriptionId,
+        }, body, success, error);
       };
 
       /**
