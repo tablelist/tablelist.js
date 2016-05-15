@@ -288,6 +288,7 @@ angular
        * @method updateSubscriptionPaymentMethod
        * @param {Object} options
        * @param {String} [options.userId] - user to subscribe
+       * @param {String} [options.subscriptionId] - id of subscription to update
        * @param {String} [options.paymentProfileId] - payment profile to charge
        */
       UserService.prototype.updateSubscriptionPaymentMethod = function(options, success, error) {
