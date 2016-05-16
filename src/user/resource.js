@@ -111,6 +111,9 @@ angular
       subscriptionAction: {
         method: "POST",
         url: endpoint + '/subscription/:subscriptionId/action',
+        params: {
+          subscriptionId: '@subscriptionId',
+        },
       },
       findByReferral: {
         method: "GET",
