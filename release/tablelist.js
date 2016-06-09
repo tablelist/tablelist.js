@@ -2072,6 +2072,71 @@ angular
 
 angular
   .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
+
+angular
+  .module('tl')
   .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
     function(resource, service) {
       this.resource = resource;
@@ -2173,71 +2238,6 @@ angular
       };
 
       return new FeedService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
     }
   ]);
 
@@ -4004,11 +4004,16 @@ angular
         method: "POST",
         url: endpoint + '/credit'
       },
+      listSubscriptions: {
+        method: "GET",
+        url: endpoint + '/subscription',
+        isArray: true
+      },
       addSubscription: {
         method: "POST",
         url: endpoint + '/subscription'
       },
-      cancelSubscription: {
+      cancelSubscriptions: {
         method: "DELETE",
         url: endpoint + '/subscription'
       },
@@ -4331,13 +4336,20 @@ angular
       };
 
       /**
+       * List subscriptions for a user
+       */
+      UserService.prototype.listSubscriptions = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listSubscriptions(options).$promise;
+      };
+
+      /**
        * Add a subscription for a user
-       *
-       * @method addSubscription
-       * @param {Object} options
-       * @param {String} [options.userId] - user to subscribe
-       * @param {String} [options.planId] - braintree reoccurring plan
-       * @param {String} [options.paymentProfileId] - payment profile to charge
        */
       UserService.prototype.addSubscription = function(options, success, error) {
         if (!options) throw new Error('options is required');
@@ -4353,8 +4365,8 @@ angular
       /**
        * Remove a subscription for a user
        */
-      UserService.prototype.cancelSubscription = function(userId, success, error) {
-        return User.cancelSubscription({
+      UserService.prototype.cancelSubscriptions = function(userId, success, error) {
+        return User.cancelSubscriptions({
           id: userId
         }, success, error);
       };

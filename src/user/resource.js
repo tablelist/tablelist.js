@@ -100,11 +100,16 @@ angular
         method: "POST",
         url: endpoint + '/credit'
       },
+      listSubscriptions: {
+        method: "GET",
+        url: endpoint + '/subscription',
+        isArray: true
+      },
       addSubscription: {
         method: "POST",
         url: endpoint + '/subscription'
       },
-      cancelSubscription: {
+      cancelSubscriptions: {
         method: "DELETE",
         url: endpoint + '/subscription'
       },

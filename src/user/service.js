@@ -254,13 +254,20 @@ angular
       };
 
       /**
+       * List subscriptions for a user
+       */
+      UserService.prototype.listSubscriptions = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listSubscriptions(options).$promise;
+      };
+
+      /**
        * Add a subscription for a user
-       *
-       * @method addSubscription
-       * @param {Object} options
-       * @param {String} [options.userId] - user to subscribe
-       * @param {String} [options.planId] - braintree reoccurring plan
-       * @param {String} [options.paymentProfileId] - payment profile to charge
        */
       UserService.prototype.addSubscription = function(options, success, error) {
         if (!options) throw new Error('options is required');
@@ -276,8 +283,8 @@ angular
       /**
        * Remove a subscription for a user
        */
-      UserService.prototype.cancelSubscription = function(userId, success, error) {
-        return User.cancelSubscription({
+      UserService.prototype.cancelSubscriptions = function(userId, success, error) {
+        return User.cancelSubscriptions({
           id: userId
         }, success, error);
       };
