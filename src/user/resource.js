@@ -111,7 +111,8 @@ angular
       },
       cancelSubscriptions: {
         method: "DELETE",
-        url: endpoint + '/subscription'
+        url: endpoint + '/subscription',
+        isArray: true
       },
       subscriptionAction: {
         method: "POST",
