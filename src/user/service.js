@@ -281,6 +281,19 @@ angular
       };
 
       /**
+       * Add a subscription for a user
+       */
+      UserService.prototype.getMembershipStatus = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.getMembershipStatus(options).$promise;
+      };
+
+      /**
        * Remove a subscription for a user
        */
       UserService.prototype.cancelSubscriptions = function(userId, success, error) {

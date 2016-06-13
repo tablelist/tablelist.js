@@ -109,6 +109,10 @@ angular
         method: "POST",
         url: endpoint + '/subscription'
       },
+      getMembershipStatus: {
+        method: "GET",
+        url: endpoint + '/membership'
+      },
       cancelSubscriptions: {
         method: "DELETE",
         url: endpoint + '/subscription',
