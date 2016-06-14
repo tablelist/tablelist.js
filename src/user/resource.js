@@ -113,18 +113,6 @@ angular
         method: "GET",
         url: endpoint + '/membership'
       },
-      cancelSubscriptions: {
-        method: "DELETE",
-        url: endpoint + '/subscription',
-        isArray: true
-      },
-      subscriptionAction: {
-        method: "POST",
-        url: endpoint + '/subscription/:subscriptionId/action',
-        params: {
-          subscriptionId: '@subscriptionId',
-        },
-      },
       findByReferral: {
         method: "GET",
         url: '/referral/:code'
