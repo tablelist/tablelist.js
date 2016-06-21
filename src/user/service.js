@@ -9,10 +9,6 @@ angular
         USER_UPDATED: 'tl.user.updated'
       };
 
-      var SUBSCRIPTION_ACTION = {
-        UPDATE_PAYMENT_METHOD: 'UPDATE_PAYMENT_METHOD',
-      };
-
       var UserService = Service.extend(User);
 
       UserService.prototype.list = function list(options) {
@@ -254,13 +250,20 @@ angular
       };
 
       /**
+       * List subscriptions for a user
+       */
+      UserService.prototype.listSubscriptions = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listSubscriptions(options).$promise;
+      };
+
+      /**
        * Add a subscription for a user
-       *
-       * @method addSubscription
-       * @param {Object} options
-       * @param {String} [options.userId] - user to subscribe
-       * @param {String} [options.planId] - braintree reoccurring plan
-       * @param {String} [options.paymentProfileId] - payment profile to charge
        */
       UserService.prototype.addSubscription = function(options, success, error) {
         if (!options) throw new Error('options is required');
@@ -274,38 +277,16 @@ angular
       };
 
       /**
-       * Remove a subscription for a user
+       * Add a subscription for a user
        */
-      UserService.prototype.cancelSubscription = function(userId, success, error) {
-        return User.cancelSubscription({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Update the payment profile for a user's subscription
-       *
-       * @method updateSubscriptionPaymentMethod
-       * @param {Object} options
-       * @param {String} [options.userId] - user to subscribe
-       * @param {String} [options.subscriptionId] - id of subscription to update
-       * @param {String} [options.paymentProfileId] - payment profile to charge
-       */
-      UserService.prototype.updateSubscriptionPaymentMethod = function(options, success, error) {
+      UserService.prototype.getMembershipStatus = function(options) {
         if (!options) throw new Error('options is required');
         if (!options.userId) throw new Error('options.userId is required');
-        if (!options.subscriptionId) throw new Error('options.subscriptionId is required');
-        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
 
-        var body = {
-          type: SUBSCRIPTION_ACTION.UPDATE_PAYMENT_METHOD,
-          paymentProfileId: options.paymentProfileId,
-        };
+        options.id = options.userId;
+        delete options.userId;
 
-        return User.subscriptionAction({
-          id: options.userId,
-          subscriptionId: options.subscriptionId,
-        }, body, success, error);
+        return User.getMembershipStatus(options).$promise;
       };
 
       /**

@@ -100,20 +100,18 @@ angular
         method: "POST",
         url: endpoint + '/credit'
       },
+      listSubscriptions: {
+        method: "GET",
+        url: endpoint + '/subscription',
+        isArray: true
+      },
       addSubscription: {
         method: "POST",
         url: endpoint + '/subscription'
       },
-      cancelSubscription: {
-        method: "DELETE",
-        url: endpoint + '/subscription'
-      },
-      subscriptionAction: {
-        method: "POST",
-        url: endpoint + '/subscription/:subscriptionId/action',
-        params: {
-          subscriptionId: '@subscriptionId',
-        },
+      getMembershipStatus: {
+        method: "GET",
+        url: endpoint + '/membership'
       },
       findByReferral: {
         method: "GET",

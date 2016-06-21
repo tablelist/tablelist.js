@@ -1494,6 +1494,43 @@ angular.module('tl').service('tl.auth.service', [
 
 angular
 	.module('tl')
+	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.campaign.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/campaign/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
+
+		var CampaignService = Service.extend(Campaign);
+
+		/**
+		 * List internal campaigns
+		 */
+		CampaignService.prototype.listInternal = function() {
+			return Campaign.list({ internal : true }).$promise;
+		};
+
+		return new CampaignService();
+	}]);
+
+
+angular
+	.module('tl')
 	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1811,43 +1848,6 @@ angular.module('tl').service('tl.booking.service', [
     return new BookingService();
   }
 ]);
-
-
-angular
-	.module('tl')
-	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.campaign.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/campaign/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
-
-		var CampaignService = Service.extend(Campaign);
-
-		/**
-		 * List internal campaigns
-		 */
-		CampaignService.prototype.listInternal = function() {
-			return Campaign.list({ internal : true }).$promise;
-		};
-
-		return new CampaignService();
-	}]);
 
 
 angular
@@ -2322,6 +2322,54 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.inventory-summary.resource', [
+    'tl.resource',
+    function(resource) {
+      'use strict';
+
+      var endpoint = '/inventory-summary';
+
+      return resource(endpoint, {
+        id: '@id'
+      }, {
+        list: {
+          method: 'GET',
+          url: endpoint,
+          isArray: true
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.inventory-summary.service', [
+    'tl.service',
+    'tl.inventory-summary.resource',
+    function(Service, InventorySummary) {
+      'use strict';
+
+      var InventorySummaryService = Service.extend(InventorySummary);
+
+      InventorySummaryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        return InventorySummary.list(options).$promise;
+      };
+
+      return new InventorySummaryService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -2419,54 +2467,6 @@ angular
       };
 
       return new InventoryService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory-summary', ['tl.inventory-summary.resource', 'tl.inventory-summary.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.inventory-summary.resource', [
-    'tl.resource',
-    function(resource) {
-      'use strict';
-
-      var endpoint = '/inventory-summary';
-
-      return resource(endpoint, {
-        id: '@id'
-      }, {
-        list: {
-          method: 'GET',
-          url: endpoint,
-          isArray: true
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.inventory-summary.service', [
-    'tl.service',
-    'tl.inventory-summary.resource',
-    function(Service, InventorySummary) {
-      'use strict';
-
-      var InventorySummaryService = Service.extend(InventorySummary);
-
-      InventorySummaryService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return InventorySummary.list(options).$promise;
-      };
-
-      return new InventorySummaryService();
     }
   ]);
 
@@ -3538,6 +3538,117 @@ angular
 
 		return new SettingsService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.subscription', ['tl.subscription.resource', 'tl.subscription.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+	.module('tl')
+	.factory('tl.subscription.resource', ['tl.resource', function(resource){
+
+    var endpoint = '/subscription/:id';
+
+		return resource(endpoint, {
+      id: '@id'
+		}, {
+      cancelSubscription: {
+        method: "DELETE",
+        url: endpoint
+      },
+      subscriptionAction: {
+        method: "POST",
+        url: endpoint + '/action',
+        params: {
+          id: '@id'
+        }
+      }
+    });
+	}]);
+angular
+	.module('tl')
+	.service('tl.subscription.service', ['tl.service', 'tl.subscription.resource',
+    function(Service, Subscription){
+      'use strict';
+
+      var SUBSCRIPTION_ACTION = {
+        UPDATE_PAYMENT_METHOD: 'UPDATE_PAYMENT_METHOD'
+      };
+
+      var SubscriptionService = Service.extend(Subscription);
+
+      /**
+       * Cancel a single user subscription
+       *
+       * @method cancelSubscription
+       * @param {String} id
+       * @param {Object} success
+       * @param {Object} error
+       */
+      SubscriptionService.prototype.cancelSubscription = function(id, success, error) {
+        return Subscription.cancelSubscription({
+          id: id
+        }, success, error);
+      };
+
+      /**
+       * Update the payment profile for a user's subscription
+       *
+       * @method updateSubscriptionPaymentMethod
+       * @param {Object} options
+       * @param {Object} success
+       * @param {Object} error
+       * @param {String} [options.id] - id of subscription to update
+       * @param {String} [options.paymentProfileId] - payment profile to charge
+       */
+      SubscriptionService.prototype.updateSubscriptionPaymentMethod = function(options, success, error) {
+        if (!options) throw new Error('options is required');
+        if (!options.id) throw new Error('options.id is required');
+        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+
+        var body = {
+          type: SUBSCRIPTION_ACTION.UPDATE_PAYMENT_METHOD,
+          paymentProfileId: options.paymentProfileId
+        };
+
+        return Subscription.subscriptionAction({
+          id: options.id
+        }, body, success, error);
+      };
+
+      return new SubscriptionService();
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 angular
   .module('tl')
   .service('tl.support', [
@@ -3590,35 +3701,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -4004,20 +4086,18 @@ angular
         method: "POST",
         url: endpoint + '/credit'
       },
+      listSubscriptions: {
+        method: "GET",
+        url: endpoint + '/subscription',
+        isArray: true
+      },
       addSubscription: {
         method: "POST",
         url: endpoint + '/subscription'
       },
-      cancelSubscription: {
-        method: "DELETE",
-        url: endpoint + '/subscription'
-      },
-      subscriptionAction: {
-        method: "POST",
-        url: endpoint + '/subscription/:subscriptionId/action',
-        params: {
-          subscriptionId: '@subscriptionId',
-        },
+      getMembershipStatus: {
+        method: "GET",
+        url: endpoint + '/membership'
       },
       findByReferral: {
         method: "GET",
@@ -4084,10 +4164,6 @@ angular
       var USER_KEY = 'tl_user';
       var EVENTS = {
         USER_UPDATED: 'tl.user.updated'
-      };
-
-      var SUBSCRIPTION_ACTION = {
-        UPDATE_PAYMENT_METHOD: 'UPDATE_PAYMENT_METHOD',
       };
 
       var UserService = Service.extend(User);
@@ -4331,13 +4407,20 @@ angular
       };
 
       /**
+       * List subscriptions for a user
+       */
+      UserService.prototype.listSubscriptions = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listSubscriptions(options).$promise;
+      };
+
+      /**
        * Add a subscription for a user
-       *
-       * @method addSubscription
-       * @param {Object} options
-       * @param {String} [options.userId] - user to subscribe
-       * @param {String} [options.planId] - braintree reoccurring plan
-       * @param {String} [options.paymentProfileId] - payment profile to charge
        */
       UserService.prototype.addSubscription = function(options, success, error) {
         if (!options) throw new Error('options is required');
@@ -4351,38 +4434,16 @@ angular
       };
 
       /**
-       * Remove a subscription for a user
+       * Add a subscription for a user
        */
-      UserService.prototype.cancelSubscription = function(userId, success, error) {
-        return User.cancelSubscription({
-          id: userId
-        }, success, error);
-      };
-
-      /**
-       * Update the payment profile for a user's subscription
-       *
-       * @method updateSubscriptionPaymentMethod
-       * @param {Object} options
-       * @param {String} [options.userId] - user to subscribe
-       * @param {String} [options.subscriptionId] - id of subscription to update
-       * @param {String} [options.paymentProfileId] - payment profile to charge
-       */
-      UserService.prototype.updateSubscriptionPaymentMethod = function(options, success, error) {
+      UserService.prototype.getMembershipStatus = function(options) {
         if (!options) throw new Error('options is required');
         if (!options.userId) throw new Error('options.userId is required');
-        if (!options.subscriptionId) throw new Error('options.subscriptionId is required');
-        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
 
-        var body = {
-          type: SUBSCRIPTION_ACTION.UPDATE_PAYMENT_METHOD,
-          paymentProfileId: options.paymentProfileId,
-        };
+        options.id = options.userId;
+        delete options.userId;
 
-        return User.subscriptionAction({
-          id: options.userId,
-          subscriptionId: options.subscriptionId,
-        }, body, success, error);
+        return User.getMembershipStatus(options).$promise;
       };
 
       /**
