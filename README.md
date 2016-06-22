@@ -65,6 +65,13 @@ Ensure that the version is incremented for each PR in the following files:
  +  "version": "1.4.6",
 ```
 
+Once your changes have been merged in to master, you need to create a tag for the new version. Only do this once the PR is finished.
+
+```git tag``` will list all current tags
+```git tag 1.4.6``` will create a new tag for the new version (1.4.6)
+```git push --tags``` will push the tags to master
+
+Now you should be able to run bower install and get the new version.
 
 #### Build SDK
 
