@@ -268,8 +268,10 @@ angular
       UserService.prototype.addSubscription = function(options, success, error) {
         if (!options) throw new Error('options is required');
         if (!options.userId) throw new Error('options.userId is required');
-        if (!options.planId) throw new Error('options.planId is required');
-        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+        if (!options.externalId){
+          if (!options.planId) throw new Error('options.planId is required');
+          if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+        }
 
         return User.addSubscription({
           id: options.userId

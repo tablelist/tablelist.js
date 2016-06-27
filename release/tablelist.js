@@ -3487,6 +3487,60 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.settings.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/config';
+
+		return resource(endpoint, {
+			// nothing here 
+		}, {
+
+			status: {
+				method: 'GET',
+				url: '/status',
+				isArray: false
+			},
+
+			config: {
+				method: 'GET',
+				url: '/config',
+				isArray: false
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.settings.service', ['tl.service', 'tl.settings.resource', function(Service, Settings){
+
+		var SettingsService = function(){};
+
+		/**
+		 * Gets the server status
+		 */
+		SettingsService.prototype.status = function(success, error) {
+			return Settings.status({}, success, error);
+		};
+
+		/**
+		 * Fetches the configuration settings
+		 */
+		SettingsService.prototype.config = function(success, error) {
+			return Settings.config({}, success, error);
+		};
+
+		return new SettingsService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.subscription', ['tl.subscription.resource', 'tl.subscription.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3565,60 +3619,6 @@ angular
       };
 
       return new SubscriptionService();
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.settings.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/config';
-
-		return resource(endpoint, {
-			// nothing here 
-		}, {
-
-			status: {
-				method: 'GET',
-				url: '/status',
-				isArray: false
-			},
-
-			config: {
-				method: 'GET',
-				url: '/config',
-				isArray: false
-			}
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.settings.service', ['tl.service', 'tl.settings.resource', function(Service, Settings){
-
-		var SettingsService = function(){};
-
-		/**
-		 * Gets the server status
-		 */
-		SettingsService.prototype.status = function(success, error) {
-			return Settings.status({}, success, error);
-		};
-
-		/**
-		 * Fetches the configuration settings
-		 */
-		SettingsService.prototype.config = function(success, error) {
-			return Settings.config({}, success, error);
-		};
-
-		return new SettingsService();
 	}]);
 angular
   .module('tl')
@@ -3701,96 +3701,6 @@ angular
 
 		return new TableService();
 	}]);
-angular
-  .module('tl')
-  .service('tl.tag', [
-    'tl.tag.resource',
-    'tl.tag.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tag.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tag';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tag.service', [
-    'tl.service',
-    'tl.tag.resource',
-    function(Service, Tag) {
-      'use strict';
-
-      var TagService = Service.extend(Tag);
-
-      TagService.prototype.list = function(options) {
-        return Tag.list(options).$promise;
-      };
-
-      return new TagService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.tracker', [
-    'tl.tracker.resource',
-    'tl.tracker.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tracker';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      create: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tracker.service', [
-    'tl.service',
-    'tl.tracker.resource',
-    function(Service, Tracker) {
-      'use strict';
-
-      var TrackerService = Service.extend(Tracker);
-
-      TrackerService.prototype.create = function(options) {
-        return Tracker.save({}, options).$promise;
-      };
-
-      return new TrackerService();
-    }
-  ]);
-
 
 angular
 	.module('tl')
@@ -3976,6 +3886,96 @@ angular
 
 		return new TrackService();
 	}]);
+
+angular
+  .module('tl')
+  .service('tl.tracker', [
+    'tl.tracker.resource',
+    'tl.tracker.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tracker';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      create: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tracker.service', [
+    'tl.service',
+    'tl.tracker.resource',
+    function(Service, Tracker) {
+      'use strict';
+
+      var TrackerService = Service.extend(Tracker);
+
+      TrackerService.prototype.create = function(options) {
+        return Tracker.save({}, options).$promise;
+      };
+
+      return new TrackerService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.tag', [
+    'tl.tag.resource',
+    'tl.tag.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tag.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tag';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tag.service', [
+    'tl.service',
+    'tl.tag.resource',
+    function(Service, Tag) {
+      'use strict';
+
+      var TagService = Service.extend(Tag);
+
+      TagService.prototype.list = function(options) {
+        return Tag.list(options).$promise;
+      };
+
+      return new TagService();
+    }
+  ]);
 
 
 angular
@@ -4425,8 +4425,10 @@ angular
       UserService.prototype.addSubscription = function(options, success, error) {
         if (!options) throw new Error('options is required');
         if (!options.userId) throw new Error('options.userId is required');
-        if (!options.planId) throw new Error('options.planId is required');
-        if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+        if (!options.externalId){
+          if (!options.planId) throw new Error('options.planId is required');
+          if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+        }
 
         return User.addSubscription({
           id: options.userId
