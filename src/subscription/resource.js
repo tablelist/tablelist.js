@@ -9,7 +9,7 @@ angular
 		}, {
       cancelSubscription: {
         method: "DELETE",
-        url: '/subscription'
+        url: '/subscription/:id'
       },
       subscriptionAction: {
         method: "POST",
