@@ -32,7 +32,7 @@ angular
             if (subClient) {
               client = client + '-' + subClient;
             }
-            data.headers.client = client;
+            data.headers['x-client-type'] = client;
           }
           if (isApi && config.VERSION) {
             var version = config.VERSION;
