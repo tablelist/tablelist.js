@@ -515,7 +515,7 @@ angular
             if (subClient) {
               client = client + '-' + subClient;
             }
-            data.url = data.url + '&client=' + client;
+            data.headers['x-client-type'] = client;
           }
           if (isApi && config.VERSION) {
             var version = config.VERSION;
@@ -1226,37 +1226,6 @@ angular.module('tl').service('tl.affiliatepayout.service', [
 
 angular
 	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.ambassador ', ['tl.ambassador.resource', 'tl.ambassador.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1292,6 +1261,37 @@ angular
       };
 
       return new AmbassadorService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
     }
   ]);
 
@@ -2069,177 +2069,6 @@ angular
 
     return new EventService();
   }]);
-
-angular
-  .module('tl')
-  .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.feed.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/feed';
-
-      return resource(endpoint, {
-        id: '@id',
-        userId: '@userId'
-      }, {
-        create: {
-          method: 'POST',
-          url: endpoint,
-          isArray: true
-        },
-        remove: {
-          method: 'DELETE',
-          url: endpoint + '/:id',
-          isArray: false
-        },
-        list: {
-          method: 'GET',
-          url: endpoint,
-          isArray: true
-        },
-        listUserFeed: {
-          method: 'GET',
-          url: '/user/:userId/feed',
-          isArray: true
-        },
-        addLike: {
-          method: 'POST',
-          url: endpoint + '/:id/like',
-          isArray: false
-        },
-        removeLike: {
-          method: 'DELETE',
-          url: endpoint + '/:id/like',
-          isArray: false
-        }
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.feed.service', ['tl.service', 'tl.feed.resource',
-    function(Service, Feed) {
-
-      var FeedService = Service.extend(Feed);
-
-      FeedService.prototype.create = function(options) {
-        if (!options) throw new Error('FeedService.create - options is required');
-
-        return Feed.create({}, options).$promise;
-      };
-
-      FeedService.prototype.remove = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.remove - feedId is required');
-        options = options || {};
-
-        options.id = feedId;
-
-        return Feed.remove(options).$promise;
-      };
-
-      FeedService.prototype.list = function(options) {
-        options = options || {};
-        return Feed.list(options).$promise;
-      };
-
-      FeedService.prototype.listUserFeed = function(userId, options) {
-        if (!userId) throw new Error('FeedService.listUserFeed - userId is required');
-        options = options || {};
-
-        options.userId = userId;
-
-        return Feed.listUserFeed(options).$promise;
-      };
-
-      FeedService.prototype.addLike = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.addLike - feedId is required');
-
-        return Feed.addLike({ id: feedId }, options).$promise;
-      };
-
-      FeedService.prototype.removeLike = function(feedId, options) {
-        if (!feedId) throw new Error('FeedService.removeLike - feedId is required');
-
-        return Feed.removeLike({ id: feedId }, options).$promise;
-      };
-
-      return new FeedService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
-    }
-  ]);
 
 
 angular
@@ -3458,6 +3287,35 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/schedule/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+
+		var ScheduleService = Service.extend(Schedule);
+
+		return new ScheduleService();
+	}]);
+
+angular
+	.module('tl')
 	.service('tl.settings', ['tl.settings.resource', 'tl.settings.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3508,35 +3366,6 @@ angular
 		};
 
 		return new SettingsService();
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.schedule.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/schedule/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
-
-		var ScheduleService = Service.extend(Schedule);
-
-		return new ScheduleService();
 	}]);
 
 angular
@@ -3669,6 +3498,177 @@ angular
       };
 
       return new SupportService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.feed.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/feed';
+
+      return resource(endpoint, {
+        id: '@id',
+        userId: '@userId'
+      }, {
+        create: {
+          method: 'POST',
+          url: endpoint,
+          isArray: true
+        },
+        remove: {
+          method: 'DELETE',
+          url: endpoint + '/:id',
+          isArray: false
+        },
+        list: {
+          method: 'GET',
+          url: endpoint,
+          isArray: true
+        },
+        listUserFeed: {
+          method: 'GET',
+          url: '/user/:userId/feed',
+          isArray: true
+        },
+        addLike: {
+          method: 'POST',
+          url: endpoint + '/:id/like',
+          isArray: false
+        },
+        removeLike: {
+          method: 'DELETE',
+          url: endpoint + '/:id/like',
+          isArray: false
+        }
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.feed.service', ['tl.service', 'tl.feed.resource',
+    function(Service, Feed) {
+
+      var FeedService = Service.extend(Feed);
+
+      FeedService.prototype.create = function(options) {
+        if (!options) throw new Error('FeedService.create - options is required');
+
+        return Feed.create({}, options).$promise;
+      };
+
+      FeedService.prototype.remove = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.remove - feedId is required');
+        options = options || {};
+
+        options.id = feedId;
+
+        return Feed.remove(options).$promise;
+      };
+
+      FeedService.prototype.list = function(options) {
+        options = options || {};
+        return Feed.list(options).$promise;
+      };
+
+      FeedService.prototype.listUserFeed = function(userId, options) {
+        if (!userId) throw new Error('FeedService.listUserFeed - userId is required');
+        options = options || {};
+
+        options.userId = userId;
+
+        return Feed.listUserFeed(options).$promise;
+      };
+
+      FeedService.prototype.addLike = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.addLike - feedId is required');
+
+        return Feed.addLike({ id: feedId }, options).$promise;
+      };
+
+      FeedService.prototype.removeLike = function(feedId, options) {
+        if (!feedId) throw new Error('FeedService.removeLike - feedId is required');
+
+        return Feed.removeLike({ id: feedId }, options).$promise;
+      };
+
+      return new FeedService();
     }
   ]);
 
@@ -5247,66 +5247,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.support.message', [
-    'tl.support.message.resource',
-    'tl.support.message.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/message';
-
-    return resource(endpoint, {}, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      markMessagesRead: {
-        method: 'POST',
-        url: endpoint + '/read',
-        isArray: true
-      },
-      sendInboundMessage: {
-        method: 'POST',
-        url: endpoint + '/inbound',
-        isArray: false
-      },
-      sendOutboundMessage: {
-        method: 'POST',
-        url: endpoint + '/outbound',
-        isArray: false
-      },
-      sendInternalMessage: {
-        method: 'POST',
-        url: endpoint + '/internal',
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.message.service', [
-    'tl.service',
-    'tl.support.message.resource',
-    function(Service, Message) {
-      'use strict';
-
-      var SupportMessageService = Service.extend(Message);
-
-      return new SupportMessageService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.support.agent', [
     'tl.support.agent.resource',
     'tl.support.agent.service',
@@ -5412,6 +5352,66 @@ angular
       };
 
       return new SupportAgentService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.support.message', [
+    'tl.support.message.resource',
+    'tl.support.message.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.message.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/message';
+
+    return resource(endpoint, {}, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      markMessagesRead: {
+        method: 'POST',
+        url: endpoint + '/read',
+        isArray: true
+      },
+      sendInboundMessage: {
+        method: 'POST',
+        url: endpoint + '/inbound',
+        isArray: false
+      },
+      sendOutboundMessage: {
+        method: 'POST',
+        url: endpoint + '/outbound',
+        isArray: false
+      },
+      sendInternalMessage: {
+        method: 'POST',
+        url: endpoint + '/internal',
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.message.service', [
+    'tl.service',
+    'tl.support.message.resource',
+    function(Service, Message) {
+      'use strict';
+
+      var SupportMessageService = Service.extend(Message);
+
+      return new SupportMessageService();
     }
   ]);
 
