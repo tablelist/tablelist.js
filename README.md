@@ -11,6 +11,7 @@ The SDK relies on Angular.js and ngResource
 ```
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular-resource.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.x/angular-cookie.min.js"></script>
 ```
 
 #### Download

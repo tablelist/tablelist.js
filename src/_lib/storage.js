@@ -1,7 +1,7 @@
 angular
   .module('tl')
   .factory('tl.storage', [function() {
-    'use strcit';
+    'use strict';
 
     var CACHE = {};
 
