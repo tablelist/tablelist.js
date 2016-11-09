@@ -15,7 +15,9 @@ angular
 
       this.connect = function() {
 
-        this.ws = ws = $websocket(this.socketUrl(endpoint));
+        this.ws = ws = $websocket(this.socketUrl(endpoint), {
+					reconnectIfNotNormalClose: true
+				});
 
         ws.onMessage(function(message) {
 					var data;
