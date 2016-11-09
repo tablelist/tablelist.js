@@ -3,7 +3,6 @@ angular
 	.module('tl')
 	.factory('tl.socket', ['$websocket', 'tl.http', 'tl.keychain', function($websocket, http, keychain){
 
-    var PING_INTERVAL = 5 * 1000; // ping every 5 seconds
     var MAX_EVENTS = 200; // hold on to 200 events max
 
     return function(endpoint, onMessage, onError) {
@@ -12,40 +11,29 @@ angular
 
       // instance vars
       var _events = [];
-      var PING = 'ping';
-      var PONG = 'pong';
       var ws = null;
-      var interval = null;
 
       this.connect = function() {
 
-        this.ws = ws = $websocket.$new({
-          url: this.socketUrl(endpoint),
-          lazy: true,
-					reconnect: true,
-          reconnectInterval: 250 // it will reconnect after 0.25 seconds
-        });
+        this.ws = ws = $websocket(this.socketUrl(endpoint));
 
-        ws.$on('$open', function() {
-          interval = window.setInterval(function() {
-            ws.$$ws.send(PING);
-          }, PING_INTERVAL);
-        });
+        ws.onMessage(function(message) {
+					let data;
 
-        ws.$on('$message', function(data) {
-          if (data === PONG) return;
+					try {
+						data = JSON.parse(message.data);
+					} catch(err) {
+						return;
+					}
+
           _events.unshift(data);
+
           onMessage(data);
-          if (_events.length >= MAX_EVENTS) {
+
+					if (_events.length >= MAX_EVENTS) {
             _events.pop();
           }
         });
-
-        ws.$on('$close', function() {
-          window.clearInterval(interval);
-        });
-
-				ws.$open();
 
 				return this;
       };
@@ -55,11 +43,11 @@ angular
       };
 
       this.isConnected = function() {
-        return ws.$status() === ws.$OPEN;
+        return ws.readyState === 1;
       };
 
       this.close = function() {
-        return ws.$close();
+        return ws.close(true);
       };
 
       this.socketUrl = function(endpoint) {
