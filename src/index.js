@@ -8,8 +8,8 @@
 angular
   .module('tl', [
     'ngResource',
-    'ngWebsocket',
     'ngCookies',
+    'ngWebSocket'
   ])
   .provider('TablelistSdk', function() {
 
