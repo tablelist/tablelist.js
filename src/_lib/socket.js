@@ -18,7 +18,7 @@ angular
         this.ws = ws = $websocket(this.socketUrl(endpoint));
 
         ws.onMessage(function(message) {
-					let data;
+					var data;
 
 					try {
 						data = JSON.parse(message.data);
