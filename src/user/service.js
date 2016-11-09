@@ -237,6 +237,9 @@ angular
         }, success, error);
       };
 
+      /**
+       * Add credit for a user
+       */
       UserService.prototype.addCredit = function(userId, amount, campaignId, success, error) {
         return User.addCredit({
           id: userId
@@ -244,6 +247,48 @@ angular
           amount: amount,
           campaign: campaignId
         }, success, error);
+      };
+
+      /**
+       * List subscriptions for a user
+       */
+      UserService.prototype.listSubscriptions = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.listSubscriptions(options).$promise;
+      };
+
+      /**
+       * Add a subscription for a user
+       */
+      UserService.prototype.addSubscription = function(options, success, error) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+        if (!options.externalId){
+          if (!options.planId) throw new Error('options.planId is required');
+          if (!options.paymentProfileId) throw new Error('options.paymentProfileId is required');
+        }
+
+        return User.addSubscription({
+          id: options.userId
+        }, options, success, error);
+      };
+
+      /**
+       * Add a subscription for a user
+       */
+      UserService.prototype.getMembershipStatus = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.userId) throw new Error('options.userId is required');
+
+        options.id = options.userId;
+        delete options.userId;
+
+        return User.getMembershipStatus(options).$promise;
       };
 
       /**

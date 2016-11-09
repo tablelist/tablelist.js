@@ -100,6 +100,19 @@ angular
         method: "POST",
         url: endpoint + '/credit'
       },
+      listSubscriptions: {
+        method: "GET",
+        url: endpoint + '/subscription',
+        isArray: true
+      },
+      addSubscription: {
+        method: "POST",
+        url: endpoint + '/subscription'
+      },
+      getMembershipStatus: {
+        method: "GET",
+        url: endpoint + '/membership'
+      },
       findByReferral: {
         method: "GET",
         url: '/referral/:code'
