@@ -20,9 +20,9 @@ angular
       if (!key) throw new Error('jsSdk.cookie - set() - key is required');
       if (!value) throw new Error('jsSdk.cookie - set() - value is required');
 
-      let secure = config.ENV_PROD;
+      var secure = config.ENV_PROD;
 
-      let expires = 'Fri, 31 Dec 9999 23:59:59 GMT';
+      var expires = 'Fri, 31 Dec 9999 23:59:59 GMT';
 
       $cookies.put(key, value, {
         domain: DOMAIN,
@@ -36,10 +36,10 @@ angular
     Cookie.prototype.remove = function(key) {
       if (!key) throw new Error('jsSdk.cookie - remove() - key is required');
 
-      let secure = config.ENV_PROD;
+      var secure = config.ENV_PROD;
 
       // update the cookie's expiration date to date in the past
-      let expires = 'Thu, 01 Jan 1970 00:00:00 GMT';
+      var expires = 'Thu, 01 Jan 1970 00:00:00 GMT';
 
       $cookies.remove(key, {
         domain: DOMAIN,
