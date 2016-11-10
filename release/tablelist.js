@@ -8,6 +8,7 @@
 angular
   .module('tl', [
     'ngResource',
+    'ngCookies',
     'ngWebSocket'
   ])
   .provider('TablelistSdk', function() {
@@ -346,62 +347,53 @@ angular
  */
 angular
   .module('tl')
-  .factory('tl.cookie', ['tl.config', 'tl.storage', function(config, storage) {
+  .factory('tl.cookie', ['$cookies', 'tl.config', function($cookies, config) {
 
     var DOMAIN = '.tablelist.com';
 
     var Cookie = function() {};
 
-    Cookie.prototype.get = function(sKey) {
-      var obj = storage.get(sKey);
-      var sval = obj ? obj.cookie : null;
-      var cval = decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
-      return sval || cval;
+    Cookie.prototype.get = function(key) {
+      if (!key) throw new Error('jsSdk.cookie - get() - key is required');
+      return $cookies.get(key);
     };
 
-    Cookie.prototype.set = function(sKey, sValue, vEnd, sPath, sDomain, bSecure) {
-      if (!sValue) return this.remove(sKey, sPath, sDomain);
-      storage.set(sKey, {
-        cookie: sValue
+    Cookie.prototype.set = function(key, value) {
+      if (!key) throw new Error('jsSdk.cookie - set() - key is required');
+      if (!value) throw new Error('jsSdk.cookie - set() - value is required');
+
+      var secure = config.ENV_PROD;
+
+      var expires = 'Fri, 31 Dec 9999 23:59:59 GMT';
+
+      $cookies.put(key, value, {
+        domain: DOMAIN,
+        secure : secure,
+        expires : expires,
       });
-      if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) {
-        return false;
-      }
-      if (!sPath) sPath = '/';
-      if (!vEnd) vEnd = Infinity;
-      if (!sDomain) sDomain = DOMAIN;
-      if (config.ENV_PROD) bSecure = true;
-      var sExpires = "";
-      if (vEnd) {
-        switch (vEnd.constructor) {
-          case Number:
-            sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
-            break;
-          case String:
-            sExpires = "; expires=" + vEnd;
-            break;
-          case Date:
-            sExpires = "; expires=" + vEnd.toUTCString();
-            break;
-        }
-      }
-      var cookie = encodeURIComponent(sKey) + "=" + encodeURIComponent(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
-      document.cookie = cookie;
+
       return true;
     };
 
-    Cookie.prototype.remove = function(sKey, sPath, sDomain) {
-      if (!sDomain) sDomain = DOMAIN;
-      storage.remove(sKey);
-      if (!sKey || !this.exists(sKey)) {
-        return false;
-      }
-      document.cookie = encodeURIComponent(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "");
+    Cookie.prototype.remove = function(key) {
+      if (!key) throw new Error('jsSdk.cookie - remove() - key is required');
+
+      var secure = config.ENV_PROD;
+
+      // update the cookie's expiration date to date in the past
+      var expires = 'Thu, 01 Jan 1970 00:00:00 GMT';
+
+      $cookies.remove(key, {
+        domain: DOMAIN,
+        secure : secure,
+        expires : expires,
+      });
+
       return true;
     };
 
-    Cookie.prototype.exists = function(sKey) {
-      return storage.exists(sKey) || (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+    Cookie.prototype.exists = function(key) {
+      return (typeof this.get(key) !== 'undefined');
     };
 
     return new Cookie();
@@ -626,24 +618,38 @@ angular
 
       Keychain.prototype.setAuthToken = function(token) {
         _authToken = token || null;
-        return cookie.set(AUTH_KEY, token);
+
+        if (_authToken) {
+          return cookie.set(AUTH_KEY, token);
+
+        } else {
+          return cookie.remove(AUTH_KEY);
+        }
       };
 
       Keychain.prototype.prospectToken = function() {
+        
         var token = _prospectToken || (function(){
           _prospectToken = cookie.get(PROSPECT_KEY);
           return _prospectToken;
         })();
+
         if (!token) {
           token = utils.guid(16, '-');
           this.setProspectToken(token);
         }
+
         return token;
       };
 
       Keychain.prototype.setProspectToken = function(token) {
         _prospectToken = token || null;
-        return cookie.set(PROSPECT_KEY, token);
+
+        if (_prospectToken) {
+          return cookie.set(PROSPECT_KEY, token);  
+        } else {
+          return cookie.remove(PROSPECT_KEY);
+        }
       };
 
       return new Keychain();
@@ -819,7 +825,7 @@ angular
 angular
   .module('tl')
   .factory('tl.storage', [function() {
-    'use strcit';
+    'use strict';
 
     var CACHE = {};
 
@@ -930,56 +936,6 @@ angular
 
 		return new Utils();
 	}]);
-
-angular
-	.module('tl')
-	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatesale.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-sale';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      update: {
-        method: 'PUT',
-        url: endpoint + '/:id'
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliatesale.service', [
-  'tl.affiliatesale.resource',
-  'tl.service',
-  function(AffiliateSale, Service) {
-    'use strict';
-
-    var AffiliateSaleService = Service.extend(AffiliateSale);
-
-    AffiliateSaleService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return AffiliateSale.list(options).$promise;
-    };
-
-    return new AffiliateSaleService();
-  }
-]);
-
 
 angular
 	.module('tl')
@@ -1484,43 +1440,6 @@ angular.module('tl').service('tl.auth.service', [
 
 angular
 	.module('tl')
-	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.campaign.resource', ['tl.resource', function(resource){
-		
-		var endpoint = '/campaign/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
-
-		var CampaignService = Service.extend(Campaign);
-
-		/**
-		 * List internal campaigns
-		 */
-		CampaignService.prototype.listInternal = function() {
-			return Campaign.list({ internal : true }).$promise;
-		};
-
-		return new CampaignService();
-	}]);
-
-
-angular
-	.module('tl')
 	.service('tl.booking', ['tl.booking.resource', 'tl.booking.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1842,6 +1761,43 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
+	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.campaign.resource', ['tl.resource', function(resource){
+		
+		var endpoint = '/campaign/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.campaign.service', ['tl.storage', 'tl.campaign.resource', 'tl.service', function(storage, Campaign, Service){
+
+		var CampaignService = Service.extend(Campaign);
+
+		/**
+		 * List internal campaigns
+		 */
+		CampaignService.prototype.listInternal = function() {
+			return Campaign.list({ internal : true }).$promise;
+		};
+
+		return new CampaignService();
+	}]);
+
+
+angular
+	.module('tl')
 	.service('tl.city', ['tl.city.resource', 'tl.city.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2062,71 +2018,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.image', ['tl.image.resource', 'tl.image.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.image.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/image';
-
-      return resource(endpoint, {}, {
-
-        // upload: {
-        //   method: 'POST',
-        //   url: endpoint,
-        //   headers: {
-        //     'Content-Type': undefined
-        //   }
-        // }
-        
-      });
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
-    function(Service, Image, tlhttp, $q) {
-
-      var ImageService = Service.extend(Image);
-
-      ImageService.prototype.upload = function(file, options) {
-
-        var deferred = $q.defer();
-
-        var formData = new FormData();
-        formData.append('image', file);
-
-        var maxFileSize = 16000000; //16mb
-
-        if (file.size > maxFileSize) {
-          deferred.reject('File cannot be greater than 4mb');
-        }
-
-        tlhttp.upload('/image', options, formData)
-          .success(function(data, status, headers, config) {
-            deferred.resolve(data, status, headers, config);
-          })
-          .error(function(data, status, headers, config) {
-            deferred.reject(data, status, headers, config);
-          });
-
-        return deferred.promise;
-      };
-
-      return new ImageService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
     function(resource, service) {
       this.resource = resource;
@@ -2228,6 +2119,71 @@ angular
       };
 
       return new FeedService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image', ['tl.image.resource', 'tl.image.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.image.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/image';
+
+      return resource(endpoint, {}, {
+
+        // upload: {
+        //   method: 'POST',
+        //   url: endpoint,
+        //   headers: {
+        //     'Content-Type': undefined
+        //   }
+        // }
+        
+      });
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.image.service', ['tl.service', 'tl.image.resource', 'tl.http', '$q',
+    function(Service, Image, tlhttp, $q) {
+
+      var ImageService = Service.extend(Image);
+
+      ImageService.prototype.upload = function(file, options) {
+
+        var deferred = $q.defer();
+
+        var formData = new FormData();
+        formData.append('image', file);
+
+        var maxFileSize = 16000000; //16mb
+
+        if (file.size > maxFileSize) {
+          deferred.reject('File cannot be greater than 4mb');
+        }
+
+        tlhttp.upload('/image', options, formData)
+          .success(function(data, status, headers, config) {
+            deferred.resolve(data, status, headers, config);
+          })
+          .error(function(data, status, headers, config) {
+            deferred.reject(data, status, headers, config);
+          });
+
+        return deferred.promise;
+      };
+
+      return new ImageService();
     }
   ]);
 
@@ -2544,47 +2500,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.item.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/item/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: '/item',
-        isArray: true
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
-
-    var ItemService = Service.extend(Item);
-
-    ItemService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Item.list(options).$promise;
-    };
-
-    return new ItemService();
-  }]);
-
 angular
   .module('tl')
   .service('tl.invoice', ['tl.invoice.resource', 'tl.invoice.service',
@@ -2647,6 +2562,47 @@ angular
       return new InvoiceService();
     }
   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.item', ['tl.item.resource', 'tl.item.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.item.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/item/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: '/item',
+        isArray: true
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.item.service', ['tl.service', 'tl.item.resource', function(Service, Item) {
+
+    var ItemService = Service.extend(Item);
+
+    ItemService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Item.list(options).$promise;
+    };
+
+    return new ItemService();
+  }]);
 
 
 angular
@@ -3736,6 +3692,51 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.tracker', [
+    'tl.tracker.resource',
+    'tl.tracker.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tracker';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      create: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tracker.service', [
+    'tl.service',
+    'tl.tracker.resource',
+    function(Service, Tracker) {
+      'use strict';
+
+      var TrackerService = Service.extend(Tracker);
+
+      TrackerService.prototype.create = function(options) {
+        return Tracker.save({}, options).$promise;
+      };
+
+      return new TrackerService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
@@ -3921,51 +3922,6 @@ angular
 
 		return new TrackService();
 	}]);
-
-angular
-  .module('tl')
-  .service('tl.tracker', [
-    'tl.tracker.resource',
-    'tl.tracker.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tracker';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      create: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tracker.service', [
-    'tl.service',
-    'tl.tracker.resource',
-    function(Service, Tracker) {
-      'use strict';
-
-      var TrackerService = Service.extend(Tracker);
-
-      TrackerService.prototype.create = function(options) {
-        return Tracker.save({}, options).$promise;
-      };
-
-      return new TrackerService();
-    }
-  ]);
 
 
 angular
@@ -5234,6 +5190,56 @@ angular
       return new VenueService();
     }
   ]);
+
+
+angular
+	.module('tl')
+	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatesale.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-sale';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      update: {
+        method: 'PUT',
+        url: endpoint + '/:id'
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliatesale.service', [
+  'tl.affiliatesale.resource',
+  'tl.service',
+  function(AffiliateSale, Service) {
+    'use strict';
+
+    var AffiliateSaleService = Service.extend(AffiliateSale);
+
+    AffiliateSaleService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return AffiliateSale.list(options).$promise;
+    };
+
+    return new AffiliateSaleService();
+  }
+]);
 
 angular
   .module('tl')

@@ -1,6 +1,6 @@
 {
   "name": "tablelist.js",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "description": "Tablelist Javascript SDK",
   "url": "https://www.tablelist.com",
   "author": "Tablelist, Inc.",
@@ -8,6 +8,7 @@
     "node": "4.4.3"
   },
   "dependencies": {
+    "angular-cookies": "1.5.8",
     "bower": "1.4.1",
     "chai": "2.2.0",
     "gulp": "3.9.0",
