@@ -55,10 +55,13 @@ angular
       this.socketUrl = function(endpoint) {
         var auth = keychain.authToken();
         var prospect = keychain.prospectToken();
-
         var params = {};
-        if (prospect) params.prospect = prospect;
-        if (auth) params.auth = auth;
+
+        if (auth) {
+					params.auth = auth;
+				} else {
+					params.prospect = prospect;
+				}
 
         return http.wsUrl(endpoint, params);
       };
