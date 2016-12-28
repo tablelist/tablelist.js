@@ -9,44 +9,10 @@ angular
       'use strict';
 
       return {
-        request: function(data) {
-          data.headers = data.headers || {};
-
-          var token = keychain.authToken();
-          var isApi = data.url.indexOf(config.API) >= 0;
-          var hasParams = data.url.indexOf('?') >= 0;
-          if (isApi && !hasParams) {
-            data.url = data.url += '?';
-          }
-          if (isApi && token) {
-            if (config.useAuthHeader) data.headers['x-access-token'] = token;
-            else data.url = data.url + '&auth=' + token;
-          }
-          if (isApi && !token) {
-            var ptoken = keychain.prospectToken();
-            data.url = data.url + '&prospect=' + ptoken;
-          }
-          if (isApi && config.CLIENT) {
-            var client = config.CLIENT;
-            var subClient = config.SUB_CLIENT;
-            if (subClient) {
-              client = client + '-' + subClient;
-            }
-            data.headers['x-client-type'] = client;
-          }
-          if (isApi && config.VERSION) {
-            var version = config.VERSION;
-            data.url = data.url + '&version=' + version;
-          }
-          data.url = data.url.replace('?&', '?');
-          return data;
-        },
         responseError: function(response) {
-
           if (response.status === 401) {
             $rootScope.$emit('unauthorized');
           }
-
           return $q.reject(response);
         }
       };
@@ -59,32 +25,47 @@ angular
 
     var HTTP = function() {};
 
-    HTTP.prototype.get = function(endpoint, params) {
-      return $http.get(this.apiUrl(endpoint, params));
+    HTTP.prototype.get = function(endpoint, params, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
+      return $http.get(this.apiUrl(endpoint, params), options);
     };
 
     HTTP.prototype.post = function(endpoint, body, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
       return $http.post(this.apiUrl(endpoint), body, options);
     };
 
     HTTP.prototype.put = function(endpoint, body, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
       return $http.put(this.apiUrl(endpoint), body, options);
     };
 
-    HTTP.prototype.delete = function(endpoint, params) {
-      return $http.delete(this.apiUrl(endpoint, params));
+    HTTP.prototype.delete = function(endpoint, params, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
+      return $http.delete(this.apiUrl(endpoint, params), options);
     };
 
-    HTTP.prototype.upload = function(endpoint, query, body) {
-      return $http.post(this.apiUrl(endpoint, query), body, {
-        headers: {
-          'Content-Type': undefined
-        },
-        transformRequest: angular.identity
-      });
+    HTTP.prototype.upload = function(endpoint, query, body, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
+      options.headers['Content-Type'] = undefined;
+      options.transformRequest = angular.identity;
+      return $http.post(this.apiUrl(endpoint, query), body, options);
     };
 
     HTTP.prototype.apiUrl = function(endpoint, params) {
+      return buildUrl(config.API, endpoint, params);
+    };
+
+    HTTP.prototype.wsUrl = function(endpoint, params) {
+      return buildUrl(config.WS, endpoint, params);
+    };
+
+    function buildUrl(base, endpoint, params) {
       params = params || {};
 
       // use leading slash
@@ -103,12 +84,34 @@ angular
       }
 
       // create url
-      var url = config.API + endpoint;
+      var url = base + endpoint;
       if (data.length > 0) {
         url += '?' + data.join('&');
       }
       return url;
-    };
+    }
+
+    function buildHeaders(headers) {
+      headers = headers || {};
+
+      var authToken = keychain.authToken();
+      var prospectToken = keychain.prospectToken();
+
+      if (authToken) {
+        headers['x-access-token'] = authToken;
+      } else {
+        headers['x-prospect-token'] = prospectToken;
+      }
+
+      var client = config.CLIENT;
+      var subClient = config.SUB_CLIENT;
+      if (subClient) {
+        client = client + '-' + subClient;
+      }
+      headers['x-client-type'] = client;
+
+      return headers;
+    }
 
     return new HTTP();
   }]);

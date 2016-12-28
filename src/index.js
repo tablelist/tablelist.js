@@ -27,7 +27,15 @@ angular
       production: 'https://api.tablelist.com',
       development: 'https://api-dev.tablelist.com',
       local: 'http://localhost:3000',
-      test: 'https://api-dev.tablelist.com',
+      test: 'https://api-dev.tablelist.com'
+    };
+
+    // Web Socket
+    var WS = {
+      production: 'wss://ws.tablelist.com',
+      development: 'wss://ws-dev.tablelist.com',
+      local: 'ws://localhost:3000',
+      test: 'wss://ws-dev.tablelist.com'
     };
 
     var config = {
@@ -39,6 +47,7 @@ angular
       ENV_LOCAL: ENV_LOCAL,
       ENV_TEST: ENV_TEST,
       API: API[TL_ENV],
+      WS: WS[TL_ENV],
       useAuthHeader: false, //send auth token as query string, or header, defaults to query string
 
       setSubclient: setSubclient,
