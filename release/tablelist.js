@@ -34,7 +34,7 @@ angular
     var WS = {
       production: 'wss://ws.tablelist.com',
       development: 'wss://ws-dev.tablelist.com',
-      local: 'http://localhost:3000',
+      local: 'ws://localhost:3000',
       test: 'wss://ws-dev.tablelist.com'
     };
 
@@ -48,8 +48,6 @@ angular
       ENV_TEST: ENV_TEST,
       API: API[TL_ENV],
       WS: WS[TL_ENV],
-      useAuthHeader: false, //send auth token as query string, or header, defaults to query string
-
       setSubclient: setSubclient,
       setVersion: setVersion
     };
@@ -493,44 +491,10 @@ angular
       'use strict';
 
       return {
-        request: function(data) {
-          data.headers = data.headers || {};
-
-          var token = keychain.authToken();
-          var isApi = data.url.indexOf(config.API) >= 0;
-          var hasParams = data.url.indexOf('?') >= 0;
-          if (isApi && !hasParams) {
-            data.url = data.url += '?';
-          }
-          if (isApi && token) {
-            if (config.useAuthHeader) data.headers['x-access-token'] = token;
-            else data.url = data.url + '&auth=' + token;
-          }
-          if (isApi && !token) {
-            var ptoken = keychain.prospectToken();
-            data.url = data.url + '&prospect=' + ptoken;
-          }
-          if (isApi && config.CLIENT) {
-            var client = config.CLIENT;
-            var subClient = config.SUB_CLIENT;
-            if (subClient) {
-              client = client + '-' + subClient;
-            }
-            data.headers['x-client-type'] = client;
-          }
-          if (isApi && config.VERSION) {
-            var version = config.VERSION;
-            data.url = data.url + '&version=' + version;
-          }
-          data.url = data.url.replace('?&', '?');
-          return data;
-        },
         responseError: function(response) {
-
           if (response.status === 401) {
             $rootScope.$emit('unauthorized');
           }
-
           return $q.reject(response);
         }
       };
@@ -543,29 +507,36 @@ angular
 
     var HTTP = function() {};
 
-    HTTP.prototype.get = function(endpoint, params) {
-      return $http.get(this.apiUrl(endpoint, params));
+    HTTP.prototype.get = function(endpoint, params, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
+      return $http.get(this.apiUrl(endpoint, params), options);
     };
 
     HTTP.prototype.post = function(endpoint, body, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
       return $http.post(this.apiUrl(endpoint), body, options);
     };
 
     HTTP.prototype.put = function(endpoint, body, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
       return $http.put(this.apiUrl(endpoint), body, options);
     };
 
-    HTTP.prototype.delete = function(endpoint, params) {
-      return $http.delete(this.apiUrl(endpoint, params));
+    HTTP.prototype.delete = function(endpoint, params, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
+      return $http.delete(this.apiUrl(endpoint, params), options);
     };
 
-    HTTP.prototype.upload = function(endpoint, query, body) {
-      return $http.post(this.apiUrl(endpoint, query), body, {
-        headers: {
-          'Content-Type': undefined
-        },
-        transformRequest: angular.identity
-      });
+    HTTP.prototype.upload = function(endpoint, query, body, options) {
+      options = options || {};
+      options.headers = buildHeaders(options.headers);
+      options.headers['Content-Type'] = undefined;
+      options.transformRequest = angular.identity;
+      return $http.post(this.apiUrl(endpoint, query), body, options);
     };
 
     HTTP.prototype.apiUrl = function(endpoint, params) {
@@ -600,6 +571,28 @@ angular
         url += '?' + data.join('&');
       }
       return url;
+    }
+
+    function buildHeaders(headers) {
+      headers = headers || {};
+
+      var authToken = keychain.authToken();
+      var prospectToken = keychain.prospectToken();
+
+      if (authToken) {
+        headers['x-access-token'] = authToken;
+      } else {
+        headers['x-prospect-token'] = prospectToken;
+      }
+
+      var client = config.CLIENT;
+      var subClient = config.SUB_CLIENT;
+      if (subClient) {
+        client = client + '-' + subClient;
+      }
+      headers['x-client-type'] = client;
+
+      return headers;
     }
 
     return new HTTP();
@@ -828,13 +821,15 @@ angular
       this.socketUrl = function(endpoint) {
         var auth = keychain.authToken();
         var prospect = keychain.prospectToken();
-
         var params = {};
-        if (prospect) params.prospect = prospect;
-        if (auth) params.auth = auth;
 
-        var url = http.wsUrl(endpoint, params);
-        return url.replace('http', 'ws');
+        if (auth) {
+					params.auth = auth;
+				} else {
+					params.prospect = prospect;
+				}
+
+        return http.wsUrl(endpoint, params);
       };
     };
 	}]);
@@ -2738,6 +2733,43 @@ angular
 
     return new MetricService();
   }]);
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Notify);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
+  }]);
+
 
 angular
 	.module('tl')
@@ -2822,43 +2854,6 @@ angular.module('tl').service('tl.outgoingPayment.service', [
     return new OutgoingPaymentService();
   }
 ]);
-
-angular
-  .module('tl')
-  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.notify.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/notify/adminapp';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      sendAdminApp: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
-
-    var NotifyService = Service.extend(Notify);
-
-    NotifyService.prototype.sendAdminApp = function() {
-      return Notify.sendAdminApp().$promise;
-    };
-
-    return new NotifyService();
-  }]);
 
 
 angular
@@ -3261,50 +3256,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.review.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/review/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
-
-		var ReviewService = Service.extend(Review);
-
-		ReviewService.prototype.read = function read(options) {
-			if (!options) throw new Error('options is required');
-			if (!options.id) throw new Error('options.id is required');
-
-			return Review.get(options).$promise;
-		};
-
-		ReviewService.prototype.update = function update(options) {
-			if (!options) throw new Error('options is required');
-			if (!options.id) throw new Error('options.id is required');
-
-			return Review.update({ id: options.id }, options).$promise;
-		};
-
-		return new ReviewService();
-	}]);
-
-
-angular
-	.module('tl')
 	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3350,6 +3301,50 @@ angular
 
 		return new ReportService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.review.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/review/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
+
+		var ReviewService = Service.extend(Review);
+
+		ReviewService.prototype.read = function read(options) {
+			if (!options) throw new Error('options is required');
+			if (!options.id) throw new Error('options.id is required');
+
+			return Review.get(options).$promise;
+		};
+
+		ReviewService.prototype.update = function update(options) {
+			if (!options) throw new Error('options is required');
+			if (!options.id) throw new Error('options.id is required');
+
+			return Review.update({ id: options.id }, options).$promise;
+		};
+
+		return new ReviewService();
+	}]);
+
 
 angular
 	.module('tl')
@@ -5370,42 +5365,6 @@ angular
 
 angular
   .module('tl')
-  .service('tl.support.task', [
-    'tl.support.task.resource',
-    'tl.support.task.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.task.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/task';
-
-    return resource(endpoint, {}, {
-
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.task.service', [
-    'tl.service',
-    'tl.support.task.resource',
-    function(Service, Task) {
-      'use strict';
-
-      var SupportTaskService = Service.extend(Task);
-
-      return new SupportTaskService();
-    }
-  ]);
-
-angular
-  .module('tl')
   .service('tl.support.message', [
     'tl.support.message.resource',
     'tl.support.message.service',
@@ -5461,5 +5420,41 @@ angular
       var SupportMessageService = Service.extend(Message);
 
       return new SupportMessageService();
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.support.task', [
+    'tl.support.task.resource',
+    'tl.support.task.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.task.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/task';
+
+    return resource(endpoint, {}, {
+
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.task.service', [
+    'tl.service',
+    'tl.support.task.resource',
+    function(Service, Task) {
+      'use strict';
+
+      var SupportTaskService = Service.extend(Task);
+
+      return new SupportTaskService();
     }
   ]);
