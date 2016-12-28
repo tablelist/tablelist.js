@@ -60,8 +60,7 @@ angular
         if (prospect) params.prospect = prospect;
         if (auth) params.auth = auth;
 
-        var url = http.wsUrl(endpoint, params);
-        return url.replace('http', 'ws');
+        return http.wsUrl(endpoint, params);
       };
     };
 	}]);

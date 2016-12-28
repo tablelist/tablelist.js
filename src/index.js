@@ -34,7 +34,7 @@ angular
     var WS = {
       production: 'wss://ws.tablelist.com',
       development: 'wss://ws-dev.tablelist.com',
-      local: 'http://localhost:3000',
+      local: 'ws://localhost:3000',
       test: 'wss://ws-dev.tablelist.com'
     };
 
