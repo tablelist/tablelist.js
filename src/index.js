@@ -54,6 +54,8 @@ angular
 
     function setEnv(env) {
       var api = API[env];
+      var ws = WS[env];
+
       if (!api) throw new Error('Enviroment : ' + env + ' is not valid');
 
       config.ENV = env;
@@ -62,6 +64,7 @@ angular
       config.ENV_LOCAL = (env === 'local');
       config.ENV_TEST = (env === 'test');
       config.API = api;
+      config.WS = ws;
     }
 
     function setSubclient(subclient) {
