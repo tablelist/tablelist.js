@@ -85,6 +85,14 @@ angular
     };
 
     HTTP.prototype.apiUrl = function(endpoint, params) {
+      return buildUrl(config.API, endpoint, params);
+    };
+
+    HTTP.prototype.wsUrl = function(endpoint, params) {
+      return buildUrl(config.WS, endpoint, params);
+    };
+
+    function buildUrl(base, endpoint, params) {
       params = params || {};
 
       // use leading slash
@@ -103,12 +111,12 @@ angular
       }
 
       // create url
-      var url = config.API + endpoint;
+      var url = base + endpoint;
       if (data.length > 0) {
         url += '?' + data.join('&');
       }
       return url;
-    };
+    }
 
     return new HTTP();
   }]);

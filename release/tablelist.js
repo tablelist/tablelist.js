@@ -27,7 +27,15 @@ angular
       production: 'https://api.tablelist.com',
       development: 'https://api-dev.tablelist.com',
       local: 'http://localhost:3000',
-      test: 'https://api-dev.tablelist.com',
+      test: 'https://api-dev.tablelist.com'
+    };
+
+    // Web Socket
+    var WS = {
+      production: 'wss://ws.tablelist.com',
+      development: 'wss://ws-dev.tablelist.com',
+      local: 'http://localhost:3000',
+      test: 'wss://ws-dev.tablelist.com'
     };
 
     var config = {
@@ -39,6 +47,7 @@ angular
       ENV_LOCAL: ENV_LOCAL,
       ENV_TEST: ENV_TEST,
       API: API[TL_ENV],
+      WS: WS[TL_ENV],
       useAuthHeader: false, //send auth token as query string, or header, defaults to query string
 
       setSubclient: setSubclient,
@@ -560,6 +569,14 @@ angular
     };
 
     HTTP.prototype.apiUrl = function(endpoint, params) {
+      return buildUrl(config.API, endpoint, params);
+    };
+
+    HTTP.prototype.wsUrl = function(endpoint, params) {
+      return buildUrl(config.WS, endpoint, params);
+    };
+
+    function buildUrl(base, endpoint, params) {
       params = params || {};
 
       // use leading slash
@@ -578,12 +595,12 @@ angular
       }
 
       // create url
-      var url = config.API + endpoint;
+      var url = base + endpoint;
       if (data.length > 0) {
         url += '?' + data.join('&');
       }
       return url;
-    };
+    }
 
     return new HTTP();
   }]);
@@ -816,7 +833,7 @@ angular
         if (prospect) params.prospect = prospect;
         if (auth) params.auth = auth;
 
-        var url = http.apiUrl(endpoint, params);
+        var url = http.wsUrl(endpoint, params);
         return url.replace('http', 'ws');
       };
     };
@@ -936,6 +953,56 @@ angular
 
 		return new Utils();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatesale.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-sale';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      update: {
+        method: 'PUT',
+        url: endpoint + '/:id'
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliatesale.service', [
+  'tl.affiliatesale.resource',
+  'tl.service',
+  function(AffiliateSale, Service) {
+    'use strict';
+
+    var AffiliateSaleService = Service.extend(AffiliateSale);
+
+    AffiliateSaleService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return AffiliateSale.list(options).$promise;
+    };
+
+    return new AffiliateSaleService();
+  }
+]);
+
 
 angular
 	.module('tl')
@@ -2671,43 +2738,6 @@ angular
 
     return new MetricService();
   }]);
-angular
-  .module('tl')
-  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.notify.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/notify/adminapp';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      sendAdminApp: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
-
-    var NotifyService = Service.extend(Notify);
-
-    NotifyService.prototype.sendAdminApp = function() {
-      return Notify.sendAdminApp().$promise;
-    };
-
-    return new NotifyService();
-  }]);
-
 
 angular
 	.module('tl')
@@ -2792,6 +2822,43 @@ angular.module('tl').service('tl.outgoingPayment.service', [
     return new OutgoingPaymentService();
   }
 ]);
+
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Notify);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
+  }]);
 
 
 angular
@@ -3194,6 +3261,50 @@ angular
 
 angular
 	.module('tl')
+	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.review.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/review/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
+
+		var ReviewService = Service.extend(Review);
+
+		ReviewService.prototype.read = function read(options) {
+			if (!options) throw new Error('options is required');
+			if (!options.id) throw new Error('options.id is required');
+
+			return Review.get(options).$promise;
+		};
+
+		ReviewService.prototype.update = function update(options) {
+			if (!options) throw new Error('options is required');
+			if (!options.id) throw new Error('options.id is required');
+
+			return Review.update({ id: options.id }, options).$promise;
+		};
+
+		return new ReviewService();
+	}]);
+
+
+angular
+	.module('tl')
 	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3239,50 +3350,6 @@ angular
 
 		return new ReportService();
 	}]);
-
-angular
-	.module('tl')
-	.service('tl.review', ['tl.review.resource', 'tl.review.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.review.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/review/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.review.service', ['tl.service', 'tl.review.resource', function(Service, Review){
-
-		var ReviewService = Service.extend(Review);
-
-		ReviewService.prototype.read = function read(options) {
-			if (!options) throw new Error('options is required');
-			if (!options.id) throw new Error('options.id is required');
-
-			return Review.get(options).$promise;
-		};
-
-		ReviewService.prototype.update = function update(options) {
-			if (!options) throw new Error('options is required');
-			if (!options.id) throw new Error('options.id is required');
-
-			return Review.update({ id: options.id }, options).$promise;
-		};
-
-		return new ReviewService();
-	}]);
-
 
 angular
 	.module('tl')
@@ -5191,56 +5258,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatesale.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-sale';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      update: {
-        method: 'PUT',
-        url: endpoint + '/:id'
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliatesale.service', [
-  'tl.affiliatesale.resource',
-  'tl.service',
-  function(AffiliateSale, Service) {
-    'use strict';
-
-    var AffiliateSaleService = Service.extend(AffiliateSale);
-
-    AffiliateSaleService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return AffiliateSale.list(options).$promise;
-    };
-
-    return new AffiliateSaleService();
-  }
-]);
-
 angular
   .module('tl')
   .service('tl.support.agent', [
@@ -5353,6 +5370,42 @@ angular
 
 angular
   .module('tl')
+  .service('tl.support.task', [
+    'tl.support.task.resource',
+    'tl.support.task.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.support.task.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/support/task';
+
+    return resource(endpoint, {}, {
+
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.support.task.service', [
+    'tl.service',
+    'tl.support.task.resource',
+    function(Service, Task) {
+      'use strict';
+
+      var SupportTaskService = Service.extend(Task);
+
+      return new SupportTaskService();
+    }
+  ]);
+
+angular
+  .module('tl')
   .service('tl.support.message', [
     'tl.support.message.resource',
     'tl.support.message.service',
@@ -5408,41 +5461,5 @@ angular
       var SupportMessageService = Service.extend(Message);
 
       return new SupportMessageService();
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.support.task', [
-    'tl.support.task.resource',
-    'tl.support.task.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.support.task.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/support/task';
-
-    return resource(endpoint, {}, {
-
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.support.task.service', [
-    'tl.service',
-    'tl.support.task.resource',
-    function(Service, Task) {
-      'use strict';
-
-      var SupportTaskService = Service.extend(Task);
-
-      return new SupportTaskService();
     }
   ]);
