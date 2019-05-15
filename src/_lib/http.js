@@ -54,10 +54,6 @@ angular
       options.headers = buildHeaders(options.headers);
       options.headers['Content-Type'] = undefined;
 
-      if (config.apiKey) {
-        options.headers['api-key'] = config.apiKey;
-      }
-
       options.transformRequest = angular.identity;
       return $http.post(this.apiUrl(endpoint, query), body, options);
     };
@@ -106,6 +102,10 @@ angular
         headers['x-access-token'] = authToken;
       } else {
         headers['x-prospect-token'] = prospectToken;
+      }
+
+      if (config.apiKey) {
+        headers['api-key'] = config.apiKey;
       }
 
       var client = config.CLIENT;

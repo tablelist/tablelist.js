@@ -545,10 +545,6 @@ angular
       options.headers = buildHeaders(options.headers);
       options.headers['Content-Type'] = undefined;
 
-      if (config.apiKey) {
-        options.headers['api-key'] = config.apiKey;
-      }
-
       options.transformRequest = angular.identity;
       return $http.post(this.apiUrl(endpoint, query), body, options);
     };
@@ -597,6 +593,10 @@ angular
         headers['x-access-token'] = authToken;
       } else {
         headers['x-prospect-token'] = prospectToken;
+      }
+
+      if (config.apiKey) {
+        headers['api-key'] = config.apiKey;
       }
 
       var client = config.CLIENT;
@@ -1009,6 +1009,173 @@ angular.module('tl').service('tl.affiliatesale.service', [
     };
 
     return new AffiliateSaleService();
+  }
+]);
+
+
+angular
+	.module('tl')
+	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliate.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate/:id';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      getById: {
+        method: 'GET',
+        url: endpoint,
+        isArray: false
+      },
+      getPayoutStructuresById: {
+        method: 'GET',
+        url: endpoint + '/payoutstructure',
+        isArray: true
+      },
+      create: {
+        method: 'POST',
+        url: 'affiliate',
+        isArray: false
+      },
+      update: {
+        method: 'PATCH',
+        url: endpoint,
+        isArray: false
+      },
+      list: {
+        method: 'GET',
+        url: 'affiliate',
+        isArray: true
+      },
+      listSales: {
+        method: 'GET',
+        url: endpoint + '/sale',
+        isArray: true
+      },
+      getSalesTotal: {
+        method: 'GET',
+        url: endpoint + '/sale/total'
+      },
+      getSalesLeaderboard: {
+        method: 'GET',
+        url: endpoint + '/leaderboard',
+        isArray: true
+      },
+      getPayoutPeriod: {
+        method: 'GET',
+        url: endpoint + '/payout-period',
+        isArray: true
+      },
+      getPromoCode: {
+        method: 'GET', 
+        url: endpoint + '/promo',
+        isArray: true
+      },
+      getTrackers: {
+        method: 'GET', 
+        url: endpoint + '/tracker',
+        isArray: true
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliate.service', [
+  'tl.affiliate.resource',
+  'tl.service',
+  function(Affiliate, Service) {
+    'use strict';
+
+    var AffiliateService = Service.extend(Affiliate);
+
+    AffiliateService.prototype.getById = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getById(options).$promise;
+    };
+
+    AffiliateService.prototype.getPayoutStructuresById = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getPayoutStructuresById(options).$promise;
+    };
+
+    AffiliateService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      return Affiliate.list(options).$promise;
+    };
+
+    AffiliateService.prototype.create = function(options) {
+      if (!options) throw new Error('options is required');
+
+      return Affiliate.create({}, options).$promise;
+    };
+
+    AffiliateService.prototype.update = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var affiliateId = options.id;
+      delete options.id;
+
+      return Affiliate.update({
+        id: affiliateId
+      }, options).$promise;
+    };
+
+    AffiliateService.prototype.listSales = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.listSales(options).$promise;
+    };
+
+    AffiliateService.prototype.getSalesTotal = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getSalesTotal(options).$promise;
+    };
+
+    AffiliateService.prototype.getSalesLeaderboard = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getSalesLeaderboard(options).$promise;
+    };
+
+    AffiliateService.prototype.getPayoutPeriod = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getPayoutPeriod(options).$promise;
+    };
+
+    AffiliateService.prototype.getPromoCode = function(options) {
+      if(!options) throw new Error('options is required');
+      if(!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getPromoCode(options).$promise;
+    };
+
+    AffiliateService.prototype.listTrackers = function(options) {
+      if(!options) throw new Error('options is required');
+      if(!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getTrackers(options).$promise;
+    };
+
+    return new AffiliateService();
   }
 ]);
 
@@ -1652,191 +1819,6 @@ angular.module('tl').service('tl.booking.service', [
 
 angular
 	.module('tl')
-	.service('tl.affiliate', ['tl.affiliate.resource', 'tl.affiliate.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliate.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate/:id';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      getById: {
-        method: 'GET',
-        url: endpoint,
-        isArray: false
-      },
-      getPayoutStructuresById: {
-        method: 'GET',
-        url: endpoint + '/payoutstructure',
-        isArray: true
-      },
-      create: {
-        method: 'POST',
-        url: 'affiliate',
-        isArray: false
-      },
-      update: {
-        method: 'PATCH',
-        url: endpoint,
-        isArray: false
-      },
-      list: {
-        method: 'GET',
-        url: 'affiliate',
-        isArray: true
-      },
-      listSales: {
-        method: 'GET',
-        url: endpoint + '/sale',
-        isArray: true
-      },
-      getSalesTotal: {
-        method: 'GET',
-        url: endpoint + '/sale/total'
-      },
-      getSalesLeaderboard: {
-        method: 'GET',
-        url: endpoint + '/leaderboard',
-        isArray: true
-      },
-      getPayoutPeriod: {
-        method: 'GET',
-        url: endpoint + '/payout-period',
-        isArray: true
-      },
-      getPromoCode: {
-        method: 'GET', 
-        url: endpoint + '/promo',
-        isArray: true
-      },
-      getTrackers: {
-        method: 'GET', 
-        url: endpoint + '/tracker',
-        isArray: true
-      }
-    });
-  }
-]);
-
-angular.module('tl').service('tl.affiliate.service', [
-  'tl.affiliate.resource',
-  'tl.service',
-  '$http',
-  'tl.http',
-  function(Affiliate, Service, $http, http) {
-    'use strict';
-
-    var AffiliateService = Service.extend(Affiliate);
-
-    AffiliateService.prototype.getById = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getById(options).$promise;
-    };
-
-    AffiliateService.prototype.getPayoutStructuresById = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getPayoutStructuresById(options).$promise;
-    };
-
-    AffiliateService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      return Affiliate.list(options).$promise;
-    };
-
-    AffiliateService.prototype.create = function(options) {
-      if (!options) throw new Error('options is required');
-
-      return Affiliate.create({}, options).$promise;
-    };
-
-    AffiliateService.prototype.update = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      var affiliateId = options.id;
-      delete options.id;
-
-      return Affiliate.update({
-        id: affiliateId
-      }, options).$promise;
-    };
-
-    AffiliateService.prototype.listSales = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.listSales(options).$promise;
-    };
-
-    AffiliateService.prototype.getSalesTotal = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getSalesTotal(options).$promise;
-    };
-
-    AffiliateService.prototype.listSalesAsCsv = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      var affiliateId = options.id;
-      delete options.id;
-
-      return $http.get(http.apiUrl('/affiliate/' + affiliateId + '/sale'), {
-        params: options,
-        data: '', //needed, otherwise the content-type header is not sent (the req must have a body)
-        headers: {
-          'Content-Type': 'text/csv'
-        }
-      });
-    };
-
-    AffiliateService.prototype.getSalesLeaderboard = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getSalesLeaderboard(options).$promise;
-    };
-
-    AffiliateService.prototype.getPayoutPeriod = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getPayoutPeriod(options).$promise;
-    };
-
-    AffiliateService.prototype.getPromoCode = function(options) {
-      if(!options) throw new Error('options is required');
-      if(!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getPromoCode(options).$promise;
-    };
-
-    AffiliateService.prototype.listTrackers = function(options) {
-      if(!options) throw new Error('options is required');
-      if(!options.id) throw new Error('options.id is required');
-
-      return Affiliate.getTrackers(options).$promise;
-    };
-
-    return new AffiliateService();
-  }
-]);
-
-
-angular
-	.module('tl')
 	.service('tl.campaign', ['tl.campaign.resource', 'tl.campaign.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -1952,6 +1934,146 @@ angular
 
 		return new ClientService();
 	}]);
+
+angular
+	.module('tl')
+	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.event.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/event/:id';
+
+    return resource(endpoint, {
+      id: '@id',
+      imageId: '@imageId'
+    }, {
+      update: {
+        method: 'PATCH',
+        url: endpoint,
+        isArray: false
+      },
+      list: {
+        method: 'GET',
+        url: '/event',
+        isArray: true
+      },
+      listForCity: {
+        method: 'GET',
+        url: '/city/:cityId/event',
+        isArray: true
+      },
+      addStaff: {
+        method: 'POST',
+        url: endpoint + '/staff',
+        isArray: false
+      },
+      updateStaff: {
+        method: 'PUT',
+        url: endpoint + '/staff/:staffId',
+        isArray: false
+      },
+      deleteStaff: {
+        method: 'DELETE',
+        url: endpoint + '/staff/:staffId',
+        isArray: false
+      },
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.event.service', ['tl.service', 'tl.event.resource', function(Service, Event) {
+
+    var EventService = Service.extend(Event);
+
+    EventService.prototype.list = function list(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return Event.list(options).$promise;
+    };
+
+    EventService.prototype.read = function read(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Event.get(options).$promise;
+    };
+
+    EventService.prototype.create = function create(options) {
+      if (!options) throw new Error('options is required');
+
+      return Event.save({}, options).$promise;
+    };
+
+    EventService.prototype.update = function update(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      return Event.update({
+        id: options.id
+      }, options).$promise;
+    };
+
+    /*==============================================================*
+    /* Cities
+    /*==============================================================*/
+
+   /**
+    * List of events for the provided city. 
+    * Returns a promise. Supports additional 'options'.
+    *
+    * @method listForCity
+    * @param [Object] options 
+    * @param [String] options.cityId - ID of a city
+    * @param {String} options.fields - CSV of fields to return
+    * @param {String} options.start  - unix start date for events
+    * @param {String} options.end    - unix end date for events
+    */
+
+    EventService.prototype.listForCity = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.cityId) throw new Error('options.cityId is required');
+
+      return Event.listForCity(options).$promise;
+    };
+
+    EventService.prototype.listCityTonight = function(cityId, success, error) {
+      return Event.listCityTonight({
+        cityId: cityId
+      }, success, error);
+    };
+
+    EventService.prototype.addStaff = function(eventId, userId, success, error) {
+      return Event.addStaff({
+        id: eventId
+      }, {
+        userId: userId
+      }, success, error);
+    };
+
+    EventService.prototype.updateStaff = function(eventId, staffId, updates, success, error) {
+      return Event.updateStaff({
+        id: eventId,
+        staffId: staffId
+      }, updates, success, error);
+    };
+
+    EventService.prototype.deleteStaff = function(eventId, staffId, success, error) {
+      return Event.deleteStaff({
+        id: eventId,
+        staffId: staffId
+      }, success, error);
+    };
+
+    return new EventService();
+  }]);
+
 angular
   .module('tl')
   .service('tl.feed', ['tl.feed.resource', 'tl.feed.service',
@@ -2351,146 +2473,6 @@ angular
       return new InventorySummaryService();
     }
   ]);
-
-
-angular
-	.module('tl')
-	.service('tl.event', ['tl.event.resource', 'tl.event.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.event.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/event/:id';
-
-    return resource(endpoint, {
-      id: '@id',
-      imageId: '@imageId'
-    }, {
-      update: {
-        method: 'PATCH',
-        url: endpoint,
-        isArray: false
-      },
-      list: {
-        method: 'GET',
-        url: '/event',
-        isArray: true
-      },
-      listForCity: {
-        method: 'GET',
-        url: '/city/:cityId/event',
-        isArray: true
-      },
-      addStaff: {
-        method: 'POST',
-        url: endpoint + '/staff',
-        isArray: false
-      },
-      updateStaff: {
-        method: 'PUT',
-        url: endpoint + '/staff/:staffId',
-        isArray: false
-      },
-      deleteStaff: {
-        method: 'DELETE',
-        url: endpoint + '/staff/:staffId',
-        isArray: false
-      },
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.event.service', ['tl.service', 'tl.event.resource', function(Service, Event) {
-
-    var EventService = Service.extend(Event);
-
-    EventService.prototype.list = function list(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return Event.list(options).$promise;
-    };
-
-    EventService.prototype.read = function read(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Event.get(options).$promise;
-    };
-
-    EventService.prototype.create = function create(options) {
-      if (!options) throw new Error('options is required');
-
-      return Event.save({}, options).$promise;
-    };
-
-    EventService.prototype.update = function update(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      return Event.update({
-        id: options.id
-      }, options).$promise;
-    };
-
-    /*==============================================================*
-    /* Cities
-    /*==============================================================*/
-
-   /**
-    * List of events for the provided city. 
-    * Returns a promise. Supports additional 'options'.
-    *
-    * @method listForCity
-    * @param [Object] options 
-    * @param [String] options.cityId - ID of a city
-    * @param {String} options.fields - CSV of fields to return
-    * @param {String} options.start  - unix start date for events
-    * @param {String} options.end    - unix end date for events
-    */
-
-    EventService.prototype.listForCity = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.cityId) throw new Error('options.cityId is required');
-
-      return Event.listForCity(options).$promise;
-    };
-
-    EventService.prototype.listCityTonight = function(cityId, success, error) {
-      return Event.listCityTonight({
-        cityId: cityId
-      }, success, error);
-    };
-
-    EventService.prototype.addStaff = function(eventId, userId, success, error) {
-      return Event.addStaff({
-        id: eventId
-      }, {
-        userId: userId
-      }, success, error);
-    };
-
-    EventService.prototype.updateStaff = function(eventId, staffId, updates, success, error) {
-      return Event.updateStaff({
-        id: eventId,
-        staffId: staffId
-      }, updates, success, error);
-    };
-
-    EventService.prototype.deleteStaff = function(eventId, staffId, success, error) {
-      return Event.deleteStaff({
-        id: eventId,
-        staffId: staffId
-      }, success, error);
-    };
-
-    return new EventService();
-  }]);
 
 angular
   .module('tl')
@@ -3428,9 +3410,7 @@ angular
   .service('tl.sale.service', [
     'tl.service',
     'tl.sale.resource',
-    '$http',
-    'tl.http',
-    function(Service, Sale, $http, http) {
+    function(Service, Sale) {
 
       var SaleService = Service.extend(Sale);
 
@@ -3459,18 +3439,6 @@ angular
         options.query = options.query ? JSON.stringify(options.query) : options.query;
 
         return Sale.list(options).$promise;
-      };
-
-      SaleService.prototype.listAsCsv = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return $http.get(http.apiUrl('/sale'), {
-          params: options,
-          data: '', //needed, otherwise the content-type header is not sent (the req must have a body)
-          headers: {
-            'Content-Type': 'text/csv'
-          }
-        });
       };
 
       return new SaleService();
@@ -3694,6 +3662,35 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/table/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -3739,35 +3736,237 @@ angular
     }
   ]);
 
+angular
+  .module('tl')
+  .service('tl.tracker', [
+    'tl.tracker.resource',
+    'tl.tracker.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tracker';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      create: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tracker.service', [
+    'tl.service',
+    'tl.tracker.resource',
+    function(Service, Tracker) {
+      'use strict';
+
+      var TrackerService = Service.extend(Tracker);
+
+      TrackerService.prototype.create = function(options) {
+        return Tracker.save({}, options).$promise;
+      };
+
+      return new TrackerService();
+    }
+  ]);
+
 
 angular
 	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+	.constant('TRACK_EVENTS', {
+		
+		// User
+		UserVerifiedPhoneNumber: "TLUserPhoneVerified",
+		UserUpdatedProfilePicture: "TLUserUpdatedProfilePicture",
+		UserCompletedProfile: "TLUserCompletedProfile",
+
+		// City
+		CityViewed: "TLCityViewed",
+		CityFeaturedViewed: "TLCityFeaturedViewed",
+		CityTonightViewed: "TLCityTonightViewed",
+		CityThisWeekViewed: "TLCityThisWeekViewed",
+		CityApplied: "TLCityApplied",
+		CityShared: "TLCityShared",
+
+		// Venues
+		VenueViewed: "TLVenueViewed",
+		VenueInfoViewed: "TLVenueInfoViewed",
+		VenueContactViewed: "TLVenueContactViewed",
+		VenueMapViewed: "TLVenueMapViewed",
+		VenueAppliedForAccess: "TLVenueAppliedForAccess",
+
+		// Events
+		EventViewed: "TLEventViewed",
+
+		// Booking Flow
+		BookingInventoryViewed: "TLBookingInventoryViewed",
+		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
+		BookingInfoViewed: "TLBookingInfoViewed",
+		BookingReviewViewed: "TLBookingReviewViewed",
+		BookingTermsViewed: "TLBookingTermsViewed",
+		BookingComplete: "TLBookingComplete",
+		BookingReservationComplete: "TLBookingReservationComplete",
+		BookingPromoterComplete: "TLBookingPromoterComplete",
+		BookingFailed: "TLBookingFailed",
+		BookingReservationFailed: "TLBookingReservationFailed",
+		BookingAddedToPassbook: "TLBookingAddedToPassbook",
+		BookingInquiryViewed: "TLBookingInquiryViewed",
+		BookingInquirySubmitted: "TLBookingInquirySubmitted",
+
+		// Booking Join Flow
+		BookingJoinPending: "TLBookingJoinPending",
+		BookingJoinAccepted: "TLBookingJoinAccepted",
+		BookingJoinCodeSent: "TLBookingJoinCodeSent",
+
+		// Booking Review
+		BookingReviewSubmitted: "TLBookingReviewSubmitted",
+
+		// Membership
+		MembershipInfoViewed: "TLMembershipInfoViewed",
+		MembershipApplyViewed: "TLMembershipApplyViewed",
+		MembershipCheckoutViewed: "TLMembershipCheckoutViewed",
+		MembershipSubscribed: "TLMembershipSubscribed",
+		MembershipUnsubscribed: "TLMembershipUnsubscribed",
+
+		// Favorites
+		FavoritedVenue: "TLFavoritedVenue",
+		FavoritedEvent: "TLFavoritedEvent",
+
+		// Referral
+		ReferralEntered: "TLReferralEntered",
+		ReferralSentFB: "TLReferralSentFB",
+		ReferralSentTW: "TLReferralSentTW",
+		ReferralSentSMS: "TLReferralSentSMS",
+		ReferralSentEmail: "TLReferralSentEmail",
+
+		// SMS
+		SMSDownloadLinkRequested: "TLSMSDownloadLinkRequested",
+
+		// Payment
+		PaymentAdded: "TLPaymentAdded",
+		PaymentUpdated: "TLPaymentUpdated",
+		PaymentInfoError: "TLPaymentInfoError",
+
+		// Promo Code
+		CodeRedeemed: "TLPromoCodeRedeemed",
+
+		// Rewards
+		RewardViewed: "TLRewardViewed",
+		RewardRedeemed: "TLRewardRedeemed",
+
+		// About Us
+		AboutBlogViewed: "TLAboutBlogViewed",
+		AboutFacebookViewed: "TLAboutFacebookViewed",
+		AboutTwitterViewed: "TLAboutTwitterViewed",
+		AboutWebsiteViewed: "TLAboutWebsiteViewed",
+
+		// Easter Eggs
+		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture",
+
+		// Inventory Search
+		InventorySearched : "TLInventorySearched",
+		InventorySearchResultSelected : "TLInventorySearchResultSelected",
+	});
+
+
+angular
+	.module('tl')
+	.service('tl.track', ['tl.track.resource', 'tl.track.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
 
 angular
 	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
+	.factory('tl.track.resource', ['tl.resource', function(resource){
 
-		var endpoint = '/table/:id';
+		var endpoint = '/track/:id';
 
 		return resource(endpoint, {
 			id: '@id'
 		}, {
-			// add additional methods here
+			funnel: {
+			 	method: 'POST',
+			 	url: '/track/funnel',
+			 	isArray: true
+			},
+			listPossibleEvents: {
+				method: 'GET',
+				url: '/track/events',
+				isArray: true
+			}
 		});
 	}]);
-
 angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
+  .module('tl')
+  .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
 
-		var TableService = Service.extend(Table);
+    var AFFILIATE = null;
 
-		return new TableService();
+    var TrackService = Service.extend(Track);
+
+    /**
+     * Returns a map of valid tracking events
+     */
+    TrackService.prototype.trackingEvents = function() {
+      return EVENTS;
+    };
+
+    /**
+     * Send a tracking event to the server
+     */
+    TrackService.prototype.send = function(eventName, data) {
+      var track = {
+        event: eventName,
+        data: data,
+        client: {
+          os: config.CLIENT,
+          version: config.VERSION,
+          device: window.navigator ? window.navigator.userAgent : null
+        }
+      };
+
+      if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
+      if (AFFILIATE) {
+        track.data = track.data || {};
+        track.data.affiliate = AFFILIATE;
+      }
+
+      return Track.save({}, track);
+    };
+
+    TrackService.prototype.setAffiliate = function(affiliateId) {
+      AFFILIATE = affiliateId || null;
+    };
+
+    TrackService.prototype.listPossibleEvents = function(success, error) {
+      return Track.listPossibleEvents({}, success, error).$promise;
+    };
+
+		TrackService.prototype.funnel = function(events, options, success, error) {
+			return Track.funnel({}, {
+				events: events,
+				start: options.start.getTime(),
+				end: options.end.getTime(),
+				data: options.data,
+				client: options.client
+			}, success, error).$promise;
+		};
+
+		return new TrackService();
 	}]);
+
 
 angular
 	.module('tl')
@@ -4370,237 +4569,6 @@ angular
       return new UserService();
     }
   ]);
-
-angular
-  .module('tl')
-  .service('tl.tracker', [
-    'tl.tracker.resource',
-    'tl.tracker.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
-
-angular
-  .module('tl')
-  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tracker';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      create: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.tracker.service', [
-    'tl.service',
-    'tl.tracker.resource',
-    function(Service, Tracker) {
-      'use strict';
-
-      var TrackerService = Service.extend(Tracker);
-
-      TrackerService.prototype.create = function(options) {
-        return Tracker.save({}, options).$promise;
-      };
-
-      return new TrackerService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.constant('TRACK_EVENTS', {
-		
-		// User
-		UserVerifiedPhoneNumber: "TLUserPhoneVerified",
-		UserUpdatedProfilePicture: "TLUserUpdatedProfilePicture",
-		UserCompletedProfile: "TLUserCompletedProfile",
-
-		// City
-		CityViewed: "TLCityViewed",
-		CityFeaturedViewed: "TLCityFeaturedViewed",
-		CityTonightViewed: "TLCityTonightViewed",
-		CityThisWeekViewed: "TLCityThisWeekViewed",
-		CityApplied: "TLCityApplied",
-		CityShared: "TLCityShared",
-
-		// Venues
-		VenueViewed: "TLVenueViewed",
-		VenueInfoViewed: "TLVenueInfoViewed",
-		VenueContactViewed: "TLVenueContactViewed",
-		VenueMapViewed: "TLVenueMapViewed",
-		VenueAppliedForAccess: "TLVenueAppliedForAccess",
-
-		// Events
-		EventViewed: "TLEventViewed",
-
-		// Booking Flow
-		BookingInventoryViewed: "TLBookingInventoryViewed",
-		BookingAddBottlesViewed: "TLBookingAddBottlesViewed",
-		BookingInfoViewed: "TLBookingInfoViewed",
-		BookingReviewViewed: "TLBookingReviewViewed",
-		BookingTermsViewed: "TLBookingTermsViewed",
-		BookingComplete: "TLBookingComplete",
-		BookingReservationComplete: "TLBookingReservationComplete",
-		BookingPromoterComplete: "TLBookingPromoterComplete",
-		BookingFailed: "TLBookingFailed",
-		BookingReservationFailed: "TLBookingReservationFailed",
-		BookingAddedToPassbook: "TLBookingAddedToPassbook",
-		BookingInquiryViewed: "TLBookingInquiryViewed",
-		BookingInquirySubmitted: "TLBookingInquirySubmitted",
-
-		// Booking Join Flow
-		BookingJoinPending: "TLBookingJoinPending",
-		BookingJoinAccepted: "TLBookingJoinAccepted",
-		BookingJoinCodeSent: "TLBookingJoinCodeSent",
-
-		// Booking Review
-		BookingReviewSubmitted: "TLBookingReviewSubmitted",
-
-		// Membership
-		MembershipInfoViewed: "TLMembershipInfoViewed",
-		MembershipApplyViewed: "TLMembershipApplyViewed",
-		MembershipCheckoutViewed: "TLMembershipCheckoutViewed",
-		MembershipSubscribed: "TLMembershipSubscribed",
-		MembershipUnsubscribed: "TLMembershipUnsubscribed",
-
-		// Favorites
-		FavoritedVenue: "TLFavoritedVenue",
-		FavoritedEvent: "TLFavoritedEvent",
-
-		// Referral
-		ReferralEntered: "TLReferralEntered",
-		ReferralSentFB: "TLReferralSentFB",
-		ReferralSentTW: "TLReferralSentTW",
-		ReferralSentSMS: "TLReferralSentSMS",
-		ReferralSentEmail: "TLReferralSentEmail",
-
-		// SMS
-		SMSDownloadLinkRequested: "TLSMSDownloadLinkRequested",
-
-		// Payment
-		PaymentAdded: "TLPaymentAdded",
-		PaymentUpdated: "TLPaymentUpdated",
-		PaymentInfoError: "TLPaymentInfoError",
-
-		// Promo Code
-		CodeRedeemed: "TLPromoCodeRedeemed",
-
-		// Rewards
-		RewardViewed: "TLRewardViewed",
-		RewardRedeemed: "TLRewardRedeemed",
-
-		// About Us
-		AboutBlogViewed: "TLAboutBlogViewed",
-		AboutFacebookViewed: "TLAboutFacebookViewed",
-		AboutTwitterViewed: "TLAboutTwitterViewed",
-		AboutWebsiteViewed: "TLAboutWebsiteViewed",
-
-		// Easter Eggs
-		EasterEggAccountProfilePicture: "TLEasterEggAccountProfilePicture",
-
-		// Inventory Search
-		InventorySearched : "TLInventorySearched",
-		InventorySearchResultSelected : "TLInventorySearchResultSelected",
-	});
-
-
-angular
-	.module('tl')
-	.service('tl.track', ['tl.track.resource', 'tl.track.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.track.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/track/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			funnel: {
-			 	method: 'POST',
-			 	url: '/track/funnel',
-			 	isArray: true
-			},
-			listPossibleEvents: {
-				method: 'GET',
-				url: '/track/events',
-				isArray: true
-			}
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.track.service', ['tl.service', 'tl.track.resource', 'TRACK_EVENTS', 'tl.config', function(Service, Track, EVENTS, config) {
-
-    var AFFILIATE = null;
-
-    var TrackService = Service.extend(Track);
-
-    /**
-     * Returns a map of valid tracking events
-     */
-    TrackService.prototype.trackingEvents = function() {
-      return EVENTS;
-    };
-
-    /**
-     * Send a tracking event to the server
-     */
-    TrackService.prototype.send = function(eventName, data) {
-      var track = {
-        event: eventName,
-        data: data,
-        client: {
-          os: config.CLIENT,
-          version: config.VERSION,
-          device: window.navigator ? window.navigator.userAgent : null
-        }
-      };
-
-      if (config.SUB_CLIENT) track.client.os = track.client.os + ('-' + config.SUB_CLIENT);
-      if (AFFILIATE) {
-        track.data = track.data || {};
-        track.data.affiliate = AFFILIATE;
-      }
-
-      return Track.save({}, track);
-    };
-
-    TrackService.prototype.setAffiliate = function(affiliateId) {
-      AFFILIATE = affiliateId || null;
-    };
-
-    TrackService.prototype.listPossibleEvents = function(success, error) {
-      return Track.listPossibleEvents({}, success, error).$promise;
-    };
-
-		TrackService.prototype.funnel = function(events, options, success, error) {
-			return Track.funnel({}, {
-				events: events,
-				start: options.start.getTime(),
-				end: options.end.getTime(),
-				data: options.data,
-				client: options.client
-			}, success, error).$promise;
-		};
-
-		return new TrackService();
-	}]);
 
 
 angular

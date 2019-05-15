@@ -1,9 +1,7 @@
 angular.module('tl').service('tl.affiliate.service', [
   'tl.affiliate.resource',
   'tl.service',
-  '$http',
-  'tl.http',
-  function(Affiliate, Service, $http, http) {
+  function(Affiliate, Service) {
     'use strict';
 
     var AffiliateService = Service.extend(Affiliate);
@@ -58,22 +56,6 @@ angular.module('tl').service('tl.affiliate.service', [
       if (!options.id) throw new Error('options.id is required');
 
       return Affiliate.getSalesTotal(options).$promise;
-    };
-
-    AffiliateService.prototype.listSalesAsCsv = function(options) {
-      if (!options) throw new Error('options is required');
-      if (!options.id) throw new Error('options.id is required');
-
-      var affiliateId = options.id;
-      delete options.id;
-
-      return $http.get(http.apiUrl('/affiliate/' + affiliateId + '/sale'), {
-        params: options,
-        data: '', //needed, otherwise the content-type header is not sent (the req must have a body)
-        headers: {
-          'Content-Type': 'text/csv'
-        }
-      });
     };
 
     AffiliateService.prototype.getSalesLeaderboard = function(options) {

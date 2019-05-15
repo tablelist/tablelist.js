@@ -3,9 +3,7 @@ angular
   .service('tl.sale.service', [
     'tl.service',
     'tl.sale.resource',
-    '$http',
-    'tl.http',
-    function(Service, Sale, $http, http) {
+    function(Service, Sale) {
 
       var SaleService = Service.extend(Sale);
 
@@ -34,18 +32,6 @@ angular
         options.query = options.query ? JSON.stringify(options.query) : options.query;
 
         return Sale.list(options).$promise;
-      };
-
-      SaleService.prototype.listAsCsv = function(options) {
-        if (!options) throw new Error('options is required');
-
-        return $http.get(http.apiUrl('/sale'), {
-          params: options,
-          data: '', //needed, otherwise the content-type header is not sent (the req must have a body)
-          headers: {
-            'Content-Type': 'text/csv'
-          }
-        });
       };
 
       return new SaleService();
