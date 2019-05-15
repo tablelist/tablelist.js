@@ -49,7 +49,8 @@ angular
       API: API[TL_ENV],
       WS: WS[TL_ENV],
       setSubclient: setSubclient,
-      setVersion: setVersion
+      setVersion: setVersion,
+      setApiKey: setApiKey
     };
 
     function setEnv(env) {
