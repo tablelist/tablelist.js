@@ -83,12 +83,17 @@ angular
       config.API = apiUrl;
     }
 
+    function setApiKey(apiKey) {
+      config.apiKey = apiKey;
+    }
+
     return {
       setEnv: setEnv,
       setSubclient: setSubclient,
       setVersion: setVersion,
       setUseAuthHeader: setUseAuthHeader,
       setApiUrl: setApiUrl,
+      setApiKey: setApiKey,
 
       // needed for Provider
       $get: function() {

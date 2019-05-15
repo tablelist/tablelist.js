@@ -53,6 +53,11 @@ angular
       options = options || {};
       options.headers = buildHeaders(options.headers);
       options.headers['Content-Type'] = undefined;
+
+      if (config.apiKey) {
+        options.headers['api-key'] = config.apiKey;
+      }
+
       options.transformRequest = angular.identity;
       return $http.post(this.apiUrl(endpoint, query), body, options);
     };
