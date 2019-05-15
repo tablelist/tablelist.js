@@ -9,6 +9,16 @@ angular
       'use strict';
 
       return {
+        request: function(data) {
+          data.headers = data.headers || {};
+
+          if (config.apiKey) {
+            var apiKey = config.apiKey;
+            data.headers['api-key'] = apiKey;
+          }
+
+          return data;
+        },
         responseError: function(response) {
           if (response.status === 401) {
             $rootScope.$emit('unauthorized');
