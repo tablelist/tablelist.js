@@ -356,6 +356,56 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular.module('tl').factory('tl.affiliatesale.resource', [
+  'tl.resource',
+  function(resource) {
+    'use strict';
+
+    var endpoint = '/affiliate-sale';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      list: {
+        method: 'GET',
+        url: endpoint,
+        isArray: true
+      },
+      update: {
+        method: 'PUT',
+        url: endpoint + '/:id'
+      }
+    });
+  }
+]);
+
+angular.module('tl').service('tl.affiliatesale.service', [
+  'tl.affiliatesale.resource',
+  'tl.service',
+  function(AffiliateSale, Service) {
+    'use strict';
+
+    var AffiliateSaleService = Service.extend(AffiliateSale);
+
+    AffiliateSaleService.prototype.list = function(options) {
+      if (!options) throw new Error('options is required');
+
+      options.query = options.query ? JSON.stringify(options.query) : options.query;
+
+      return AffiliateSale.list(options).$promise;
+    };
+
+    return new AffiliateSaleService();
+  }
+]);
+
 /**
  * Angular module for setting, reading and removing cookies
  *
@@ -501,12 +551,26 @@ angular
 
       return {
         request: function(data) {
-          data.headers = data.headers || {};
+          var headers = data.headers || {};
+
+          var authToken = keychain.authToken();
+          var prospectToken = keychain.prospectToken();
+
+          if (authToken) {
+            headers['x-access-token'] = authToken;
+          } else {
+            headers['x-prospect-token'] = prospectToken;
+          }
 
           if (config.apiKey) {
-            var apiKey = config.apiKey;
-            data.headers['api-key'] = apiKey;
+            headers['api-key'] = config.apiKey;
           }
+
+          if (config.apiKey) {
+            headers['api-key'] = config.apiKey;
+          }
+
+          data.headers = headers;
 
           return data;
         },
@@ -595,19 +659,6 @@ angular
 
     function buildHeaders(headers) {
       headers = headers || {};
-
-      var authToken = keychain.authToken();
-      var prospectToken = keychain.prospectToken();
-
-      if (authToken) {
-        headers['x-access-token'] = authToken;
-      } else {
-        headers['x-prospect-token'] = prospectToken;
-      }
-
-      if (config.apiKey) {
-        headers['api-key'] = config.apiKey;
-      }
 
       var client = config.CLIENT;
       var subClient = config.SUB_CLIENT;
@@ -972,19 +1023,18 @@ angular
 
 		return new Utils();
 	}]);
-
 angular
 	.module('tl')
-	.service('tl.affiliatesale', ['tl.affiliatesale.resource', 'tl.affiliatesale.service', function(resource, service){
+	.service('tl.affiliatepayout', ['tl.affiliatepayout.resource', 'tl.affiliatepayout.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
 	}]);
-angular.module('tl').factory('tl.affiliatesale.resource', [
+angular.module('tl').factory('tl.affiliatepayout.resource', [
   'tl.resource',
   function(resource) {
     'use strict';
 
-    var endpoint = '/affiliate-sale';
+    var endpoint = '/affiliate-payout';
 
     return resource(endpoint, {
       id: '@id'
@@ -996,29 +1046,28 @@ angular.module('tl').factory('tl.affiliatesale.resource', [
       },
       update: {
         method: 'PUT',
-        url: endpoint + '/:id'
+        url: endpoint + '/:id',
       }
     });
   }
 ]);
-
-angular.module('tl').service('tl.affiliatesale.service', [
-  'tl.affiliatesale.resource',
+angular.module('tl').service('tl.affiliatepayout.service', [
+  'tl.affiliatepayout.resource',
   'tl.service',
-  function(AffiliateSale, Service) {
+  function(AffiliatePayout, Service) {
     'use strict';
 
-    var AffiliateSaleService = Service.extend(AffiliateSale);
+    var AffiliatePayoutService = Service.extend(AffiliatePayout);
 
-    AffiliateSaleService.prototype.list = function(options) {
+    AffiliatePayoutService.prototype.list = function(options) {
       if (!options) throw new Error('options is required');
 
       options.query = options.query ? JSON.stringify(options.query) : options.query;
 
-      return AffiliateSale.list(options).$promise;
+      return AffiliatePayout.list(options).$promise;
     };
 
-    return new AffiliateSaleService();
+    return new AffiliatePayoutService();
   }
 ]);
 
@@ -1189,54 +1238,6 @@ angular.module('tl').service('tl.affiliate.service', [
   }
 ]);
 
-angular
-	.module('tl')
-	.service('tl.affiliatepayout', ['tl.affiliatepayout.resource', 'tl.affiliatepayout.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular.module('tl').factory('tl.affiliatepayout.resource', [
-  'tl.resource',
-  function(resource) {
-    'use strict';
-
-    var endpoint = '/affiliate-payout';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      list: {
-        method: 'GET',
-        url: endpoint,
-        isArray: true
-      },
-      update: {
-        method: 'PUT',
-        url: endpoint + '/:id',
-      }
-    });
-  }
-]);
-angular.module('tl').service('tl.affiliatepayout.service', [
-  'tl.affiliatepayout.resource',
-  'tl.service',
-  function(AffiliatePayout, Service) {
-    'use strict';
-
-    var AffiliatePayoutService = Service.extend(AffiliatePayout);
-
-    AffiliatePayoutService.prototype.list = function(options) {
-      if (!options) throw new Error('options is required');
-
-      options.query = options.query ? JSON.stringify(options.query) : options.query;
-
-      return AffiliatePayout.list(options).$promise;
-    };
-
-    return new AffiliatePayoutService();
-  }
-]);
-
 
 angular
 	.module('tl')
@@ -1275,37 +1276,6 @@ angular
       };
 
       return new AmbassadorService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
-	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-angular
-  .module('tl')
-  .factory('tl.answer.resource', ['tl.resource',
-    function(resource) {
-
-      var endpoint = '/answer';
-
-      return resource(endpoint, {
-        // nothing here
-      }, {});
-    }
-  ]);
-
-angular
-  .module('tl')
-  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
-    function(Service, Answer) {
-
-      var AnswerService = Service.extend(Answer);
-
-      return new AnswerService();
     }
   ]);
 
@@ -1504,6 +1474,37 @@ angular.module('tl').service('tl.auth.service', [
     return new AuthService();
   }
 ]);
+
+
+angular
+	.module('tl')
+	.service('tl.answer', ['tl.answer.resource', 'tl.answer.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+angular
+  .module('tl')
+  .factory('tl.answer.resource', ['tl.resource',
+    function(resource) {
+
+      var endpoint = '/answer';
+
+      return resource(endpoint, {
+        // nothing here
+      }, {});
+    }
+  ]);
+
+angular
+  .module('tl')
+  .service('tl.answer.service', ['tl.service', 'tl.answer.resource',
+    function(Service, Answer) {
+
+      var AnswerService = Service.extend(Answer);
+
+      return new AnswerService();
+    }
+  ]);
 
 
 angular
@@ -2258,87 +2259,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/inquiry/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-	      approve: {
-	        method: 'POST',
-	        url: endpoint + '/approve',
-	        isArray: false
-	      },
-	      decline: {
-	        method: 'POST',
-	        url: endpoint + '/decline',
-	        isArray: false
-	      },
-		});
-	}]);
-angular
-  .module('tl')
-  .service('tl.inquiry.service', [
-    'tl.service',
-    'tl.inquiry.resource',
-    function(Service, Inquiry) {
-      'use strict';
-
-      /*==============================================================*
-      /* Constants
-      /*==============================================================*/
-      var DEFAULT_LIMIT = 100;
-      var DEFAULT_SORT = '-created';
-
-      /*==============================================================*
-      /* Constructor
-      /*==============================================================*/
-      var InquiryService = Service.extend(Inquiry);
-
-      InquiryService.prototype.list = function(options) {
-        if (!options) throw new Error('options is required');
-
-        options.sort = options.sort || DEFAULT_SORT;
-        options.limit = options.limit || DEFAULT_LIMIT;
-
-        return Inquiry.query(options).$promise;
-      };
-
-      InquiryService.prototype.approve = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.inquiryId) throw new Error('options.inquiryId is required');
-
-        options.id = options.inquiryId;
-        delete options.inquiryId;
-
-        return Inquiry.approve(options).$promise;
-      };
-
-      InquiryService.prototype.decline = function(options) {
-        if (!options) throw new Error('options is required');
-        if (!options.inquiryId) throw new Error('options.inquiryId is required');
-
-        options.id = options.inquiryId;
-        delete options.inquiryId;
-
-        return Inquiry.decline(options).$promise;
-      };
-
-      return new InquiryService();
-    }
-  ]);
-
-
-angular
-	.module('tl')
 	.service('tl.inventory', ['tl.inventory.resource', 'tl.inventory.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -2433,6 +2353,87 @@ angular
       };
 
       return new InventoryService();
+    }
+  ]);
+
+
+angular
+	.module('tl')
+	.service('tl.inquiry', ['tl.inquiry.resource', 'tl.inquiry.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.inquiry.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/inquiry/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+	      approve: {
+	        method: 'POST',
+	        url: endpoint + '/approve',
+	        isArray: false
+	      },
+	      decline: {
+	        method: 'POST',
+	        url: endpoint + '/decline',
+	        isArray: false
+	      },
+		});
+	}]);
+angular
+  .module('tl')
+  .service('tl.inquiry.service', [
+    'tl.service',
+    'tl.inquiry.resource',
+    function(Service, Inquiry) {
+      'use strict';
+
+      /*==============================================================*
+      /* Constants
+      /*==============================================================*/
+      var DEFAULT_LIMIT = 100;
+      var DEFAULT_SORT = '-created';
+
+      /*==============================================================*
+      /* Constructor
+      /*==============================================================*/
+      var InquiryService = Service.extend(Inquiry);
+
+      InquiryService.prototype.list = function(options) {
+        if (!options) throw new Error('options is required');
+
+        options.sort = options.sort || DEFAULT_SORT;
+        options.limit = options.limit || DEFAULT_LIMIT;
+
+        return Inquiry.query(options).$promise;
+      };
+
+      InquiryService.prototype.approve = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.inquiryId) throw new Error('options.inquiryId is required');
+
+        options.id = options.inquiryId;
+        delete options.inquiryId;
+
+        return Inquiry.approve(options).$promise;
+      };
+
+      InquiryService.prototype.decline = function(options) {
+        if (!options) throw new Error('options is required');
+        if (!options.inquiryId) throw new Error('options.inquiryId is required');
+
+        options.id = options.inquiryId;
+        delete options.inquiryId;
+
+        return Inquiry.decline(options).$promise;
+      };
+
+      return new InquiryService();
     }
   ]);
 
@@ -2739,43 +2740,6 @@ angular
 
     return new MetricService();
   }]);
-angular
-  .module('tl')
-  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
-    this.resource = resource;
-    this.service = service;
-  }]);
-
-angular
-  .module('tl')
-  .factory('tl.notify.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/notify/adminapp';
-
-    return resource(endpoint, {
-      id: '@id'
-    }, {
-      sendAdminApp: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
-
-angular
-  .module('tl')
-  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
-
-    var NotifyService = Service.extend(Notify);
-
-    NotifyService.prototype.sendAdminApp = function() {
-      return Notify.sendAdminApp().$promise;
-    };
-
-    return new NotifyService();
-  }]);
-
 
 angular
 	.module('tl')
@@ -2860,6 +2824,43 @@ angular.module('tl').service('tl.outgoingPayment.service', [
     return new OutgoingPaymentService();
   }
 ]);
+
+angular
+  .module('tl')
+  .service('tl.notify', ['tl.metric.resource', 'tl.metric.service', function(resource, service) {
+    this.resource = resource;
+    this.service = service;
+  }]);
+
+angular
+  .module('tl')
+  .factory('tl.notify.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/notify/adminapp';
+
+    return resource(endpoint, {
+      id: '@id'
+    }, {
+      sendAdminApp: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.notify.service', ['tl.service', 'tl.notify.resource', function(Service, Notify) {
+
+    var NotifyService = Service.extend(Notify);
+
+    NotifyService.prototype.sendAdminApp = function() {
+      return Notify.sendAdminApp().$promise;
+    };
+
+    return new NotifyService();
+  }]);
 
 
 angular
@@ -3199,54 +3200,6 @@ angular
 
 		return new ProspectService();
 	}]);
-
-angular
-	.module('tl')
-	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.report.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/report/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			reports: {
-				method: 'GET',
-				url: '/report-type'
-			},
-			download: {
-				method: 'GET',
-				url: endpoint + '/download'
-			}
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
-
-		var ReportService = Service.extend(Report);
-
-		ReportService.prototype.reports = function(success, error) {
-			return Report.reports({}, success, error);
-		};
-
-		ReportService.prototype.listReports = function(key, success, error) {
-			return Report.query({ report: key }, success, error);
-		};
-
-		ReportService.prototype.download = function(reportId, success, error) {
-			return Report.download({ id: reportId }, success, error);
-		};
-
-		return new ReportService();
-	}]);
 angular
   .module('tl')
   .service('tl.question', ['tl.question.resource', 'tl.question.service',
@@ -3307,6 +3260,54 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.report', ['tl.report.resource', 'tl.report.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.report.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/report/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			reports: {
+				method: 'GET',
+				url: '/report-type'
+			},
+			download: {
+				method: 'GET',
+				url: endpoint + '/download'
+			}
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.report.service', ['tl.service', 'tl.report.resource', function(Service, Report){
+
+		var ReportService = Service.extend(Report);
+
+		ReportService.prototype.reports = function(success, error) {
+			return Report.reports({}, success, error);
+		};
+
+		ReportService.prototype.listReports = function(key, success, error) {
+			return Report.query({ report: key }, success, error);
+		};
+
+		ReportService.prototype.download = function(reportId, success, error) {
+			return Report.download({ id: reportId }, success, error);
+		};
+
+		return new ReportService();
+	}]);
 
 angular
 	.module('tl')
@@ -3383,35 +3384,6 @@ angular
 
 angular
 	.module('tl')
-	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.schedule.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/schedule/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
-
-		var ScheduleService = Service.extend(Schedule);
-
-		return new ScheduleService();
-	}]);
-
-angular
-	.module('tl')
 	.service('tl.sale', ['tl.sale.resource', 'tl.sale.service', function(resource, service){
 		this.resource = resource;
 		this.service = service;
@@ -3484,6 +3456,35 @@ angular
     }
   ]);
 
+
+angular
+	.module('tl')
+	.service('tl.schedule', ['tl.schedule.resource', 'tl.schedule.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
+
+angular
+	.module('tl')
+	.factory('tl.schedule.resource', ['tl.resource', function(resource){
+
+		var endpoint = '/schedule/:id';
+
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
+
+angular
+	.module('tl')
+	.service('tl.schedule.service', ['tl.service', 'tl.schedule.resource', function(Service, Schedule){
+
+		var ScheduleService = Service.extend(Schedule);
+
+		return new ScheduleService();
+	}]);
 
 angular
 	.module('tl')
@@ -3672,35 +3673,6 @@ angular
     }
   ]);
 
-
-angular
-	.module('tl')
-	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
-		this.resource = resource;
-		this.service = service;
-	}]);
-
-angular
-	.module('tl')
-	.factory('tl.table.resource', ['tl.resource', function(resource){
-
-		var endpoint = '/table/:id';
-
-		return resource(endpoint, {
-			id: '@id'
-		}, {
-			// add additional methods here
-		});
-	}]);
-
-angular
-	.module('tl')
-	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
-
-		var TableService = Service.extend(Table);
-
-		return new TableService();
-	}]);
 angular
   .module('tl')
   .service('tl.tag', [
@@ -3746,51 +3718,35 @@ angular
     }
   ]);
 
-angular
-  .module('tl')
-  .service('tl.tracker', [
-    'tl.tracker.resource',
-    'tl.tracker.service',
-    function(resource, service) {
-      this.resource = resource;
-      this.service = service;
-    }
-  ]);
 
 angular
-  .module('tl')
-  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
-
-    var endpoint = '/tracker';
-
-    return resource(endpoint, {}, {
-      //additional methods here
-      create: {
-        method: 'POST',
-        url: endpoint,
-        isArray: false
-      }
-    });
-  }]);
+	.module('tl')
+	.service('tl.table', ['tl.table.resource', 'tl.table.service', function(resource, service){
+		this.resource = resource;
+		this.service = service;
+	}]);
 
 angular
-  .module('tl')
-  .service('tl.tracker.service', [
-    'tl.service',
-    'tl.tracker.resource',
-    function(Service, Tracker) {
-      'use strict';
+	.module('tl')
+	.factory('tl.table.resource', ['tl.resource', function(resource){
 
-      var TrackerService = Service.extend(Tracker);
+		var endpoint = '/table/:id';
 
-      TrackerService.prototype.create = function(options) {
-        return Tracker.save({}, options).$promise;
-      };
+		return resource(endpoint, {
+			id: '@id'
+		}, {
+			// add additional methods here
+		});
+	}]);
 
-      return new TrackerService();
-    }
-  ]);
+angular
+	.module('tl')
+	.service('tl.table.service', ['tl.service', 'tl.table.resource', function(Service, Table){
 
+		var TableService = Service.extend(Table);
+
+		return new TableService();
+	}]);
 
 angular
 	.module('tl')
@@ -3976,6 +3932,51 @@ angular
 
 		return new TrackService();
 	}]);
+
+angular
+  .module('tl')
+  .service('tl.tracker', [
+    'tl.tracker.resource',
+    'tl.tracker.service',
+    function(resource, service) {
+      this.resource = resource;
+      this.service = service;
+    }
+  ]);
+
+angular
+  .module('tl')
+  .factory('tl.tracker.resource', ['tl.resource', function(resource) {
+
+    var endpoint = '/tracker';
+
+    return resource(endpoint, {}, {
+      //additional methods here
+      create: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      }
+    });
+  }]);
+
+angular
+  .module('tl')
+  .service('tl.tracker.service', [
+    'tl.service',
+    'tl.tracker.resource',
+    function(Service, Tracker) {
+      'use strict';
+
+      var TrackerService = Service.extend(Tracker);
+
+      TrackerService.prototype.create = function(options) {
+        return Tracker.save({}, options).$promise;
+      };
+
+      return new TrackerService();
+    }
+  ]);
 
 
 angular

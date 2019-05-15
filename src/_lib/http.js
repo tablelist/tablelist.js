@@ -10,12 +10,26 @@ angular
 
       return {
         request: function(data) {
-          data.headers = data.headers || {};
+          var headers = data.headers || {};
+
+          var authToken = keychain.authToken();
+          var prospectToken = keychain.prospectToken();
+
+          if (authToken) {
+            headers['x-access-token'] = authToken;
+          } else {
+            headers['x-prospect-token'] = prospectToken;
+          }
 
           if (config.apiKey) {
-            var apiKey = config.apiKey;
-            data.headers['api-key'] = apiKey;
+            headers['api-key'] = config.apiKey;
           }
+
+          if (config.apiKey) {
+            headers['api-key'] = config.apiKey;
+          }
+
+          data.headers = headers;
 
           return data;
         },
@@ -104,19 +118,6 @@ angular
 
     function buildHeaders(headers) {
       headers = headers || {};
-
-      var authToken = keychain.authToken();
-      var prospectToken = keychain.prospectToken();
-
-      if (authToken) {
-        headers['x-access-token'] = authToken;
-      } else {
-        headers['x-prospect-token'] = prospectToken;
-      }
-
-      if (config.apiKey) {
-        headers['api-key'] = config.apiKey;
-      }
 
       var client = config.CLIENT;
       var subClient = config.SUB_CLIENT;
