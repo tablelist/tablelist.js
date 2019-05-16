@@ -28,6 +28,11 @@ angular.module('tl').factory('tl.affiliate.resource', [
         url: endpoint,
         isArray: false
       },
+      activate: {
+        method: 'POST',
+        url: endpoint,
+        isArray: false
+      },
       list: {
         method: 'GET',
         url: 'affiliate',

@@ -44,6 +44,18 @@ angular.module('tl').service('tl.affiliate.service', [
       }, options).$promise;
     };
 
+    AffiliateService.prototype.activate = function(options) {
+      if (!options) throw new Error('options is required');
+      if (!options.id) throw new Error('options.id is required');
+
+      var affiliateId = options.id;
+      delete options.id;
+
+      return Affiliate.activate({
+        id: affiliateId
+      }, options).$promise;
+    };
+
     AffiliateService.prototype.listSales = function(options) {
       if (!options) throw new Error('options is required');
       if (!options.id) throw new Error('options.id is required');
