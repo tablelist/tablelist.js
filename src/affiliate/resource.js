@@ -53,13 +53,18 @@ angular.module('tl').factory('tl.affiliate.resource', [
         isArray: true
       },
       getPromoCode: {
-        method: 'GET', 
+        method: 'GET',
         url: endpoint + '/promo',
         isArray: true
       },
       getTrackers: {
-        method: 'GET', 
+        method: 'GET',
         url: endpoint + '/tracker',
+        isArray: true
+      },
+      getApiKeys: {
+        method: 'GET',
+        url: endpoint + '/api-key',
         isArray: true
       }
     });

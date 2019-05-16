@@ -86,6 +86,13 @@ angular.module('tl').service('tl.affiliate.service', [
       return Affiliate.getTrackers(options).$promise;
     };
 
+    AffiliateService.prototype.listApiKeys = function(options) {
+      if(!options) throw new Error('options is required');
+      if(!options.id) throw new Error('options.id is required');
+
+      return Affiliate.getApiKeys(options).$promise;
+    };
+
     return new AffiliateService();
   }
 ]);
