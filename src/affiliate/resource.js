@@ -30,7 +30,7 @@ angular.module('tl').factory('tl.affiliate.resource', [
       },
       activate: {
         method: 'POST',
-        url: endpoint,
+        url: endpoint + '/activate',
         isArray: false
       },
       list: {
