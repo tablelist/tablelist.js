@@ -39,11 +39,11 @@ angular
     /*==============================================================*/
 
    /**
-    * List of events for the provided city. 
+    * List of events for the provided city.
     * Returns a promise. Supports additional 'options'.
     *
     * @method listForCity
-    * @param [Object] options 
+    * @param [Object] options
     * @param [String] options.cityId - ID of a city
     * @param {String} options.fields - CSV of fields to return
     * @param {String} options.start  - unix start date for events

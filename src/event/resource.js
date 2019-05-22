@@ -9,7 +9,7 @@ angular
       imageId: '@imageId'
     }, {
       update: {
-        method: 'PATCH',
+        method: 'PUT',
         url: endpoint,
         isArray: false
       },
